@@ -83,6 +83,199 @@ belegten Musters.
 
 ---
 
+## 2026-08-10 — Lokale Datenhaltung: drift, verschlüsselt über SQLite3 Multiple Ciphers
+
+**Gewählt:** `drift` 2.34.3 (27.07.2026, 160/160 Punkte, 2448 Likes) auf
+`package:sqlite3` 3.5.1 (04.08.2026), Verschlüsselung über den Hook
+`hooks: user_defines: sqlite3: source: sqlite3mc`. Schlüssel in
+`flutter_secure_storage` 11.0.0 (06.08.2026, 160/160, 4471 Likes), also im
+Android Keystore bzw. der iOS Keychain.
+
+**Warum:** Art. 9 verlangt verschlüsselte ruhende Daten; das ist keine Option,
+sondern Voraussetzung. drift gibt typsichere Abfragen und versionierte
+Migrationen — bei einem Datenmodell mit acht Befundkarten und einem Verlauf über
+Jahre ist der Migrationspfad kein Nebenaspekt.
+
+**Der Fund, der die naheliegende Wahl gekippt hat:** Der übliche Weg zu
+verschlüsseltem drift ist `sqlcipher_flutter_libs`. Dessen aktuelle Version heißt
+**`0.7.0+eol`** (15.02.2026) und die Beschreibung sagt: *„Not used anymore, update
+to version 3.x of package:sqlite3 instead"* — ab 0.7.0 tut das Paket nichts mehr.
+Hätte ich aus der Erinnerung gewählt, wäre eine leere Abhängigkeit im Projekt
+gelandet, die Verschlüsselung *verspricht* und nicht liefert. Bei
+Gesundheitsdaten ist das der teuerste denkbare Fehler.
+
+Drifts eigene Dokumentation empfiehlt heute `NativeDatabase` mit
+**SQLite3 Multiple Ciphers** (`source: sqlite3mc`) statt SQLCipher; SQLCipher hat
+seit drift 2.32.0 keinen einfachen Aufbau mehr. Dazu gehört ein Selbsttest beim
+Öffnen — `PRAGMA cipher;` muss eine Zeile liefern —, damit eine unverschlüsselt
+geöffnete Datenbank auffällt statt still zu funktionieren.
+
+**Verworfen:** `sqlcipher_flutter_libs` (EOL, siehe oben). `isar` — letzte
+Veröffentlichung 04/2023, stehen geblieben. `sqflite_sqlcipher` 3.4.1 — gepflegt,
+aber ohne typsichere Abfrageschicht und ohne Migrationswerkzeug; das wäre
+Handarbeit an genau der Stelle, die über Jahre wehtut. Reines `sqflite` — dasselbe
+Argument, zusätzlich ohne Verschlüsselung.
+
+**Rückholbar:** ja, der Zugriff liegt hinter der Repository-Schnittstelle. Der
+Wechsel der Verschlüsselungsquelle (`sqlite3mc` ↔ `sqlcipher`) ist eine Zeile in
+der `pubspec.yaml` plus ein Migrationslauf.
+
+---
+
+## 2026-08-10 — Medien verschlüsselt als Dateien, nicht als Blobs
+
+**Gewählt:** Fotos und Audio liegen als Dateien im app-eigenen Verzeichnis
+(`path_provider` 2.1.6), einzeln mit AES-GCM-256 verschlüsselt über
+`cryptography` 2.9.0. Der Schlüssel kommt aus demselben Keystore-Eintrag wie der
+Datenbankschlüssel, über eine eigene Ableitung.
+
+**Warum:** Ein Wundfoto ist 2–5 MB. Als Blob in der Datenbank bläht es die Datei
+auf, verlangsamt jede Sicherung und macht selektives Löschen teuer — und ein
+Löschpfad je Datensatztyp ist nach der Datenschutz-Grundregel Pflicht. Als Datei
+ist Löschen ein Aufruf. Das Betriebssystem verschlüsselt zwar ohnehin, aber die
+Art.-9-Regel verlangt Verschlüsselung ruhender Daten ausdrücklich für Datenbank
+**und** Mediendateien; die Geräteverschlüsselung als einzige Maßnahme wäre eine
+Annahme über die Gerätekonfiguration des Kunden.
+
+**Verworfen:** Blobs in der Datenbank (Größe, Löschpfad, Sicherung).
+`encrypt` 5.0.3 — letzte Veröffentlichung 09/2023, drei Jahre alt. Verlassen auf
+die Geräteverschlüsselung allein (siehe oben).
+
+**Bekanntes Risiko:** `cryptography` erscheint unregelmäßig (zuletzt 11/2025,
+150/160 Punkte) und hängt an einem Betreuer. Gegenmittel: die Verschlüsselung
+sitzt hinter einer eigenen Schnittstelle, und mit `cryptography_plus` 3.0.0
+(03/2026) existiert ein gepflegter, API-gleicher Fork als Ausweichweg.
+
+**Rückholbar:** ja, hinter der Schnittstelle; ein Wechsel kostet einen
+Neuverschlüsselungslauf über die vorhandenen Dateien.
+
+---
+
+## 2026-08-10 — Keine Zustandsverwaltungs-Bibliothek
+
+**Gewählt:** Framework-Mittel. Das Repository ist die einzige Quelle der Wahrheit,
+der Besuchsentwurf hängt an einem `ChangeNotifier`, der über den Besuchskorridor
+gereicht wird; Autosave schreibt nach jedem Feld in die Datenbank.
+
+**Warum:** Die Gegenprobe aus `/eps:technikwahl` lautet: wie viele Bildschirme
+teilen sich Zustand? Hier ist es **ein** Ablauf mit vier Stationen und einem
+Entwurf, der ohnehin nach jedem Feld persistiert werden muss. Wenn die Datenbank
+die Wahrheit hält, bleibt für eine Zustandsbibliothek wenig zu tun. Riverpod ist
+in den Workspace-Regeln ausdrücklich Rückfallposition und nicht Standard —
+ungefragt mitzunehmen widerspräche der Haltung des Auftraggebers.
+
+**Wann das neu zu prüfen ist** (benannt, damit die Entscheidung nicht aus
+Trägheit stehenbleibt): sobald ein Screen mehr als zwei unabhängige asynchrone
+Quellen zusammenführt, oder sobald die Auswertungs-Warteschlange von mehreren
+Screens gleichzeitig beobachtet werden muss. Dann `flutter_riverpod` 3.4.2.
+
+**Verworfen:** `flutter_riverpod` und `flutter_bloc` — beide gepflegt und
+tragfähig, nur für diesen Zuschnitt ohne Gegenwert.
+
+**Rückholbar:** ja. Ein Repository plus `ChangeNotifier` ist genau die Struktur,
+in die Riverpod später ohne Umbau der Fachschicht eingezogen wird.
+
+---
+
+## 2026-08-10 — Kein Routing-Paket
+
+**Gewählt:** `Navigator` aus dem Framework, benannte Routen.
+
+**Warum:** Der Besuch ist bewusst ein linearer Korridor mit vier Stationen; daneben
+stehen flache Listen. Es gibt keine Deep Links, kein Web-Ziel und keine
+URL-Anforderung — die drei Gründe, aus denen `go_router` seinen Preis wert wäre.
+Der Wiedereinstieg nach einer Unterbrechung kommt aus der Datenbank, nicht aus dem
+Navigationszustand; ein Router hätte das ohnehin nicht gelöst.
+
+**Verworfen:** `go_router` 17.4.0 (04.08.2026, 150/160, 5761 Likes) — gepflegt und
+richtig, sobald Deep Links oder Web dazukommen.
+
+**Rückholbar:** ja, solange Screens ihre Argumente als einfache Objekte bekommen
+und nicht aus dem Navigationszustand lesen.
+
+---
+
+## 2026-08-10 — Zeichnen und Einbrennen ohne Paket
+
+**Gewählt:** `InteractiveViewer` plus `CustomPainter` für Markierung, Zoom und
+Pan. Die eingebrannte Zweitdatei entsteht über `PictureRecorder` und `Canvas`
+und wird als PNG geschrieben.
+
+**Warum:** Das Framework kann beides. Die Markierung wird ohnehin als normalisierte
+Geometrie gespeichert und nicht als Pixel — damit ist das Einbrennen ein
+Zeichenvorgang auf einer zweiten Leinwand, kein Bildbearbeitungsproblem. Ein Paket
+brächte hier nichts, das nicht schon da ist.
+
+**Verworfen:** `photo_view` — letzte Veröffentlichung 04/2024. `image` 4.9.1 —
+gutes Paket, aber für „Linie auf Bild zeichnen und als PNG speichern" nicht nötig.
+`signature` — auf Unterschriften zugeschnitten, nicht auf Konturen über einem Bild.
+
+**Zu prüfen auf dem Gerät:** ob die EXIF-Ausrichtung beim Dekodieren angewandt
+wird. Wenn nicht, kommt `image` doch dazu — dann aber aus einem gemessenen Grund.
+
+**Rückholbar:** ja.
+
+---
+
+## 2026-08-10 — Kamera, Audio, Bericht
+
+**Gewählt:**
+- `camera` 0.12.0+2 (13.07.2026, 160/160, 2595 Likes) — gebraucht wird der
+  Sucher, weil die Voraufnahme als halbtransparentes Geisterbild darüberliegt.
+  `image_picker` reicht dafür nicht, es liefert nur ein fertiges Bild.
+- `record` 7.1.1 (29.06.2026, 160/160, 886 Likes) — Aufnahme in eine Datei, mit
+  Pegel für die sichtbare Aufnahmerückmeldung.
+- `pdf` 3.13.0 plus `printing` 5.15.0 für den Wundbericht — `printing` bringt
+  Vorschau und Teilen mit, dadurch entfällt `share_plus` als zweite Abhängigkeit.
+
+**Verworfen:** `image_picker` (kein Sucher, kein Overlay). `permission_handler`
+13.0.0 — `camera` und `record` holen ihre Berechtigungen selbst; ein weiteres
+Paket dafür wäre unnötig. Kommt dazu, falls später mehrere Berechtigungen
+gebündelt erklärt werden sollen.
+
+**Rückholbar:** ja, alle drei sitzen hinter projekteigenen Schnittstellen.
+
+---
+
+## 2026-08-10 — Spracherkennung: Anbindung ohne Schlüssel entwickelbar
+
+**Gewählt:** Die Erkennung sitzt hinter einem projekteigenen Port. Dahinter
+stehen zwei Adapter: einer aus aufgezeichneten Beispielaufnahmen samt erwarteter
+Ausgabe, der ohne Schlüssel und ohne Netz läuft, und einer gegen Mistral, der
+über eine Umgebungsvariable scharfgeschaltet wird. Fehlt der erwartete Wert bei
+gewähltem Cloud-Adapter, scheitert der Start mit klarer Meldung statt still
+weiterzulaufen.
+
+**Warum:** Es liegt kein Mistral-Schlüssel vor, und die gesamte
+Rückkopplungs-UX — Bestätigungsansicht, Sicherheitsgrade, Feldkorrektur — ist der
+eigentliche Entwurfsraum und hängt nicht an der Erkennung. Mit
+Beispielaufnahmen als Quelle ist sie vollständig entwickelbar, testbar und
+vorführbar. Der Port ist zugleich die Vorbedingung dafür, On-Device-Erkennung
+später gegen die Cloud zu stellen, ohne die App umzubauen — was die Art.-9-Regel
+ausdrücklich als ernsthaft zu prüfende Alternative verlangt.
+
+**Offen und ausdrücklich ungemessen:** ob Voxtral strukturierte Ausgabe direkt aus
+Audio trägt (einstufig) oder ob Transkription plus Textmodell mit striktem Schema
+stabiler ist (zweistufig). Beide Wege sind im Port vorgesehen. Ohne Schlüssel ist
+das nicht messbar; ein Messskript, das ohne Schlüssel nichts kostet, gehört zum
+Lieferumfang. Was gemessen wird, steht in `/eps:freihaendige-erfassung`:
+Feldgenauigkeit gegen echte Aufnahmen, nicht Wortfehlerrate.
+
+**Verworfen:** direkte Verdrahtung gegen Mistral (ohne Schlüssel nicht
+entwickelbar, und der Anbieter wäre nicht mehr austauschbar).
+`speech_to_text` 7.4.0 als Ersatz — der Systemdienst kennt das Fachvokabular
+nicht und liefert keine Feldzuordnung; als zusätzlicher Offline-Entwurfsweg
+bleibt er in Sichtweite, nicht als Ersatz.
+
+**Datenschutz, noch nicht entscheidungsreif:** Bevor Audio das Gerät verlässt,
+braucht es nach `datenschutz-art9.md` Anbieter, Zweck, Datenarten, Region,
+Aufbewahrung und Trainingsverbot — und Zero Data Retention sichert Mistral nur im
+Scale-Tarif zu. Solange das offen ist, läuft ausschließlich der Beispieladapter.
+
+**Rückholbar:** ja, das ist der Zweck des Ports.
+
+---
+
 <!-- Vorlage für neue Einträge:
 
 ## JJJJ-MM-TT — Thema
