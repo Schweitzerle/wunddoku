@@ -22,11 +22,30 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 
 ## Nächste drei Schritte
 
-1. Persistenz: verschlüsselte drift-Datenbank aufsetzen, Selbsttest
-   `PRAGMA cipher;` beim Öffnen, Repository-Schnittstelle, Migrationsgerüst
-2. Sprach-Port mit Beispieladapter — Transkript, Feldzuordnung,
+1. Sprach-Port mit Beispieladapter — Transkript, Feldzuordnung,
    Sicherheitsgrade; ohne Schlüssel vollständig testbar
-3. Erster Screen des Besuchskorridors samt Bestätigungsansicht, mit Goldens
+2. Theme aus der Token-Spezifikation (`lib/shared/theme/`), dann erster Screen
+   des Besuchskorridors samt Bestätigungsansicht, mit Goldens und
+   Semantics-Tests
+3. Wound-/Visit-Repository nachziehen, sobald der Korridor sie braucht
+
+## Erledigt (Persistenz, 2026-08-10)
+
+- Verschlüsselte drift-Datenbank: `sqlite3` 3.x als SQLite3 Multiple Ciphers
+  über den `hooks: user_defines`-Eintrag in der `pubspec.yaml`. Beleg: der
+  `PRAGMA cipher;`-Selbsttest läuft als Test auf dem Host durch — der
+  Hook-Build greift auch unter `flutter test`.
+- `AppDatabase.encrypted` verweigert das Öffnen ohne Cipher (StateError) und
+  prüft das Schlüsselformat, bevor der Schlüssel in ein SQL-Literal gelangt.
+- Schlüssel: 32 Zufallsbytes, erzeugt beim ersten Start, abgelegt über
+  `flutter_secure_storage` (Keystore/Keychain). Schnittstelle
+  `DatabaseKeyStore` für Tests attrappierbar.
+- Schema v1: Patients / Wounds / Visits, Fremdschlüssel mit `ON DELETE
+  CASCADE` — Patient löschen nimmt Wunden und Besuche mit (Löschpfad).
+  Jede Tabelle trägt bereits das `synchronized`-Feld aus der
+  Offline-first-Entscheidung.
+- `PatientRepository` mit Anlegen, Suche, Sortierung, Löschen; 10 neue Tests,
+  Gesamtlauf 48 Tests grün, Analyzer sauber.
 
 ## Offene Fragen
 
