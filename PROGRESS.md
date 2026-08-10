@@ -22,12 +22,29 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 
 ## Nächste drei Schritte
 
-1. Sprach-Port mit Beispieladapter — Transkript, Feldzuordnung,
-   Sicherheitsgrade; ohne Schlüssel vollständig testbar
-2. Theme aus der Token-Spezifikation (`lib/shared/theme/`), dann erster Screen
+1. Theme aus der Token-Spezifikation (`lib/shared/theme/`), dann erster Screen
    des Besuchskorridors samt Bestätigungsansicht, mit Goldens und
    Semantics-Tests
-3. Wound-/Visit-Repository nachziehen, sobald der Korridor sie braucht
+2. Wound-/Visit-Repository nachziehen, sobald der Korridor sie braucht
+3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
+   dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Sprachstrecke Stufe 1, 2026-08-10)
+
+- `TranscriptInterpreter` (reines Dart): Transkript → typisierte Vorschläge
+  für Maße (mit mm/cm-Umrechnung), Gewebeanteile (beide Wortstellungen),
+  Exsudation, Schmerz-NRS. Jeder Vorschlag trägt Sicherheitsgrad und
+  **Span im Transkript** (Herkunftsbeleg für JS-4).
+- Regeln umgesetzt: Wert außerhalb der Plausibilität wird behalten, aber
+  `low` (blockiert Speichern); Nichtgesagtes erzeugt keinen Vorschlag;
+  gebeugte Katalognamen („Granulationsgewebe") treffen mit `medium`.
+- Deutsche Zahlwörter 0–99 inkl. „einunddreißig", „drei Komma fünf",
+  „dreieinhalb". Stolperstein: `\w` in Dart-RegExp ist ASCII — Umlaute
+  brauchen eine eigene Zeichenklasse.
+- `SpeechRecognizer`-Port plus `CannedSpeechRecognizer`; die Mistral-Fassung
+  kommt erst, wenn die Datenschutzangaben entscheidungsreif sind
+  (`DECISIONS.md`).
+- 21 neue Tests; Gesamtlauf 69 grün, Analyzer sauber.
 
 ## Erledigt (Persistenz, 2026-08-10)
 
