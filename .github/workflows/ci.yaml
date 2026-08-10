@@ -1,0 +1,43 @@
+name: CI
+
+# Externer Pass/Fail für Analyzer, Tests und Goldens.
+# Goldens rendern plattformabhängig — deshalb laufen sie hier auf Linux, genau wie
+# beim Erzeugen mit `flutter test --update-goldens` auf dem Entwicklungsrechner.
+on:
+  push:
+  pull_request:
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.5'
+          channel: stable
+          cache: true
+
+      - name: Abhängigkeiten
+        run: flutter pub get
+
+      - name: Formatierung
+        run: dart format --set-exit-if-changed lib test tool
+
+      - name: Analyzer
+        run: flutter analyze --fatal-infos
+
+      - name: Tests inklusive Goldens
+        run: flutter test --reporter expanded
+
+      # Bei abweichenden Goldens liegt der Bilddiff hier drin — ohne ihn ist ein
+      # roter Golden-Test nicht beurteilbar.
+      - name: Golden-Abweichungen sichern
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: golden-failures
+          path: '**/failures/**'
+          if-no-files-found: ignore
+          retention-days: 7

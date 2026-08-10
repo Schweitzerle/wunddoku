@@ -1,0 +1,7 @@
+{
+  "@@locale": "de",
+  "appTitle": "wunddoku",
+  "@appTitle": {
+    "description": "Name der Anwendung, erscheint im Fenstertitel und im Umschalter."
+  }
+}

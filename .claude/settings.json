@@ -1,0 +1,32 @@
+{
+  "claudeMdExcludes": [
+    "/home/chweizerles/.claude/CLAUDE.md",
+    "/home/chweizerles/.claude/CLAUDE.local.md",
+    "/home/chweizerles/.claude/AGENTS.md",
+    "/home/chweizerles/.claude/rules/**",
+    "/home/chweizerles/.claude-shared/**"
+  ],
+  "model": "opus",
+  "effortLevel": "high",
+  "permissions": {
+    "allow": [
+      "Bash(flutter:*)",
+      "Bash(dart:*)",
+      "Bash(eps-freeze:*)",
+      "Bash(eps-doktor:*)",
+      "Bash(eps-stop:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "mcp__plugin_eps_dart",
+      "mcp__plugin_eps_dart__*"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Bash(git push:*)"
+    ]
+  }
+}
