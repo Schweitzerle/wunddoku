@@ -35,9 +35,32 @@ Gerüst steht, `/eps:projekt-start` durchlaufen. Datenkategorien geklärt
 - Gibt es beim Sanitätshaus einen bestehenden AV-Vertrag und eine DSFA, in die
   sich die App einfügt?
 
+**Aus der Katalogrecherche (2026-08-10), Einzelheiten in `docs/fachkataloge.md`:**
+
+- **AVLON-Gradeinteilung fehlt.** Die Skala Ia–IV ist in keiner frei zugänglichen
+  Quelle veröffentlicht. Der Auftraggeber hat die Aufgabe selbst umgesetzt und
+  besitzt die Definition — ihn fragen ist der kürzeste Weg. *(Vorläufige Skala im
+  Code an einer Stelle, Austausch kostet eine Zeile.)*
+- Soll **Nekrose** in trocken und feucht getrennt werden, wie es die
+  DGP-Vorlage tut? Das Briefing nennt sie ungeteilt. *(Annahme: ungeteilt.)*
+- **Exsudatmenge** — Schätzurteil (kein/gering/mäßig/stark, wie im Briefing) oder
+  beobachtbarer Verbandzustand (trocken → nass, Kleidung feucht/nass, wie in der
+  DGP-Vorlage)? Der zweite Weg ist zwischen zwei Personen reproduzierbar.
+  *(Annahme: Briefing gilt, der zweite Weg wird als Vorschlag vorgelegt.)*
+- **Schmerz-NRS** auf den Verbandwechsel bezogen oder auf den Ruheschmerz?
+  *(Annahme: Verbandwechsel, weil handlungsleitend.)*
+- Vollständige Liste der **Schmerzqualitäten** — das Briefing lässt sie mit
+  „brennend/stechend/…" offen. Wird nicht erfunden.
+- Welcher **ICD-10-Zuschnitt** ist im Alltag gemeint? Der Gesamtkatalog hat rund
+  16.000 Endstellen. *(Annahme: kuratierte Wundversorgungs-Teilmenge als
+  Vorschlagsweg, Volltextsuche als Rückfall.)*
+
 **An Julian:**
 
 - Bis wann soll die Abgabe stehen? Der Umfang wird danach geschnitten.
+- **AVLON-Poster der Akademie-ZWM, 9,00 €** — falls der Auftraggeber die Definition
+  nicht liefert, wäre das die Beschaffungsquelle. Kostet Geld, geht deshalb über
+  dich.
 
 **Noch offen, wird im Projekt entschieden:**
 
