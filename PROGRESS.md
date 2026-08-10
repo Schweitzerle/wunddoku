@@ -45,10 +45,17 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 
 **Aus der Katalogrecherche (2026-08-10), Einzelheiten in `docs/fachkataloge.md`:**
 
-- **AVLON-Gradeinteilung fehlt.** Die Skala Ia–IV ist in keiner frei zugänglichen
-  Quelle veröffentlicht. Der Auftraggeber hat die Aufgabe selbst umgesetzt und
-  besitzt die Definition — ihn fragen ist der kürzeste Weg. *(Vorläufige Skala im
-  Code an einer Stelle, Austausch kostet eine Zeile.)*
+- **AVLON: die Auditliste gibt die Klassifikation falsch wieder.** Nicht „je
+  Dimension ein Grad Ia–IV", sondern **eine** Tiefenskala Ia/Ib/II/III/IV/**V**
+  plus die fünf Zusatzmerkmale A/V/L/O/N, die dazukommen. Am Originalposter
+  geprüft und so umgesetzt. Dem Auftraggeber gegenüber ansprechen, weil er es
+  anders formuliert hat — sinnvoll als Frage, nicht als Korrektur.
+- **Kurzschreibweise des zusammengesetzten AVLON-Befunds abstimmen.** Das Poster
+  legt keine fest; die App schreibt „Grad III + A + N". Der Wert erscheint im
+  Bericht, also gehört die Schreibweise abgeglichen.
+- **Verbrennung und Erfrierung sind laut Poster außerhalb des AVLON-Geltungs-
+  bereichs.** Kommen solche Wunden im Alltag des Sanitätshauses vor? Wenn ja,
+  braucht dieser Fall eine eigene Behandlung in der Oberfläche.
 - Soll **Nekrose** in trocken und feucht getrennt werden, wie es die
   DGP-Vorlage tut? Das Briefing nennt sie ungeteilt. *(Annahme: ungeteilt.)*
 - **Exsudatmenge** — Schätzurteil (kein/gering/mäßig/stark, wie im Briefing) oder
@@ -66,9 +73,11 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 **An Julian:**
 
 - Bis wann soll die Abgabe stehen? Der Umfang wird danach geschnitten.
-- **AVLON-Poster der Akademie-ZWM, 9,00 €** — falls der Auftraggeber die Definition
-  nicht liefert, wäre das die Beschaffungsquelle. Kostet Geld, geht deshalb über
-  dich.
+- Das AVLON-Poster liegt als `wund_hautposter_7.pdf` im Workspace-Wurzelverzeichnis
+  und ist dort **nicht** von `.gitignore` erfasst. Es ist ein kostenpflichtiges,
+  mit Wasserzeichen versehenes Dokument und sollte nicht in die Git-Historie
+  geraten. Die Datei liegt außerhalb des Projektverzeichnisses — Änderung daran
+  geht über Julian.
 
 **Noch offen, wird im Projekt entschieden:**
 

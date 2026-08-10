@@ -267,25 +267,72 @@ void main() {
   });
 
   group('AVLON', () {
-    test('an unassessed dimension stays absent instead of defaulting', () {
-      final assessment = AvlonAssessment.empty.withGrade(
-        AvlonDimension.venous,
-        AvlonGrade.iib,
+    test('the scale has six grades ending at V', () {
+      expect(AvlonGrade.values.map((g) => g.label), [
+        'Ia',
+        'Ib',
+        'II',
+        'III',
+        'IV',
+        'V',
+      ]);
+    });
+
+    test('only grade Ia describes no tissue defect', () {
+      expect(AvlonGrade.ia.hasTissueDefect, isFalse);
+      for (final grade in AvlonGrade.values.where((g) => g != AvlonGrade.ia)) {
+        expect(grade.hasTissueDefect, isTrue, reason: grade.label);
+      }
+    });
+
+    test('the modifiers spell AVLON in order', () {
+      expect(AvlonModifier.values.map((m) => m.letter).join(), 'AVLON');
+    });
+
+    test('a grade stands on its own without modifiers', () {
+      final classification = AvlonClassification(grade: AvlonGrade.iii);
+      expect(classification.modifiers, isEmpty);
+      expect(classification.label, 'Grad III');
+    });
+
+    test('modifiers are added to the grade and render in AVLON order', () {
+      final classification = AvlonClassification(grade: AvlonGrade.iii)
+          .withModifier(AvlonModifier.neuropathy)
+          .withModifier(AvlonModifier.arterialPerfusion);
+      expect(classification.label, 'Grad III + A + N');
+    });
+
+    test('a modifier can be taken back', () {
+      final classification = AvlonClassification(
+        grade: AvlonGrade.v,
+        modifiers: {AvlonModifier.osteoarthropathy, AvlonModifier.neuropathy},
+      ).withoutModifier(AvlonModifier.osteoarthropathy);
+      expect(classification.modifiers, {AvlonModifier.neuropathy});
+      expect(classification.label, 'Grad V + N');
+    });
+
+    test('regrading keeps the modifiers', () {
+      final classification = AvlonClassification(
+        grade: AvlonGrade.ii,
+        modifiers: {AvlonModifier.venousCirculation},
+      ).withGrade(AvlonGrade.iii);
+      expect(classification.grade, AvlonGrade.iii);
+      expect(classification.modifiers, {AvlonModifier.venousCirculation});
+    });
+
+    test('equality ignores the order the modifiers were added in', () {
+      expect(
+        AvlonClassification(grade: AvlonGrade.ib)
+            .withModifier(AvlonModifier.lymphaticDrainage)
+            .withModifier(AvlonModifier.venousCirculation),
+        AvlonClassification(
+          grade: AvlonGrade.ib,
+          modifiers: {
+            AvlonModifier.venousCirculation,
+            AvlonModifier.lymphaticDrainage,
+          },
+        ),
       );
-      expect(assessment[AvlonDimension.venous], AvlonGrade.iib);
-      expect(assessment[AvlonDimension.arterial], isNull);
-      expect(assessment.isComplete, isFalse);
-      expect(assessment.missingDimensions, hasLength(4));
-    });
-
-    test('all five dimensions from the audit list are present', () {
-      expect(AvlonDimension.values, hasLength(5));
-    });
-
-    test('grades carry their written label', () {
-      expect(AvlonGrade.iia.label, 'IIa');
-      expect(AvlonGrade.values.first.label, 'Ia');
-      expect(AvlonGrade.values.last.label, 'IV');
     });
   });
 

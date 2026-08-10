@@ -8,9 +8,10 @@
 
 ## Quellenlage in einem Satz
 
-Für die Farbschema-Matrix, den Wundgrund, Wundrand, Wundumgebung, Exsudat, die
-Uhrzeitmethode und ICD-10 liegen zitierfähige Primärquellen vor. **Für AVLON nicht** —
-dazu unten ein eigener Abschnitt.
+Für alle Kataloge liegen zitierfähige Primärquellen vor. AVLON war zunächst offen —
+die Gradeinteilung ist nirgends frei veröffentlicht — und wurde am 2026-08-10 über
+das Originalposter der Akademie-ZWM geklärt. **Dabei stellte sich heraus, dass das
+Briefing die Struktur der Klassifikation falsch wiedergibt**; siehe Abschnitt 8.
 
 ---
 
@@ -206,41 +207,87 @@ Katalog als Rückfall. Die Teilmenge wird mit dem Auftraggeber abgestimmt.
 
 ---
 
-## 8. AVLON — Quellenlage unzureichend
+## 8. AVLON — geklärt, und anders als im Briefing beschrieben
 
-**Was gesichert ist:** AVLON existiert und stammt aus dem Kammerlander-Umfeld. Die
-Akademie-ZWM führt es im eigenen Verlagsangebot als Poster
-**„AVLON Wund- und Dekubitusklassifikation"** (A3/A4, laminiert, 9,00 €).
+**Quelle:** „AVLON Wund-/und Dekubitusklassifikation (Graduierung)" nach
+G. Kammerlander et al. 2006, *Teil 2 der Wundklassifikation/Wundgraduierung nach
+G. Kammerlander et al. 2007*, © Akademie für Zertifiziertes Wundmanagement —
+KAMMERLANDER-WFI 2008. Als PDF über den Shop der Akademie-ZWM bezogen; die Datei
+trägt ein Wasserzeichen und bleibt außerhalb des Repositorys. Hier steht nur, was
+für das Datenmodell gebraucht wird.
 
-**Was nicht gesichert ist:** die Definitionen der Grade. Weder die Auflösung des
-Akronyms noch die Abstufung Ia bis IV ist in einer frei zugänglichen Quelle
-veröffentlicht. Geprüft wurden: die Publikationsseite der Akademie-ZWM und drei ihrer
-Volltexte, die Klassifikationsübersicht des Wundzentrums Hamburg, das Wundkompendium
-des Klinikums Passau, die Klassifikationslegende von Mölnlycke (2025) sowie mehrere
-gezielte Suchen. Ergebnis: **keine belastbare Fassung der Gradeinteilung.**
+Das Poster nennt als Mitwirkende D. Mayer, S. Brenner, J. Schaflinger,
+G. Hirschberger, T. Eberlein, A. Risse, D. Brunner, P. Asmussen, Andriessen,
+H. Klier, F. Zimpfer, B. Nink-Grebe.
 
-Die Auflösung des Akronyms im Briefing — Arteriell, Venös, Lymphangiös,
-Osteo-Arthropathie, Neuropathie — ist plausibel und deckt sich mit Kammerlanders
-Arbeitsschwerpunkten (venöse und lymphangiöse Stauung, Ulcus cruris, Dekubitus). Sie
-ist damit aber **eine Angabe des Auftraggebers, keine geprüfte Quelle.**
+### Die Korrektur
 
-**Was daraus folgt — und was ausdrücklich nicht passiert:**
+Das Briefing beschreibt AVLON als „je Dimension (Arteriell/Venös/Lymphangiös/
+Osteo-Arthropathie/Neuropathie) Grad Ia–IV". **So ist die Klassifikation nicht
+gebaut.** Das Poster ist eine Matrix mit zwei unabhängigen Achsen:
 
-Es wird keine Gradeinteilung erfunden. Stattdessen:
+- **Eine** Gradskala, die die **Tiefe des Gewebedefekts** beschreibt — sechs Stufen,
+  nicht vier, und sie endet bei **V**, nicht bei IV.
+- **Fünf Zusatzmerkmale** A/V/L/O/N, die zu diesem einen Grad **hinzukommen**. Sie
+  werden nicht einzeln graduiert; in der Tabelle steht in jeder Gradspalte
+  derselbe Zusatz.
 
-- Die fünf Dimensionen werden genau so abgebildet, wie der Auftraggeber sie nennt.
-- Die Gradskala wird als **eine** geschlossene Aufzählung an genau einer Stelle
-  definiert, so dass ihr Austausch eine Zeile kostet, sobald die verbindliche
-  Fassung vorliegt.
-- Die vorläufige Skala trägt im Code einen Doc-Kommentar, der auf diesen Abschnitt
-  verweist und sie als vorläufig kennzeichnet.
-- Der Beschaffungsweg steht in `PROGRESS.md`: **den Auftraggeber fragen** — er hat
-  die Aufgabe selbst umgesetzt und besitzt die Definition. Alternativ das Poster für
-  9 € bestellen; das kostet Geld und geht deshalb über Julian, nicht über den Agenten.
+Ein Befund lautet also „Grad III + A + N", nicht „A: Grad III, N: Grad II".
 
-Das ist der ehrliche Umgang mit einer Lücke: sie benennen, den Einbau so bauen, dass
-das Schließen billig ist, und die Beschaffung an die Person geben, die sie leisten
-kann.
+Wäre das Briefing wörtlich umgesetzt worden, hätte die App fünf getrennte
+Gradfelder mit einer erfundenen Vierstufigkeit angeboten — falsch in der Struktur
+und falsch im Wertebereich.
+
+### Erklärter Zweck
+
+Das Poster formuliert ihn selbst:
+
+> „Eine neue Klassifikation, welche die Probleme Dekubitus, diabetischer Fuss und
+> sonstige Wunden in einer Skala vereinigt. Die Verbrennung & Erfrierung wurde
+> hierbei bewusst nicht berücksichtigt."
+
+Verbrennung und Erfrierung sind damit ausdrücklich **außerhalb** des
+Geltungsbereichs. Das gehört in die Oberfläche, wenn eine solche Wunde angelegt
+wird — sonst wird AVLON auf einen Fall angewandt, für den es nicht gemacht ist.
+
+### Die Gradskala
+
+| Grad | Definition (verbatim) |
+|---|---|
+| **Ia** | persist. Rötung/Entzündung an der Epidermis sichtbar aber **ohne** sichtbaren Gewebedefekt |
+| **Ib** | Gewebedefekt innerhalb der Epidermis bzw. bis an die Dermis reichend |
+| **II** | Gewebedefekt innerhalb der Dermis bzw. bis an die Subcutis reichend |
+| **III** | Gewebedefekt innerhalb der Subcutis bzw. bis an die Fascie reichend (oberflächliches, epifasciales Kompartement) |
+| **IV** | Gewebedefekt innerhalb oder bis in den Faszien-, Sehnen-, Muskelbereich (tiefe Kompartemente) |
+| **V** | Gewebedefekt innerhalb oder bis in den/die Knochen, Gelenksbereich, Körperhöhle |
+
+**Grad Ia ist der einzige Grad ohne Gewebedefekt.** Das hat eine Folge fürs Modell,
+die man leicht übersieht: Bei Ia gibt es keinen Wundgrund, also auch keine
+Gewebeanteile in Prozent und keine Tiefe. Im Code steht das als
+`AvlonGrade.hasTissueDefect`.
+
+### Die Zusatzmerkmale
+
+| Buchstabe | Bezeichnung (verbatim) |
+|---|---|
+| **A** | + arterielle Perfusionsstörung |
+| **V** | + venöse Zirkulationsstörung |
+| **L** | + lymphangiöse Abflussstörung |
+| **O** | + Osteo-Arthropathie |
+| **N** | + Neuropathie |
+
+Die Bezeichnungen sind präziser als die Kurzform im Briefing: nicht „Arteriell",
+sondern „arterielle **Perfusionsstörung**"; nicht „Venös", sondern „venöse
+**Zirkulationsstörung**"; nicht „Lymphangiös", sondern „lymphangiöse
+**Abflussstörung**". In der Oberfläche steht die volle Bezeichnung — sie ist die,
+die der Kunde benutzt.
+
+Mehrfachauswahl: ein diabetischer Fuß trägt regelmäßig A und N zugleich.
+
+**Nicht auf dem Poster:** eine festgelegte Kurzschreibweise für den zusammengesetzten
+Befund. Die Darstellung „Grad III + A + N" ist die Setzung dieses Projekts und als
+solche im Code vermerkt; sie ist mit dem Auftraggeber abzugleichen, weil sie im
+Bericht auftaucht.
 
 ---
 
@@ -248,7 +295,7 @@ kann.
 
 - Gerhard Kammerlander, *Wundbeurteilung und Klassifikation — Zuordnung von Verbandsmaterialien* (2001) — [akademie-zwm.ch](https://www.akademie-zwm.ch/uploads/tx_scpublications/Wundbeurteilung_und_Klassifikation_-__2001.pdf)
 - Gerhard Kammerlander / Thomas Eberlein, *Lokaltherapeutische Standards für Hautwunden — Kurzübersicht Teil 1* — [akademie-zwm.ch](https://www.akademie-zwm.ch/uploads/tx_scpublications/Wundtherapie_-_Grundsatzartikel-Uebersicht-Einteilung_1-3.pdf)
-- Akademie-ZWM, Verlagsangebot Wund- und Hautposter (Nachweis der Existenz von AVLON) — [akademie-zwm.ch](https://www.akademie-zwm.ch/shop/wund-und-hautposter.html)
+- G. Kammerlander et al., *AVLON Wund-/und Dekubitusklassifikation (Graduierung)*, 2006/2007, © Akademie für Zertifiziertes Wundmanagement — KAMMERLANDER-WFI 2008. Bezugsquelle: [akademie-zwm.ch](https://www.akademie-zwm.ch/shop/wund-und-hautposter.html) (kostenpflichtig; die Datei liegt nicht im Repository)
 - Barbara Uebach, *Wundassessment / Wundverlaufsdokumentation*, Stand 22.01.2021, Deutsche Gesellschaft für Palliativmedizin — [dgpalliativmedizin.de](https://www.dgpalliativmedizin.de/images/Wundassessment_Verlaufsdokumentation_22.01.2021_2.pdf)
 - Klinikum Passau, *Leitfaden zum modernen Wundmanagement* — [klinikum-passau.de](https://www.klinikum-passau.de/fileadmin/user_upload/downloads/broschueren/Wundkompendium-Broschuere.pdf)
 - Mölnlycke, *Klassifikation von Wunden und deren Grunderkrankungen* (2025) — [molnlycke.com](https://www.molnlycke.com/globalassets/local/de/wissen/woundcare/downloads/2025/wunddokumentation-und-verbandwechsel/2025-molnlycke-legende-wunddoku.pdf)
