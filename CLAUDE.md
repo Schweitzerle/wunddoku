@@ -7,40 +7,80 @@
 
 ## Kunde und Auftrag
 
-- **Kunde:** _(wer nutzt die App, welche Branche)_
+- **Kunde:** Sanitätshaus mit ambulanter Wundversorgung. Drei Pflegekräfte fahren
+  Touren zu Patienten nach Hause — Verbandwechsel, Desinfektion, Kontrolle.
+  Arbeitsbedingungen: Handschuhe an, beide Hände am Verband, fremde Wohnung,
+  wechselndes Licht, oft kein Netz, Patient sitzt daneben und hört mit.
 - **Auftraggeber:** Schneider Prozessautomatik
-- **Problem in einem Satz:** _(was geht heute nicht, ohne Technikwort)_
-- **Erfolgsmaß:** _(eingesparte Minuten je Vorgang, Fehlerquote gegen den Papierweg)_
+- **Problem in einem Satz:** Der Befund entsteht am Bett, aufgeschrieben wird er
+  Stunden später im Büro aus dem Gedächtnis.
+- **Erfolgsmaß:** Nachdokumentation im Büro geht gegen null; ein Wundbefund ist
+  vor dem Verlassen der Wohnung vollständig. Gegenprobe: Anteil der Befunde, die
+  ohne Nacharbeit im Büro auskommen, und die Zeit vom Betreten der Wohnung bis
+  zum fertigen Befund. Absolutwerte sind noch beim Auftraggeber zu erfragen
+  (siehe `PROGRESS.md`, offene Fragen).
 
 ## Datenkategorien
 
-- **Verarbeitete Daten:** _(z. B. Name, Adresse, Fotos vom Objekt, Messwerte)_
-- **Besondere Kategorien nach Art. 9 DSGVO:** ja — welche genau, ist noch zu präzisieren. `.claude/rules/art9.md` ist aktiv.
-- **Verantwortlicher:** _(in der Regel der Kunde)_
-- **Auftragsverarbeiter:** Schneider Prozessautomatik, dazu: _(Hosting, KI-Dienste, …)_
+- **Verarbeitete Daten:**
+  - Wundbefunde — Maße, Gewebeanteile, AVLON-Grade, Wundrand, Wundumgebung,
+    Exsudation, Wundtaschen, Schmerz und Schmerztherapie, ICD-10-Diagnose
+  - Wundfotos — Original und eingebrannte Markierungsfassung
+  - Sprachaufnahmen der Pflegekraft, deren Inhalt der Befund ist
+  - Patientenstammdaten — Name, Anschrift (zugleich Besuchsort), Geburtsdatum
+  - Urheber und Zeitpunkt je Befund (Pflegekraft), damit mittelbar
+    Beschäftigtendaten
+- **Besondere Kategorien nach Art. 9 DSGVO:** **ja** — Gesundheitsdaten, in
+  Text-, Bild- und Audioform. `.claude/rules/art9.md` ist aktiv.
+  Nicht verarbeitet und bewusst nicht erhoben: Biometrie zur Identifizierung
+  (die Stimme dient der Eingabe, nicht dem Wiedererkennen), Zahlungsdaten,
+  ethnische Herkunft, Religion, Gewerkschaftszugehörigkeit.
+- **Verantwortlicher:** das Sanitätshaus
+- **Auftragsverarbeiter:** Schneider Prozessautomatik (diese Software).
+  Unterauftragsverarbeiter entsteht erst, wenn Audio das Gerät verlässt —
+  derzeit Mistral als Kandidat, Entscheidung offen in `DECISIONS.md`.
 
 Bei „ja" ist `.claude/rules/art9.md` verlinkt und gilt zusätzlich.
 
 ## Ist-Prozess
 
-_(Zwei bis drei Sätze, wie es heute läuft. Ausführlich in `docs/ux/ist-prozess.md`.)_
+Die Pflegekraft versorgt die Wunde, merkt sich Maße und Aussehen und dokumentiert
+abends im Büro nach — mehrere Stunden und mehrere Patienten später. Fotos entstehen
+mit dem Privat- oder Diensthandy und werden nachträglich zugeordnet. Der Verlauf
+einer Wunde über Wochen lässt sich aus dieser Dokumentation nur schwer ablesen,
+obwohl genau er den klinischen Wert trägt. Ausführlich in `docs/ux/ist-prozess.md`.
 
 ## Gewählter Stack
 
-Begründungen stehen in `DECISIONS.md`. Hier nur das Ergebnis:
+Begründungen stehen in `DECISIONS.md`. Hier nur das Ergebnis — leere Zeilen sind
+noch nicht entschieden und laufen über `/eps:technikwahl`.
 
 | Bereich | Gewählt |
 |---|---|
 | Zustandsverwaltung | |
 | Lokale Datenhaltung | |
 | Navigation | |
-| Backend / Synchronisation | |
+| Backend / Synchronisation | keins — rein lokal, offline-first (2026-08-10) |
 | Externe Dienste | |
 
 ## Projektbegriffe
 
-_(Fachvokabular des Kunden mit den erlaubten Wertebereichen. Diese Begriffe werden
-im Code als Enums oder Value Objects abgebildet, nicht als freie Strings.)_
+Das Fachvokabular kommt aus etablierten klinischen Schemata und wird gegen
+Primärquellen recherchiert, bevor es Code wird. Erlaubte Wertebereiche werden als
+Enums oder Value Objects abgebildet, nie als freie Strings:
+
+- **AVLON nach Kammerlander** — Arteriell, Venös, Lymphangiös, Osteo-Arthropathie,
+  Neuropathie, je Dimension Grad Ia–IV
+- **Gewebeanteile am Wundgrund** — Nekrose, Fibrin, Granulation, Epithelisation,
+  in Prozent, Summe 100
+- **Wundrand** und **Wundumgebung** — Normal, Mazeration, Rötung, Trocken, Livide,
+  Atroph, Ödematös; Umgebung zusätzlich Infektion, Mykose, Juckreiz
+- **Exsudation** — Intensität kein/gering/mäßig/stark, Art serös/eitrig/blutig
+- **Wundtaschen und Unterminierungen** — Position als Uhrzeit 1–12, Tiefe in cm
+- **Schmerz** — Intensität 0–10, Qualität, lokale und systemische Therapie
+- **ICD-10-GM** — Diagnosekatalog
+
+Der recherchierte Stand mit Quellenangabe steht in `docs/fachkataloge.md`.
 
 ## Befehle
 
