@@ -7,18 +7,26 @@
 
 ## Wo wir stehen
 
-Gerüst steht, `/eps:projekt-start` durchlaufen. Datenkategorien geklärt
-(Gesundheitsdaten, Art. 9 — Regel aktiv), Kunde, Ist-Prozess und Erfolgsmaß in
-`CLAUDE.md`. Umfang mit Julian abgesteckt. Noch keine Fachlichkeit, kein Screen.
+`/eps:projekt-start`, `/eps:ux-prozess` und die erste Runde `/eps:technikwahl`
+sind durch. Es liegen vor:
+
+- UX-Konzept unter `docs/ux/` — Ist-Prozess, 10 Job Stories, Story Map mit vier
+  Slices, Aktivierungsereignis, fünf Flows, 16 Screens mit Zuständen, Tokens,
+  Nachprozess
+- `docs/fachkataloge.md` — Katalogrecherche gegen Primärquellen
+- `lib/domain/catalog/` — sechs Value-Object-Dateien, 32 Tests grün,
+  Analyzer sauber
+- Technikentscheidungen für Slice 1 in `DECISIONS.md`
+
+Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 
 ## Nächste drei Schritte
 
-1. `/eps:ux-prozess` — Ist-Prozess, Job Stories, Story Map, Aktivierungsereignis,
-   Flows, Screen-Inventar, Token-Spezifikation. Vor dem ersten Screen.
-2. Fachkataloge gegen Primärquellen recherchieren und als Enums/Value Objects
-   abbilden → `docs/fachkataloge.md` plus `lib/.../domain`
-3. Erste Technikentscheidungen über `/eps:technikwahl` — lokale Datenhaltung
-   (verschlüsselt), Zustandsverwaltung, Navigation
+1. Persistenz: verschlüsselte drift-Datenbank aufsetzen, Selbsttest
+   `PRAGMA cipher;` beim Öffnen, Repository-Schnittstelle, Migrationsgerüst
+2. Sprach-Port mit Beispieladapter — Transkript, Feldzuordnung,
+   Sicherheitsgrade; ohne Schlüssel vollständig testbar
+3. Erster Screen des Besuchskorridors samt Bestätigungsansicht, mit Goldens
 
 ## Offene Fragen
 

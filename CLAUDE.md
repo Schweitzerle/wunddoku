@@ -57,11 +57,14 @@ noch nicht entschieden und laufen über `/eps:technikwahl`.
 
 | Bereich | Gewählt |
 |---|---|
-| Zustandsverwaltung | |
-| Lokale Datenhaltung | |
-| Navigation | |
-| Backend / Synchronisation | keins — rein lokal, offline-first (2026-08-10) |
-| Externe Dienste | |
+| Zustandsverwaltung | keine Bibliothek — Repository plus `ChangeNotifier` |
+| Lokale Datenhaltung | `drift` auf `sqlite3`, verschlüsselt über `sqlite3mc` |
+| Medien | Dateien im App-Bereich, AES-GCM-256 (`cryptography`), Schlüssel im Keystore |
+| Navigation | `Navigator` aus dem Framework, benannte Routen |
+| Backend / Synchronisation | keins — rein lokal, offline-first |
+| Kamera / Audio / Bericht | `camera`, `record`, `pdf` + `printing` |
+| Markierung im Bild | `InteractiveViewer` + `CustomPainter`, kein Paket |
+| Spracherkennung | eigener Port; Beispieladapter ohne Schlüssel, Mistral-Adapter zuschaltbar |
 
 ## Projektbegriffe
 
