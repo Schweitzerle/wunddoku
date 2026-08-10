@@ -39,6 +39,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  drift: ^2.34.3
+  sqlite3: ^3.5.1
+  path_provider: ^2.1.6
+  flutter_secure_storage: ^11.0.0
 
 dev_dependencies:
   flutter_test:
@@ -50,6 +54,16 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  drift_dev: ^2.34.0
+  build_runner: ^2.15.1
+
+# Build package:sqlite3 with SQLite3 Multiple Ciphers instead of plain SQLite,
+# so the database file is encrypted at rest (Art. 9 requirement). The former
+# route, sqlcipher_flutter_libs, is end-of-life — see DECISIONS.md 2026-08-10.
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
