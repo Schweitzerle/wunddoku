@@ -29,16 +29,41 @@ sind durch. Es liegen vor:
 - **Abschluss**: Lücken benannt, Abschluss nie gesperrt, Besuch wird als
   vollständig oder als „mit Lücken" geführt; danach beginnt der nächste Besuch
 
-Offen: Maße neben dem Foto, Verlauf, PDF-Bericht.
+- **Verlauf**: Kurve der Fläche über die Besuche (Lücken bleiben Lücken),
+  Besuchsliste mit Miniaturen, Veränderung gegen den Nachbarbesuch
+- **PDF-Wundbericht**: Kopf, Verlaufstabelle, je Besuch Foto und Befund;
+  Lücken als „fehlt", Vergleichbarkeitsvermerk am ersten Foto
+
+Damit ist Slice 1 inhaltlich zu.
 
 ## Nächste drei Schritte
 
-1. Verlauf über Besuche: Fotos und Maße nebeneinander, Markierungen
-   übereinander — der Teil, der den klinischen Wert trägt
-2. PDF-Bericht für den Büro-Nachprozess (`pdf` + `printing`, in
-   `DECISIONS.md` schon gewählt)
-3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
+1. Gerätebeleg für Verlauf und Bericht nachholen (Handy war beim letzten
+   Durchlauf abgesteckt)
+2. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+3. Durchgang mit `flutter-reviewer` und `ux-reviewer` über die vier neuen
+   Screens, danach `/eps:abgabe`
+
+## Erledigt (Verlauf und Bericht, 2026-08-11)
+
+- `WoundHistory` als reine Domänenstruktur; `historyOf` liest Besuche, Werte
+  und Fotohandles in drei Abfragen statt einer je Besuch.
+- `AreaChart` selbst gezeichnet: eine Reihe, wenige Punkte, und die eine
+  Regel — **keine Interpolation** — bricht eine allgemeine Diagrammbibliothek
+  standardmäßig. Skala beginnt bei null.
+- Veränderung wird nur gegen den **Nachbarbesuch** ausgesagt.
+- `ReportContent` ist wortlose Struktur, der Text entsteht erst beim Rendern.
+- `FieldPresentation` liegt jetzt in `lib/shared/text/` — `data/` darf kein
+  Feature importieren.
+- Gesamtlauf **243 grün**.
+
+### Zwei Befunde aus dem gerenderten Muster
+
+Ein Testlauf kann ein PDF nicht ansehen. Erst der gerenderte Musterbericht
+zeigte: das Erstelldatum stand als roher `DateTime` in der Fußzeile (der
+Platzhalter trug kein `format`), und jede Zelle der Spalte „Tiefe"
+wiederholte das Wort „Tiefe". Beides behoben.
 
 ## Erledigt (Abschluss des Besuchs, 2026-08-11)
 
@@ -259,6 +284,14 @@ brauchen.
 
 ## Stolpersteine
 
+- **`printing` 5.15.0 verlangt Dart ≥ 3.12**, hier läuft 3.11.3. Version aus
+  `DECISIONS.md` gegen die SDK-Grenze prüfen, nicht nur gegen pub.dev.
+- **Die eingebaute PDF-Schrift Helvetica kennt kein „ und kein —.** Ohne
+  eingebettete Schrift druckt der Bericht die Formulierungen des Kunden mit
+  Löchern; im Testlauf sieht man nur eine Warnzeile.
+- **Ein Platzhalter ohne `format` landet als `toString()` im Text.** Bei
+  `DateTime` also `2026-08-11 00:00:00.000`. Sichtbar erst im gerenderten
+  Dokument.
 - **`InteractiveViewer`: `toScene` nur außerhalb des Kindbaums.** Sitzt der
   Gestenerkenner *im* transformierten Teilbaum, hat Flutter die Zeigerposition
   schon zurückgerechnet — ein zweiter Aufruf verschiebt die Marke doppelt. Bei
