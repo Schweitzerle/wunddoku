@@ -47,3 +47,6 @@ app.*.map.json
 # Verweis auf die Workspace-Regeln — vor der Abgabe mit eps-freeze auflösen
 .claude/rules/base
 .claude/rules/art9.md
+
+# Golden diffs are build output, not source.
+test/**/failures/
