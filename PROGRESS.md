@@ -22,12 +22,33 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 
 ## Nächste drei Schritte
 
-1. Aufnahme-Screen (Phase A): großer Knopf unten, Pegel, haptische und hörbare
-   Quittung, Kartenmodus als gleichwertiger Weg ohne Sprache
+1. Kartenmodus — der gleichwertige Weg ohne Sprache, den Aufnahme-Screen und
+   Bestätigungsansicht schon anbieten
 2. Wound-/Visit-Repository plus Autosave, damit der Besuchsentwurf die
    Unterbrechung übersteht
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Aufnahme-Screen, 2026-08-11)
+
+- `CaptureScreen` samt `CaptureViewModel` und `AudioRecorder`-Port. Zustände als
+  `sealed class`: idle, recording, interpreting, done, queued, unavailable.
+- Phase A umgesetzt: eine große Aktion im unteren Erreichbarkeitsbereich,
+  Pegelanzeige, mitlaufende Dauer, Aufnahmezustand über Sicht **und** Haptik
+  **und** Text.
+- Keine Sackgassen: verweigertes Mikrofon führt zum Kartenmodus (gleichwertig
+  formuliert, nicht als Trostpreis), fehlender Erkenner reiht die Aufnahme ein
+  statt zu scheitern — das Audio bleibt erhalten.
+- **Zwei echte Fehler, vom Test gefunden:**
+  - `dispose()` schloss das Mikrofon nicht. Screen verlassen hieß: Mikrofon
+    läuft weiter, ohne dass etwas davon auf dem Bildschirm steht. Genau der
+    Fall, den JS-8 ausschließt. Jetzt beendet `dispose()` die Aufnahme, mit
+    eigenem Test.
+  - `HapticFeedback` warf ohne Plattform-Plugin und blockierte damit den Start
+    der Aufnahme. Haptik ist Quittung, kein Tor — läuft jetzt ungeawaitet und
+    fehlertolerant. Ein Gerät ohne Vibration muss aufnehmen können.
+- 11 neue Tests, Goldens für Leerzustand und Aufnahme. Gesamtlauf **114 grün**,
+  Analyzer sauber.
 
 ## Erledigt (Theme und Bestätigungsansicht, 2026-08-11)
 
@@ -64,6 +85,18 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
   Screenshots vom Emulator.
 - `find.bySemanticsLabel` findet nur gebaute Zeilen. Was unterhalb der
   Sichtkante liegt, muss im Test erst sichtbar gescrollt werden.
+- **`await` auf echte Futures hängt im Widget-Test.** Wer im Test etwas
+  awaitet, das auf einen `StreamController.close()` oder einen Dienst wartet,
+  wartet ewig — die FakeAsync-Zone dreht sich nur bei `pump`. Gegenmittel:
+  `tester.runAsync(...)`. Kostete hier sieben Minuten Testlaufzeit bis zum
+  Timeout.
+- **Android-Plattform 37 heißt im SDK `android-37.0`**, Gradle sucht
+  `android-37`. Jedes Modul, das gegen 37 kompiliert, scheitert. Projektlokal
+  auf 36 festgenagelt (`android/build.gradle.kts`), weil ein Symlink im SDK
+  außerhalb des Projekts läge.
+- Emulator überlastet diese Maschine (14 GB, davon 12 belegt). **Auf dem
+  angeschlossenen Gerät testen**, nicht im Emulator. Testläufe mit
+  `--concurrency=1`, sonst kommt der OOM-Killer.
 
 ## Erledigt (Sprachstrecke Stufe 1, 2026-08-10)
 
