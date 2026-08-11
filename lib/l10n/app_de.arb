@@ -443,5 +443,90 @@
   "captureTakePhoto": "Wunde fotografieren",
   "@captureTakePhoto": {
     "description": "Aktion im Aufnahme-Screen: zum Sucher wechseln. Gehört in Phase A, weil das Foto nach dem Verband nichts mehr wert ist."
+  },
+  "closingTitle": "Besuch abschließen",
+  "@closingTitle": {
+    "description": "Titel des Abschluss-Screens."
+  },
+  "closingComplete": "Befund vollständig",
+  "@closingComplete": {
+    "description": "Ankerzeile, wenn jede erwartete Angabe erfasst ist."
+  },
+  "closingGaps": "{count, plural, =1{Eine Angabe fehlt} other{{count} Angaben fehlen}}",
+  "@closingGaps": {
+    "description": "Ankerzeile, wenn Angaben fehlen. Lücken sind erlaubt und werden benannt, nicht versteckt.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "closingGapsHint": "Lücken dürfen mitgehen. Der Befund wird als unvollständig geführt.",
+  "@closingGapsHint": {
+    "description": "Erklärung unter der Ankerzeile, wenn Angaben fehlen. Die zentrale Regel des Projekts: eine Lücke darf mitgehen, ein unklarer Wert nicht."
+  },
+  "closingRecorded": "{count} erfasst",
+  "@closingRecorded": {
+    "description": "Zählt die erfassten Angaben in der Zusammenfassung.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "closingMissingHeader": "Fehlt noch",
+  "@closingMissingHeader": {
+    "description": "Überschrift über der Liste der fehlenden Angaben. Jede Zeile führt zurück in die Erfassung."
+  },
+  "closingTissueRemainder": "Gewebeanteile ergeben {sum} %, nicht 100 %.",
+  "@closingTissueRemainder": {
+    "description": "Hinweis, wenn die Gewebeanteile am Wundgrund nicht auf 100 Prozent aufgehen.",
+    "placeholders": {
+      "sum": {
+        "type": "int"
+      }
+    }
+  },
+  "closingPhoto": "{count, plural, =0{Kein Foto} =1{Ein Foto} other{{count} Fotos}}",
+  "@closingPhoto": {
+    "description": "Zeile in der Zusammenfassung: wie viele Fotos zum Besuch gehören.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "closingPhotoMarked": "{count, plural, =1{mit Markierung} other{{count} mit Markierung}}",
+  "@closingPhotoMarked": {
+    "description": "Zusatz zur Fotozeile: wie viele Fotos eine Markierung tragen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "closingNoPhotoHint": "Ohne Foto lässt sich der Verlauf später nicht vergleichen.",
+  "@closingNoPhotoHint": {
+    "description": "Hinweis, wenn kein Foto zum Besuch gehört. Kein Verbot — der Vergleich über Wochen trägt aber den klinischen Wert."
+  },
+  "closingFinish": "Besuch abschließen",
+  "@closingFinish": {
+    "description": "Primäre Aktion, wenn der Befund vollständig ist."
+  },
+  "closingFinishWithGaps": "Mit Lücken abschließen",
+  "@closingFinishWithGaps": {
+    "description": "Primäre Aktion, wenn Angaben fehlen. Bewusst anders beschriftet, damit der Unterschied nicht untergeht."
+  },
+  "closingBack": "Zurück zur Erfassung",
+  "@closingBack": {
+    "description": "Führt zurück in den Befund, um eine Lücke noch zu füllen."
+  },
+  "closingDone": "Besuch abgeschlossen.",
+  "@closingDone": {
+    "description": "Rückmeldung nach dem Abschluss, wird auch vom Screenreader angesagt."
+  },
+  "captureFinishVisit": "Besuch abschließen",
+  "@captureFinishVisit": {
+    "description": "Aktion im Aufnahme-Screen: zum Abschluss wechseln, wenn alles erfasst ist."
   }
 }

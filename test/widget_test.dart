@@ -206,6 +206,41 @@ void main() {
     expect(stored.single.marking!.outline, hasLength(3));
     expect(media.files, hasLength(2));
   });
+
+  testWidgets('closing records whether gaps travelled with the visit', (
+    tester,
+  ) async {
+    final dependencies = await _dependencies();
+    addTearDown(dependencies.dispose);
+
+    await tester.pumpWidget(
+      TestApp(child: VisitCorridor(dependencies: dependencies)),
+    );
+    await tester.pumpAndSettle();
+
+    final closed = await dependencies.visits.openDraft(dependencies.demoWound);
+
+    await tester.tap(find.text('Besuch abschließen'));
+    await tester.pumpAndSettle();
+
+    // Nothing was recorded, so every expected field is a gap — and closing is
+    // still possible. Blocking here would send the nurse home with an open
+    // record.
+    expect(find.text('9 Angaben fehlen'), findsOneWidget);
+    await tester.tap(find.text('Mit Lücken abschließen'));
+    await tester.pumpAndSettle();
+
+    final row = await (dependencies.database.select(
+      dependencies.database.visits,
+    )..where((v) => v.id.equals(closed!.value))).getSingle();
+    expect(row.status, VisitStatus.completeWithGaps);
+    expect(row.completedAt, isNotNull);
+
+    // The next patient is the next visit: a fresh draft is open afterwards.
+    final next = await dependencies.visits.openDraft(dependencies.demoWound);
+    expect(next, isNotNull);
+    expect(next, isNot(closed));
+  });
 }
 
 /// A synthetic wound photo — never a real one (`datenschutz-art9.md`).

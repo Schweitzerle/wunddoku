@@ -18,6 +18,8 @@ import 'features/besuch/ui/capture_screen.dart';
 import 'features/besuch/ui/capture_view_model.dart';
 import 'features/besuch/ui/card_entry_screen.dart';
 import 'features/besuch/ui/card_entry_view_model.dart';
+import 'features/besuch/ui/closing_screen.dart';
+import 'features/besuch/ui/closing_view_model.dart';
 import 'features/besuch/ui/confirmation_screen.dart';
 import 'features/besuch/ui/confirmation_view_model.dart';
 import 'features/besuch/ui/field_presentation.dart';
@@ -129,6 +131,18 @@ Future<Uint8List> burnWithPainter(Uint8List photo, ImageMarking marking) async {
   } finally {
     decoded.dispose();
   }
+}
+
+/// What the closing screen sent back.
+class _ClosingResult {
+  const _ClosingResult.finished({required this.withGaps}) : fillGap = false;
+  const _ClosingResult.fillGap() : fillGap = true, withGaps = false;
+
+  /// Whether the nurse went back to fill a named gap instead of closing.
+  final bool fillGap;
+
+  /// Whether the visit was closed with gaps left in it on purpose.
+  final bool withGaps;
 }
 
 /// The phases of a visit, in the order the nurse works through them.
@@ -254,6 +268,55 @@ class _VisitCorridorState extends State<VisitCorridor> {
     if (mounted) _capture.reset();
   }
 
+  /// Closes the visit, after showing what travels with it.
+  ///
+  /// The gaps are named here and never block: a nurse who cannot close leaves
+  /// the flat with an open record, which is the evening in the office this app
+  /// exists to remove. What the visit is *recorded* as does differ, and that
+  /// distinction reaches the office.
+  Future<void> _finishVisit() async {
+    final visit = _visit;
+    if (visit == null) return;
+
+    final photos = await _visits.photosOf(visit);
+    if (!mounted) return;
+
+    final navigator = Navigator.of(context);
+    final result = await navigator.push<_ClosingResult>(
+      MaterialPageRoute<_ClosingResult>(
+        builder: (_) => ClosingScreen(
+          summary: ClosingSummary(
+            draft: _draft,
+            expectedSlots: FieldPresentation.woundBedSlots,
+            photoCount: photos.length,
+            markedPhotoCount: photos
+                .where((photo) => photo.markedRef != null)
+                .length,
+          ),
+          onFinish: (withGaps) =>
+              navigator.pop(_ClosingResult.finished(withGaps: withGaps)),
+          onFillGap: (_) => navigator.pop(const _ClosingResult.fillGap()),
+          onBack: navigator.pop,
+        ),
+      ),
+    );
+
+    if (result == null || !mounted) return;
+    if (result.fillGap) {
+      await _openCards();
+      return;
+    }
+
+    await _visits.completeVisit(visit, withGaps: result.withGaps);
+    if (!mounted) return;
+
+    // The next patient is the next visit: the corridor starts a fresh one
+    // rather than leaving a closed record open on screen.
+    setState(() => _draft = const VisitDraft());
+    _capture.reset();
+    await _resumeOrStart();
+  }
+
   /// Photograph, mark, keep — the picture half of phase A.
   ///
   /// One corridor rather than three screens the nurse navigates between: at
@@ -341,5 +404,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     onInterpreted: _openConfirmation,
     onUseCards: _visit == null ? null : _openCards,
     onTakePhoto: _visit == null ? null : _takePhoto,
+    onFinishVisit: _visit == null ? null : _finishVisit,
   );
 }

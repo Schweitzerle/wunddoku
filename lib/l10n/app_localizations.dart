@@ -663,6 +663,96 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wunde fotografieren'**
   String get captureTakePhoto;
+
+  /// Titel des Abschluss-Screens.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch abschließen'**
+  String get closingTitle;
+
+  /// Ankerzeile, wenn jede erwartete Angabe erfasst ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Befund vollständig'**
+  String get closingComplete;
+
+  /// Ankerzeile, wenn Angaben fehlen. Lücken sind erlaubt und werden benannt, nicht versteckt.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{Eine Angabe fehlt} other{{count} Angaben fehlen}}'**
+  String closingGaps(int count);
+
+  /// Erklärung unter der Ankerzeile, wenn Angaben fehlen. Die zentrale Regel des Projekts: eine Lücke darf mitgehen, ein unklarer Wert nicht.
+  ///
+  /// In de, this message translates to:
+  /// **'Lücken dürfen mitgehen. Der Befund wird als unvollständig geführt.'**
+  String get closingGapsHint;
+
+  /// Zählt die erfassten Angaben in der Zusammenfassung.
+  ///
+  /// In de, this message translates to:
+  /// **'{count} erfasst'**
+  String closingRecorded(int count);
+
+  /// Überschrift über der Liste der fehlenden Angaben. Jede Zeile führt zurück in die Erfassung.
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlt noch'**
+  String get closingMissingHeader;
+
+  /// Hinweis, wenn die Gewebeanteile am Wundgrund nicht auf 100 Prozent aufgehen.
+  ///
+  /// In de, this message translates to:
+  /// **'Gewebeanteile ergeben {sum} %, nicht 100 %.'**
+  String closingTissueRemainder(int sum);
+
+  /// Zeile in der Zusammenfassung: wie viele Fotos zum Besuch gehören.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0{Kein Foto} =1{Ein Foto} other{{count} Fotos}}'**
+  String closingPhoto(int count);
+
+  /// Zusatz zur Fotozeile: wie viele Fotos eine Markierung tragen.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{mit Markierung} other{{count} mit Markierung}}'**
+  String closingPhotoMarked(int count);
+
+  /// Hinweis, wenn kein Foto zum Besuch gehört. Kein Verbot — der Vergleich über Wochen trägt aber den klinischen Wert.
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Foto lässt sich der Verlauf später nicht vergleichen.'**
+  String get closingNoPhotoHint;
+
+  /// Primäre Aktion, wenn der Befund vollständig ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch abschließen'**
+  String get closingFinish;
+
+  /// Primäre Aktion, wenn Angaben fehlen. Bewusst anders beschriftet, damit der Unterschied nicht untergeht.
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Lücken abschließen'**
+  String get closingFinishWithGaps;
+
+  /// Führt zurück in den Befund, um eine Lücke noch zu füllen.
+  ///
+  /// In de, this message translates to:
+  /// **'Zurück zur Erfassung'**
+  String get closingBack;
+
+  /// Rückmeldung nach dem Abschluss, wird auch vom Screenreader angesagt.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch abgeschlossen.'**
+  String get closingDone;
+
+  /// Aktion im Aufnahme-Screen: zum Abschluss wechseln, wenn alles erfasst ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch abschließen'**
+  String get captureFinishVisit;
 }
 
 class _AppLocalizationsDelegate

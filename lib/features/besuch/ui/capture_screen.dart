@@ -20,6 +20,7 @@ class CaptureScreen extends StatefulWidget {
     this.onInterpreted,
     this.onUseCards,
     this.onTakePhoto,
+    this.onFinishVisit,
     super.key,
   });
 
@@ -30,6 +31,13 @@ class CaptureScreen extends StatefulWidget {
 
   /// Called for the equal path without speech.
   final VoidCallback? onUseCards;
+
+  /// Called to close the visit.
+  ///
+  /// In the app bar rather than among the capture actions: closing ends the
+  /// visit and must be reachable from every step, but it must never sit where
+  /// a thumb goes for the recording.
+  final VoidCallback? onFinishVisit;
 
   /// Called to photograph the wound.
   ///
@@ -83,7 +91,16 @@ class _CaptureScreenState extends State<CaptureScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.captureTitle)),
+      appBar: AppBar(
+        title: Text(l10n.captureTitle),
+        actions: [
+          if (widget.onFinishVisit != null)
+            TextButton(
+              onPressed: widget.onFinishVisit,
+              child: Text(l10n.captureFinishVisit),
+            ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (context, _) => switch (widget.viewModel.state) {

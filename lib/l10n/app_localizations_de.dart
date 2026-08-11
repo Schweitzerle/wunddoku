@@ -361,4 +361,80 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get captureTakePhoto => 'Wunde fotografieren';
+
+  @override
+  String get closingTitle => 'Besuch abschließen';
+
+  @override
+  String get closingComplete => 'Befund vollständig';
+
+  @override
+  String closingGaps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Angaben fehlen',
+      one: 'Eine Angabe fehlt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get closingGapsHint =>
+      'Lücken dürfen mitgehen. Der Befund wird als unvollständig geführt.';
+
+  @override
+  String closingRecorded(int count) {
+    return '$count erfasst';
+  }
+
+  @override
+  String get closingMissingHeader => 'Fehlt noch';
+
+  @override
+  String closingTissueRemainder(int sum) {
+    return 'Gewebeanteile ergeben $sum %, nicht 100 %.';
+  }
+
+  @override
+  String closingPhoto(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Fotos',
+      one: 'Ein Foto',
+      zero: 'Kein Foto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String closingPhotoMarked(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mit Markierung',
+      one: 'mit Markierung',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get closingNoPhotoHint =>
+      'Ohne Foto lässt sich der Verlauf später nicht vergleichen.';
+
+  @override
+  String get closingFinish => 'Besuch abschließen';
+
+  @override
+  String get closingFinishWithGaps => 'Mit Lücken abschließen';
+
+  @override
+  String get closingBack => 'Zurück zur Erfassung';
+
+  @override
+  String get closingDone => 'Besuch abgeschlossen.';
+
+  @override
+  String get captureFinishVisit => 'Besuch abschließen';
 }
