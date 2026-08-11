@@ -22,12 +22,48 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 
 ## Nächste drei Schritte
 
-1. Theme aus der Token-Spezifikation (`lib/shared/theme/`), dann erster Screen
-   des Besuchskorridors samt Bestätigungsansicht, mit Goldens und
-   Semantics-Tests
-2. Wound-/Visit-Repository nachziehen, sobald der Korridor sie braucht
+1. Aufnahme-Screen (Phase A): großer Knopf unten, Pegel, haptische und hörbare
+   Quittung, Kartenmodus als gleichwertiger Weg ohne Sprache
+2. Wound-/Visit-Repository plus Autosave, damit der Besuchsentwurf die
+   Unterbrechung übersteht
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Theme und Bestätigungsansicht, 2026-08-11)
+
+- `lib/shared/theme/`: Farb-, Typo-, Abstands- und Motion-Tokens als
+  `ThemeExtension`. Die in `docs/ux/tokens.md` offen gelassene Kontrastprüfung
+  ist jetzt ein **Test**: elf Token-Paare gegen die WCAG-Formel, beide Themes,
+  grün.
+- Bestätigungsansicht (`features/besuch/ui/`) — der Kernscreen:
+  Zeile mit Wert, Sicherheitsgrad und Herkunft; Sortierung nach Dringlichkeit
+  statt nach Formularreihenfolge; Lücke erlaubt, unsicherer Wert sperrt das
+  Speichern und wird als Wort statt als geratene Zahl gezeigt.
+- Herkunftsbeleg: Antippen öffnet das wörtliche Transkript mit hervorgehobener
+  Fundstelle.
+- Barrierefreiheit: vier `meetsGuideline`-Prüfungen, Sicherheitsgrad als Wort
+  im Semantik-Label, 200-%-Textskalierung und 320 dp ohne Überlauf.
+- Goldens für Light, Dark und 200 % unter `test/features/goldens/`.
+- 34 neue Tests; Gesamtlauf **103 grün**, Analyzer sauber.
+
+## Stolpersteine
+
+- Der Trust-Dialog muss einmal interaktiv bestätigt werden (`eps` im
+  Projektverzeichnis), sonst greifen die `permissions.allow`-Einträge aus
+  `.claude/settings.json` nicht.
+- `\w` in Dart-RegExp ist ASCII. Umlaute brauchen eine eigene Zeichenklasse,
+  sonst fallen „dreißig" und „fünf" durch die Zahlwort-Erkennung.
+- **`flutter run -d linux` schlägt fehl:** `flutter_secure_storage_linux`
+  verlangt das Systempaket `libsecret-1 >= 0.18.4`, das hier nicht installiert
+  ist. Installation wäre eine Änderung außerhalb des Projekts und braucht
+  sudo — geht über Julian. Der schnelle Layout-Durchlauf auf dem Desktop
+  entfällt damit vorerst; geprüft wird auf dem Android-Emulator, wo der
+  Keystore ohnehin die echte Ablage ist.
+- Goldens laufen mit Testschrift (Kästchen statt Buchstaben). Sie belegen
+  Layout, Farbe und Hierarchie, **nicht** die Typografie. Dafür braucht es
+  Screenshots vom Emulator.
+- `find.bySemanticsLabel` findet nur gebaute Zeilen. Was unterhalb der
+  Sichtkante liegt, muss im Test erst sichtbar gescrollt werden.
 
 ## Erledigt (Sprachstrecke Stufe 1, 2026-08-10)
 
