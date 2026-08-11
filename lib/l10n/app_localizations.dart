@@ -99,6 +99,234 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'wunddoku'**
   String get appTitle;
+
+  /// Titel der Bestätigungsansicht, in der die Pflegekraft die erkannten Felder durchsieht.
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfen'**
+  String get confirmationTitle;
+
+  /// Kopfzeile der Bestätigungsansicht. Fasst zusammen, wie viele Felder sicher erkannt wurden, wie viele einen Blick brauchen und wie viele gar nicht gesagt wurden.
+  ///
+  /// In de, this message translates to:
+  /// **'{taken} übernommen · {check} prüfen · {missing} fehlen'**
+  String confirmationSummary(int taken, int check, int missing);
+
+  /// Leerzustand der Bestätigungsansicht, wenn sie ohne vorherige Aufnahme geöffnet wurde.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nichts erfasst.'**
+  String get confirmationEmpty;
+
+  /// Erklärender Satz im Leerzustand der Bestätigungsansicht. Sagt, wofür der Screen da ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprich den Befund ein — hier siehst du danach, was verstanden wurde.'**
+  String get confirmationEmptyHint;
+
+  /// Aktion im Leerzustand der Bestätigungsansicht, führt zurück zum Sprechen.
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Erfassung'**
+  String get confirmationBackToCapture;
+
+  /// Primäre Aktion der Bestätigungsansicht: die geprüften Werte in den Befund übernehmen.
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get confirmationAccept;
+
+  /// Hinweis unter dem gesperrten Übernehmen-Knopf, wenn Werte mit niedriger Sicherheit offen sind.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{Ein Wert muss noch entschieden werden.} other{{count} Werte müssen noch entschieden werden.}}'**
+  String confirmationBlocked(int count);
+
+  /// Semantik-Label für ein Feld mit hoher Erkennungssicherheit. Wird vom Screenreader vorgelesen, weil die Stufe sonst nur an Symbol und Farbe hinge.
+  ///
+  /// In de, this message translates to:
+  /// **'Sicher erkannt'**
+  String get confidenceHigh;
+
+  /// Semantik-Label und Aufschrift für ein Feld mit mittlerer Erkennungssicherheit.
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte prüfen'**
+  String get confidenceMedium;
+
+  /// Semantik-Label und Aufschrift für ein Feld mit niedriger Erkennungssicherheit. Solche Felder sperren das Speichern.
+  ///
+  /// In de, this message translates to:
+  /// **'Entscheiden'**
+  String get confidenceLow;
+
+  /// Aufschrift für ein Feld, zu dem nichts gesagt wurde. Bewusst leer statt geraten.
+  ///
+  /// In de, this message translates to:
+  /// **'fehlt'**
+  String get confidenceMissing;
+
+  /// Feldbezeichnung für die Wundlänge in Zentimetern.
+  ///
+  /// In de, this message translates to:
+  /// **'Länge'**
+  String get fieldLengthCm;
+
+  /// Feldbezeichnung für die Wundbreite in Zentimetern.
+  ///
+  /// In de, this message translates to:
+  /// **'Breite'**
+  String get fieldWidthCm;
+
+  /// Feldbezeichnung für die Wundtiefe in Zentimetern.
+  ///
+  /// In de, this message translates to:
+  /// **'Tiefe'**
+  String get fieldDepthCm;
+
+  /// Feldbezeichnung für die Exsudatmenge.
+  ///
+  /// In de, this message translates to:
+  /// **'Exsudat'**
+  String get fieldExudateAmount;
+
+  /// Feldbezeichnung für die Art des Exsudats.
+  ///
+  /// In de, this message translates to:
+  /// **'Exsudatart'**
+  String get fieldExudateKind;
+
+  /// Feldbezeichnung für die Schmerzintensität auf der Skala 0 bis 10.
+  ///
+  /// In de, this message translates to:
+  /// **'Schmerz'**
+  String get fieldPainScore;
+
+  /// Feldbezeichnung für den Gewebeanteil Nekrose am Wundgrund. Fachbegriff des Kunden, wird nicht umformuliert.
+  ///
+  /// In de, this message translates to:
+  /// **'Nekrose'**
+  String get fieldTissueNecrosis;
+
+  /// Feldbezeichnung für den Gewebeanteil Fibrinbelag am Wundgrund.
+  ///
+  /// In de, this message translates to:
+  /// **'Fibrin'**
+  String get fieldTissueFibrin;
+
+  /// Feldbezeichnung für den Gewebeanteil Granulationsgewebe am Wundgrund.
+  ///
+  /// In de, this message translates to:
+  /// **'Granulation'**
+  String get fieldTissueGranulation;
+
+  /// Feldbezeichnung für den Gewebeanteil Epithelgewebe am Wundgrund.
+  ///
+  /// In de, this message translates to:
+  /// **'Epithelisation'**
+  String get fieldTissueEpithelialisation;
+
+  /// Feldbezeichnung für sonstige sichtbare Strukturen am Wundgrund, etwa freiliegende Sehne oder Knochen.
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Strukturen'**
+  String get fieldTissueOther;
+
+  /// Ein Maß in Zentimetern, wie es in der Bestätigungszeile steht.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} cm'**
+  String valueCentimetres(String value);
+
+  /// Ein Gewebeanteil in Prozent.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} %'**
+  String valuePercent(int value);
+
+  /// Die Schmerzintensität auf der Skala 0 bis 10.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} von 10'**
+  String valuePainScore(int value);
+
+  /// Exsudatmenge: kein Exsudat. Wert aus dem Fachkatalog des Kunden.
+  ///
+  /// In de, this message translates to:
+  /// **'kein'**
+  String get exudateAmountNone;
+
+  /// Exsudatmenge: geringe Menge.
+  ///
+  /// In de, this message translates to:
+  /// **'gering'**
+  String get exudateAmountSlight;
+
+  /// Exsudatmenge: mäßige Menge.
+  ///
+  /// In de, this message translates to:
+  /// **'mäßig'**
+  String get exudateAmountModerate;
+
+  /// Exsudatmenge: starke Menge.
+  ///
+  /// In de, this message translates to:
+  /// **'stark'**
+  String get exudateAmountHeavy;
+
+  /// Exsudatart: serös. Fachbegriff, nicht übersetzen.
+  ///
+  /// In de, this message translates to:
+  /// **'serös'**
+  String get exudateKindSerous;
+
+  /// Exsudatart: eitrig.
+  ///
+  /// In de, this message translates to:
+  /// **'eitrig'**
+  String get exudateKindPurulent;
+
+  /// Exsudatart: blutig.
+  ///
+  /// In de, this message translates to:
+  /// **'blutig'**
+  String get exudateKindBloody;
+
+  /// Überschrift des Herkunftsbelegs: zeigt die Stelle im wörtlichen Transkript, aus der ein Wert stammt.
+  ///
+  /// In de, this message translates to:
+  /// **'Wortlaut'**
+  String get provenanceTitle;
+
+  /// Erklärung über dem hervorgehobenen Transkriptausschnitt im Herkunftsbeleg.
+  ///
+  /// In de, this message translates to:
+  /// **'Aus diesem Teil der Aufnahme stammt der Wert.'**
+  String get provenanceHint;
+
+  /// Aktion in der Feldzeile: die Herkunft des Werts im Transkript anzeigen.
+  ///
+  /// In de, this message translates to:
+  /// **'Wortlaut zeigen'**
+  String get actionShowProvenance;
+
+  /// Aktion in der Feldzeile: den vorgeschlagenen Wert verwerfen, das Feld bleibt leer.
+  ///
+  /// In de, this message translates to:
+  /// **'Wert verwerfen'**
+  String get actionDiscardValue;
+
+  /// Aktion in der Feldzeile: einen unsicheren Wert bewusst bestätigen.
+  ///
+  /// In de, this message translates to:
+  /// **'Wert übernehmen'**
+  String get actionAcceptValue;
+
+  /// Schließt einen Dialog oder ein Blatt.
+  ///
+  /// In de, this message translates to:
+  /// **'Schließen'**
+  String get close;
 }
 
 class _AppLocalizationsDelegate

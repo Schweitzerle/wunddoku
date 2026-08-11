@@ -19,17 +19,21 @@ class Token {
 
 /// Splits [transcript] into [Token]s, keeping character offsets.
 ///
-/// Punctuation is stripped from the token text but stays inside the offsets,
-/// so spans remain accurate for highlighting.
+/// Surrounding punctuation is dropped from both the text and the offsets: the
+/// offsets end up in the provenance highlight the nurse reads, and a trailing
+/// comma in that highlight looks like part of the value.
 List<Token> tokenize(String transcript) {
   final tokens = <Token>[];
+  final trim = RegExp(r'^[^0-9a-zäöüß]+|[^0-9a-zäöüß]+$');
   for (final match in RegExp(r'\S+').allMatches(transcript)) {
-    final text = match
-        .group(0)!
-        .toLowerCase()
-        .replaceAll(RegExp(r'^[^\wäöüß]+|[^\wäöüß]+$'), '');
+    final raw = match.group(0)!.toLowerCase();
+    final leading = trim.firstMatch(raw)?.start == 0
+        ? trim.firstMatch(raw)!.end
+        : 0;
+    final text = raw.replaceAll(trim, '');
     if (text.isNotEmpty) {
-      tokens.add(Token(text, match.start, match.end));
+      final start = match.start + leading;
+      tokens.add(Token(text, start, start + text.length));
     }
   }
   return tokens;

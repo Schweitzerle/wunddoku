@@ -48,6 +48,13 @@ sealed class FieldProposal {
 
   /// Where in the transcript the value was heard.
   final TranscriptSpan span;
+
+  /// Stable identifier of the record field this proposal fills.
+  ///
+  /// Two proposals with the same id are two attempts at the same field — the
+  /// later one replaces the earlier, which is what makes re-dictating a single
+  /// field work.
+  String get slotId;
 }
 
 /// Which of the three wound measurements a [MeasurementProposal] fills.
@@ -64,6 +71,9 @@ class MeasurementProposal extends FieldProposal {
 
   final MeasurementAxis axis;
   final double centimetres;
+
+  @override
+  String get slotId => 'measurement.${axis.name}';
 }
 
 /// A tissue share of the wound bed in percent.
@@ -81,6 +91,9 @@ class TissueShareProposal extends FieldProposal {
 
   final TissueType tissue;
   final int percent;
+
+  @override
+  String get slotId => 'tissue.${tissue.name}';
 }
 
 /// The estimated exudate amount.
@@ -92,6 +105,9 @@ class ExudateAmountProposal extends FieldProposal {
   });
 
   final ExudateAmount amount;
+
+  @override
+  String get slotId => 'exudate.amount';
 }
 
 /// One observed exudate kind.
@@ -106,6 +122,9 @@ class ExudateKindProposal extends FieldProposal {
   });
 
   final ExudateKind kind;
+
+  @override
+  String get slotId => 'exudate.kind.${kind.name}';
 }
 
 /// The pain intensity on the 0-10 scale.
@@ -120,6 +139,9 @@ class PainScoreProposal extends FieldProposal {
   /// [ConfidenceTier.low]) so the confirmation view can show what was heard
   /// instead of a silent nothing.
   final int score;
+
+  @override
+  String get slotId => 'pain.score';
 }
 
 /// Everything one spoken recording yielded.

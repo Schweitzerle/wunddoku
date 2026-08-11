@@ -3,5 +3,178 @@
   "appTitle": "wunddoku",
   "@appTitle": {
     "description": "Name der Anwendung, erscheint im Fenstertitel und im Umschalter."
+  },
+
+  "confirmationTitle": "Prüfen",
+  "@confirmationTitle": {
+    "description": "Titel der Bestätigungsansicht, in der die Pflegekraft die erkannten Felder durchsieht."
+  },
+
+  "confirmationSummary": "{taken} übernommen · {check} prüfen · {missing} fehlen",
+  "@confirmationSummary": {
+    "description": "Kopfzeile der Bestätigungsansicht. Fasst zusammen, wie viele Felder sicher erkannt wurden, wie viele einen Blick brauchen und wie viele gar nicht gesagt wurden.",
+    "placeholders": {
+      "taken": { "type": "int" },
+      "check": { "type": "int" },
+      "missing": { "type": "int" }
+    }
+  },
+
+  "confirmationEmpty": "Noch nichts erfasst.",
+  "@confirmationEmpty": {
+    "description": "Leerzustand der Bestätigungsansicht, wenn sie ohne vorherige Aufnahme geöffnet wurde."
+  },
+
+  "confirmationEmptyHint": "Sprich den Befund ein — hier siehst du danach, was verstanden wurde.",
+  "@confirmationEmptyHint": {
+    "description": "Erklärender Satz im Leerzustand der Bestätigungsansicht. Sagt, wofür der Screen da ist."
+  },
+
+  "confirmationBackToCapture": "Zur Erfassung",
+  "@confirmationBackToCapture": {
+    "description": "Aktion im Leerzustand der Bestätigungsansicht, führt zurück zum Sprechen."
+  },
+
+  "confirmationAccept": "Übernehmen",
+  "@confirmationAccept": {
+    "description": "Primäre Aktion der Bestätigungsansicht: die geprüften Werte in den Befund übernehmen."
+  },
+
+  "confirmationBlocked": "{count, plural, =1{Ein Wert muss noch entschieden werden.} other{{count} Werte müssen noch entschieden werden.}}",
+  "@confirmationBlocked": {
+    "description": "Hinweis unter dem gesperrten Übernehmen-Knopf, wenn Werte mit niedriger Sicherheit offen sind.",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "confidenceHigh": "Sicher erkannt",
+  "@confidenceHigh": {
+    "description": "Semantik-Label für ein Feld mit hoher Erkennungssicherheit. Wird vom Screenreader vorgelesen, weil die Stufe sonst nur an Symbol und Farbe hinge."
+  },
+
+  "confidenceMedium": "Bitte prüfen",
+  "@confidenceMedium": {
+    "description": "Semantik-Label und Aufschrift für ein Feld mit mittlerer Erkennungssicherheit."
+  },
+
+  "confidenceLow": "Entscheiden",
+  "@confidenceLow": {
+    "description": "Semantik-Label und Aufschrift für ein Feld mit niedriger Erkennungssicherheit. Solche Felder sperren das Speichern."
+  },
+
+  "confidenceMissing": "fehlt",
+  "@confidenceMissing": {
+    "description": "Aufschrift für ein Feld, zu dem nichts gesagt wurde. Bewusst leer statt geraten."
+  },
+
+  "fieldLengthCm": "Länge",
+  "@fieldLengthCm": {
+    "description": "Feldbezeichnung für die Wundlänge in Zentimetern."
+  },
+  "fieldWidthCm": "Breite",
+  "@fieldWidthCm": {
+    "description": "Feldbezeichnung für die Wundbreite in Zentimetern."
+  },
+  "fieldDepthCm": "Tiefe",
+  "@fieldDepthCm": {
+    "description": "Feldbezeichnung für die Wundtiefe in Zentimetern."
+  },
+  "fieldExudateAmount": "Exsudat",
+  "@fieldExudateAmount": {
+    "description": "Feldbezeichnung für die Exsudatmenge."
+  },
+  "fieldExudateKind": "Exsudatart",
+  "@fieldExudateKind": {
+    "description": "Feldbezeichnung für die Art des Exsudats."
+  },
+  "fieldPainScore": "Schmerz",
+  "@fieldPainScore": {
+    "description": "Feldbezeichnung für die Schmerzintensität auf der Skala 0 bis 10."
+  },
+  "fieldTissueNecrosis": "Nekrose",
+  "@fieldTissueNecrosis": {
+    "description": "Feldbezeichnung für den Gewebeanteil Nekrose am Wundgrund. Fachbegriff des Kunden, wird nicht umformuliert."
+  },
+  "fieldTissueFibrin": "Fibrin",
+  "@fieldTissueFibrin": {
+    "description": "Feldbezeichnung für den Gewebeanteil Fibrinbelag am Wundgrund."
+  },
+  "fieldTissueGranulation": "Granulation",
+  "@fieldTissueGranulation": {
+    "description": "Feldbezeichnung für den Gewebeanteil Granulationsgewebe am Wundgrund."
+  },
+  "fieldTissueEpithelialisation": "Epithelisation",
+  "@fieldTissueEpithelialisation": {
+    "description": "Feldbezeichnung für den Gewebeanteil Epithelgewebe am Wundgrund."
+  },
+  "fieldTissueOther": "Andere Strukturen",
+  "@fieldTissueOther": {
+    "description": "Feldbezeichnung für sonstige sichtbare Strukturen am Wundgrund, etwa freiliegende Sehne oder Knochen."
+  },
+
+  "valueCentimetres": "{value} cm",
+  "@valueCentimetres": {
+    "description": "Ein Maß in Zentimetern, wie es in der Bestätigungszeile steht.",
+    "placeholders": {
+      "value": { "type": "String" }
+    }
+  },
+  "valuePercent": "{value} %",
+  "@valuePercent": {
+    "description": "Ein Gewebeanteil in Prozent.",
+    "placeholders": {
+      "value": { "type": "int" }
+    }
+  },
+  "valuePainScore": "{value} von 10",
+  "@valuePainScore": {
+    "description": "Die Schmerzintensität auf der Skala 0 bis 10.",
+    "placeholders": {
+      "value": { "type": "int" }
+    }
+  },
+
+  "exudateAmountNone": "kein",
+  "@exudateAmountNone": { "description": "Exsudatmenge: kein Exsudat. Wert aus dem Fachkatalog des Kunden." },
+  "exudateAmountSlight": "gering",
+  "@exudateAmountSlight": { "description": "Exsudatmenge: geringe Menge." },
+  "exudateAmountModerate": "mäßig",
+  "@exudateAmountModerate": { "description": "Exsudatmenge: mäßige Menge." },
+  "exudateAmountHeavy": "stark",
+  "@exudateAmountHeavy": { "description": "Exsudatmenge: starke Menge." },
+
+  "exudateKindSerous": "serös",
+  "@exudateKindSerous": { "description": "Exsudatart: serös. Fachbegriff, nicht übersetzen." },
+  "exudateKindPurulent": "eitrig",
+  "@exudateKindPurulent": { "description": "Exsudatart: eitrig." },
+  "exudateKindBloody": "blutig",
+  "@exudateKindBloody": { "description": "Exsudatart: blutig." },
+
+  "provenanceTitle": "Wortlaut",
+  "@provenanceTitle": {
+    "description": "Überschrift des Herkunftsbelegs: zeigt die Stelle im wörtlichen Transkript, aus der ein Wert stammt."
+  },
+
+  "provenanceHint": "Aus diesem Teil der Aufnahme stammt der Wert.",
+  "@provenanceHint": {
+    "description": "Erklärung über dem hervorgehobenen Transkriptausschnitt im Herkunftsbeleg."
+  },
+
+  "actionShowProvenance": "Wortlaut zeigen",
+  "@actionShowProvenance": {
+    "description": "Aktion in der Feldzeile: die Herkunft des Werts im Transkript anzeigen."
+  },
+  "actionDiscardValue": "Wert verwerfen",
+  "@actionDiscardValue": {
+    "description": "Aktion in der Feldzeile: den vorgeschlagenen Wert verwerfen, das Feld bleibt leer."
+  },
+  "actionAcceptValue": "Wert übernehmen",
+  "@actionAcceptValue": {
+    "description": "Aktion in der Feldzeile: einen unsicheren Wert bewusst bestätigen."
+  },
+  "close": "Schließen",
+  "@close": {
+    "description": "Schließt einen Dialog oder ein Blatt."
   }
 }
