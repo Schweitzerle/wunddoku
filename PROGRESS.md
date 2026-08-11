@@ -50,6 +50,29 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
 - 11 neue Tests, Goldens für Leerzustand und Aufnahme. Gesamtlauf **114 grün**,
   Analyzer sauber.
 
+## Beleg auf dem Gerät (2026-08-11)
+
+`flutter run -d ZY22G54KRS -t lib/main_driver.dart` auf einem **motorola edge
+30 ultra, Android 15**; Screenshot über `tool/shot.dart`:
+`doc/screenshots/bestaetigung-geraet.png` (1080×2400, synthetische Daten).
+
+Bestätigt, was die Goldens mit Testschrift nicht zeigen konnten:
+
+- Sortierung nach Dringlichkeit trägt — blockierender Wert oben, dann „prüfen",
+  dann die Lücken, erledigte Werte unten.
+- „Entscheiden" steht dort, wo sonst die geratene Zahl stünde.
+- Zusammenfassung, Sperrgrund und deaktivierter Knopf sitzen zusammen am
+  unteren Rand, einhändig erreichbar.
+- Typografie ist auf Armlänge lesbar; die Zeilenhöhe passt zur
+  Handschuh-Annahme.
+
+**Entwurfsbefund aus dem Gerätelauf, noch offen:** Vier Lücken-Zeilen füllen
+fast den halben Bildschirm und schieben die erledigten Werte aus dem Blick. Mit
+allen acht Befundkarten wird die Liste unbrauchbar lang. Vorschlag für die
+nächste Runde: Lücken zu **einer** aufklappbaren Zeile zusammenfassen
+(„4 Angaben fehlen"), damit der Platz denen gehört, die Aufmerksamkeit
+brauchen.
+
 ## Erledigt (Theme und Bestätigungsansicht, 2026-08-11)
 
 - `lib/shared/theme/`: Farb-, Typo-, Abstands- und Motion-Tokens als
