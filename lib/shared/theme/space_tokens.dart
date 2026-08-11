@@ -14,6 +14,7 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
   double get s8 => 8;
   double get s12 => 12;
   double get s16 => 16;
+  double get s20 => 20;
   double get s24 => 24;
   double get s32 => 32;
 

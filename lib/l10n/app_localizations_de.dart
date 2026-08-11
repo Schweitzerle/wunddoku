@@ -202,4 +202,43 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String confirmationGapsCollapsed(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Angaben fehlen',
+      one: 'Eine Angabe fehlt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get confirmationGapsNone => 'Nichts fehlt.';
+
+  @override
+  String confirmationSettledHeading(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werte übernommen',
+      one: '1 Wert übernommen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get confirmationAllClear => 'Alles geprüft.';
+
+  @override
+  String confirmationNeedsDecision(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werte brauchen dich',
+      one: '1 Wert braucht dich',
+    );
+    return '$_temp0';
+  }
 }

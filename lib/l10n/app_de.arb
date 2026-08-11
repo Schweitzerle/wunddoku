@@ -259,5 +259,30 @@
         "type": "int"
       }
     }
+  },
+  "confirmationGapsCollapsed": "{count, plural, =1{Eine Angabe fehlt} other{{count} Angaben fehlen}}",
+  "@confirmationGapsCollapsed": {
+    "description": "Zusammengefasste Zeile für alle Felder, zu denen nichts gesagt wurde. Aufklappbar. Ersetzt eine Zeile je Lücke, damit der Platz denen gehört, die eine Entscheidung brauchen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "confirmationGapsNone": "Nichts fehlt.",
+  "@confirmationGapsNone": {
+    "description": "Steht anstelle der Lückenzeile, wenn jedes erwartete Feld einen Wert hat."
+  },
+  "confirmationSettledHeading": "{count, plural, =1{1 Wert übernommen} other{{count} Werte übernommen}}",
+  "@confirmationSettledHeading": {
+    "description": "Überschrift des kompakten Bereichs mit den sicher erkannten Werten am unteren Ende der Liste."
+  },
+  "confirmationAllClear": "Alles geprüft.",
+  "@confirmationAllClear": {
+    "description": "Steht oben, wenn kein Wert mehr eine Entscheidung braucht."
+  },
+  "confirmationNeedsDecision": "{count, plural, =1{1 Wert braucht dich} other{{count} Werte brauchen dich}}",
+  "@confirmationNeedsDecision": {
+    "description": "Anker am Kopf der Bestätigungsansicht: wie viele Werte noch eine Entscheidung oder einen Blick brauchen. Wichtigste Orientierung des Screens."
   }
 }

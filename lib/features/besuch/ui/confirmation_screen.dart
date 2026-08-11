@@ -4,6 +4,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
 import 'confirmation_view_model.dart';
 import 'widgets/confirmation_row.dart';
+import 'widgets/confirmation_zones.dart';
 import 'widgets/provenance_sheet.dart';
 
 /// The screen where the nurse checks what the system understood.
@@ -53,28 +54,47 @@ class _ConfirmationBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
-    final entries = viewModel.entries;
+    final attention = viewModel.attentionEntries;
 
+    // Three zones instead of one flat list: what needs work is drawn large,
+    // what is missing is one collapsed line, what is done sits compact at the
+    // bottom. The screen gives its space in proportion to the work left.
     return Column(
+      // Without stretch the head block shrinks to its widest line and the
+      // outer Column centres it, so it no longer aligns with the list below.
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _SummaryBar(viewModel: viewModel),
         Expanded(
-          child: ListView.separated(
-            padding: EdgeInsets.symmetric(horizontal: spacing.s16),
-            itemCount: entries.length,
-            separatorBuilder: (_, _) => SizedBox(height: spacing.s8),
-            itemBuilder: (context, index) {
-              final entry = entries[index];
-              return ConfirmationRow(
-                // Keyed by slot so a row keeps its element when the list
-                // re-sorts after a decision.
-                key: ValueKey(entry.slotId),
-                entry: entry,
-                onShowProvenance: () => _showProvenance(context, index),
-                onAccept: () => viewModel.accept(entry.slotId),
-                onDiscard: () => viewModel.discard(entry.slotId),
-              );
-            },
+          child: ListView(
+            padding: EdgeInsets.fromLTRB(
+              spacing.s16,
+              0,
+              spacing.s16,
+              spacing.s24,
+            ),
+            children: [
+              for (final entry in attention) ...[
+                ConfirmationRow(
+                  // Keyed by slot so a row keeps its element when the list
+                  // re-sorts after a decision.
+                  key: ValueKey(entry.slotId),
+                  entry: entry,
+                  onShowProvenance: () => _showProvenance(context, entry),
+                  onAccept: () => viewModel.accept(entry.slotId),
+                  onDiscard: () => viewModel.discard(entry.slotId),
+                ),
+                SizedBox(height: spacing.s12),
+              ],
+              GapZone(entries: viewModel.gapEntries),
+              SettledZone(
+                entries: viewModel.settledEntries,
+                onShowProvenance: (slotId) => _showProvenance(
+                  context,
+                  viewModel.entries.firstWhere((e) => e.slotId == slotId),
+                ),
+              ),
+            ],
           ),
         ),
         _AcceptBar(viewModel: viewModel, onAccept: onAccept),
@@ -82,8 +102,7 @@ class _ConfirmationBody extends StatelessWidget {
     );
   }
 
-  void _showProvenance(BuildContext context, int index) {
-    final entry = viewModel.entries[index];
+  void _showProvenance(BuildContext context, ConfirmationEntry entry) {
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -95,7 +114,11 @@ class _ConfirmationBody extends StatelessWidget {
   }
 }
 
-/// The one-line tally above the list.
+/// The anchor at the head of the screen.
+///
+/// How much is left to do is the most important thing on this screen, so it
+/// is set as a headline rather than as fine print — the previous version put
+/// it in 13 px grey and it read like a footnote.
 class _SummaryBar extends StatelessWidget {
   const _SummaryBar({required this.viewModel});
 
@@ -106,27 +129,43 @@ class _SummaryBar extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final status = context.statusColors;
+    final open = viewModel.attentionCount;
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
         spacing.s16,
         spacing.s8,
         spacing.s16,
-        spacing.s16,
+        spacing.s20,
       ),
       child: Semantics(
         // Announced when the numbers change, so the nurse learns that a
         // decision landed without having to look for it.
         liveRegion: true,
-        child: Text(
-          l10n.confirmationSummary(
-            viewModel.settledCount,
-            viewModel.attentionCount,
-            viewModel.gapCount,
-          ),
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              open == 0
+                  ? l10n.confirmationAllClear
+                  : l10n.confirmationNeedsDecision(open),
+              style: theme.textTheme.headlineMedium?.copyWith(
+                color: open == 0 ? theme.colorScheme.onSurface : status.pruefen,
+              ),
+            ),
+            SizedBox(height: spacing.s4),
+            Text(
+              l10n.confirmationSummary(
+                viewModel.settledCount,
+                viewModel.attentionCount,
+                viewModel.gapCount,
+              ),
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
         ),
       ),
     );

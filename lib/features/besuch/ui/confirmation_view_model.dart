@@ -139,6 +139,22 @@ class ConfirmationViewModel extends ChangeNotifier {
     return List.unmodifiable(sorted);
   }
 
+  /// Rows that still want a decision, most urgent first.
+  ///
+  /// These are the only rows drawn at full size — the screen gives its space
+  /// to what still needs the nurse, not to what is already done.
+  List<ConfirmationEntry> get attentionEntries => List.unmodifiable(
+    entries.where((e) => e.needsAttention),
+  );
+
+  /// Rows that will stay empty, in the declared order.
+  List<ConfirmationEntry> get gapEntries =>
+      List.unmodifiable(_entries.where((e) => e.isGap));
+
+  /// Rows whose value goes into the record as it stands.
+  List<ConfirmationEntry> get settledEntries =>
+      List.unmodifiable(_entries.where((e) => e.isSettled));
+
   /// Number of values that go into the record as they stand.
   int get settledCount => _entries.where((e) => e.isSettled).length;
 

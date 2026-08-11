@@ -417,6 +417,36 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, =0{Noch nichts erkannt} =1{1 Angabe erkannt} other{{count} Angaben erkannt}}'**
   String captureRecognizedSoFar(int count);
+
+  /// Zusammengefasste Zeile für alle Felder, zu denen nichts gesagt wurde. Aufklappbar. Ersetzt eine Zeile je Lücke, damit der Platz denen gehört, die eine Entscheidung brauchen.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{Eine Angabe fehlt} other{{count} Angaben fehlen}}'**
+  String confirmationGapsCollapsed(int count);
+
+  /// Steht anstelle der Lückenzeile, wenn jedes erwartete Feld einen Wert hat.
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts fehlt.'**
+  String get confirmationGapsNone;
+
+  /// Überschrift des kompakten Bereichs mit den sicher erkannten Werten am unteren Ende der Liste.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Wert übernommen} other{{count} Werte übernommen}}'**
+  String confirmationSettledHeading(num count);
+
+  /// Steht oben, wenn kein Wert mehr eine Entscheidung braucht.
+  ///
+  /// In de, this message translates to:
+  /// **'Alles geprüft.'**
+  String get confirmationAllClear;
+
+  /// Anker am Kopf der Bestätigungsansicht: wie viele Werte noch eine Entscheidung oder einen Blick brauchen. Wichtigste Orientierung des Screens.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Wert braucht dich} other{{count} Werte brauchen dich}}'**
+  String confirmationNeedsDecision(num count);
 }
 
 class _AppLocalizationsDelegate

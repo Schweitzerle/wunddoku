@@ -13,6 +13,12 @@ abstract final class AppTheme {
   /// never tints the perception of a wound photo.
   static const seed = Color(0xFF0B5F6B);
 
+  /// The family both themes are built with.
+  ///
+  /// Swapped in one place while the two candidates are being compared on the
+  /// device; see `DECISIONS.md`.
+  static AppFontFamily font = AppFontFamily.geist;
+
   static ThemeData light() => _build(
     brightness: Brightness.light,
     surface: const Color(0xFFFCFCFD),
@@ -57,7 +63,7 @@ abstract final class AppTheme {
 
     return ThemeData(
       colorScheme: scheme,
-      textTheme: buildTextTheme(),
+      textTheme: buildTextTheme(font),
       scaffoldBackgroundColor: scheme.surface,
       // Flat by decision: separation comes from surface tones and spacing.
       // Shadows are invisible in sunlight and cost saveLayer.

@@ -101,8 +101,13 @@ void main() {
         TestApp(child: ConfirmationScreen(viewModel: _model())),
       );
 
-      expect(find.text('fehlt'), findsWidgets);
-      expect(find.text('Nekrose'), findsOneWidget);
+      // One collapsed row instead of four; the names appear on expanding.
+      expect(find.text('4 Angaben fehlen'), findsOneWidget);
+      expect(find.text('Nekrose'), findsNothing);
+
+      await tester.tap(find.text('4 Angaben fehlen'));
+      await tester.pump();
+      expect(find.textContaining('Nekrose'), findsOneWidget);
     });
 
     testWidgets('tapping a row shows where the value came from', (
@@ -112,8 +117,12 @@ void main() {
         TestApp(child: ConfirmationScreen(viewModel: _model())),
       );
 
-      await tester.scrollUntilVisible(find.text('Länge'), 100);
-      await tester.tap(find.text('Länge'));
+      await tester.scrollUntilVisible(find.text('3,5 cm'), 100);
+      // scrollUntilVisible stops as soon as the widget enters the viewport;
+      // ensureVisible brings it fully in so the tap cannot miss.
+      await tester.ensureVisible(find.text('3,5 cm'));
+      await tester.pump();
+      await tester.tap(find.text('3,5 cm'));
       await tester.pumpAndSettle();
 
       expect(find.text('Wortlaut'), findsOneWidget);
@@ -130,9 +139,8 @@ void main() {
         TestApp(child: ConfirmationScreen(viewModel: _model())),
       );
 
-      // Length, width and exudate amount are settled, plus the extra row for
-      // the exudate kind; depth blocks and granulation wants a look; necrosis,
-      // fibrin, epithelialisation and the pain score were never mentioned.
+      // The anchor names the work; the tally underneath carries the detail.
+      expect(find.text('2 Werte brauchen dich'), findsOneWidget);
       expect(find.text('4 übernommen · 2 prüfen · 4 fehlen'), findsOneWidget);
     });
   });
@@ -164,10 +172,17 @@ void main() {
         find.bySemanticsLabel('Tiefe, Entscheiden, Entscheiden'),
         findsOne,
       );
-      expect(find.bySemanticsLabel('Nekrose, fehlt, fehlt'), findsOne);
+      // The gaps are announced as one node that names every missing field,
+      // so a screen reader hears them without four separate stops.
+      expect(
+        find.bySemanticsLabel(
+          '4 Angaben fehlen: Nekrose · Fibrin · Epithelisation · Schmerz',
+        ),
+        findsOne,
+      );
 
-      // Settled rows sort to the bottom and start out below the fold.
-      await tester.scrollUntilVisible(find.text('Länge'), 100);
+      // Settled values sit in the compact zone below the fold.
+      await tester.scrollUntilVisible(find.text('3,5 cm'), 100);
       expect(find.bySemanticsLabel('Länge, 3,5 cm, Sicher erkannt'), findsOne);
 
       handle.dispose();

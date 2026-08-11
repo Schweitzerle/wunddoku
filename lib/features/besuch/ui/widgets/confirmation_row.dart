@@ -6,12 +6,13 @@ import '../../../../shared/theme/color_tokens.dart';
 import '../confirmation_view_model.dart';
 import '../field_presentation.dart';
 
-/// One field of the record in the confirmation view.
+/// A field that still wants a decision, drawn at full size.
 ///
-/// Shows the label, the proposed value and how sure the interpreter was.
-/// Colour is never the only carrier of that state: every tier also has an
-/// icon, a word, and a semantics label, so it survives sunlight, colour
-/// blindness and a screen reader.
+/// Reads like an instrument, not like a form row: the value dominates
+/// (40 px against a 13 px legend), and the only saturated colour on screen
+/// marks what the nurse has to act on. Colour is never the sole carrier —
+/// every tier also has an icon, a word and a semantics label, so it survives
+/// sunlight, colour blindness and a screen reader.
 class ConfirmationRow extends StatelessWidget {
   const ConfirmationRow({
     required this.entry,
@@ -36,82 +37,87 @@ class ConfirmationRow extends StatelessWidget {
     final spacing = context.spacing;
 
     final label = FieldPresentation.label(l10n, entry.slotId);
-    final state = _RowState.of(
-      entry,
-      l10n,
-      context.statusColors,
-      theme.colorScheme,
-    );
+    final state = _RowState.of(entry, l10n, context.statusColors);
 
-    return Container(
-      constraints: BoxConstraints(minHeight: spacing.confirmationRow),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(spacing.r12),
-        border: Border.all(color: state.accent, width: state.borderWidth),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Semantics(
-              // The confidence has to reach a screen reader as words, not as
-              // a colour: acting on a misread value is the actual risk here.
-              // Child semantics are excluded so the tier is announced once,
-              // while the buttons beside stay reachable as their own nodes.
-              label: '$label, ${state.valueText}, ${state.stateWord}',
-              button: true,
-              container: true,
-              excludeSemantics: true,
-              child: InkWell(
-                onTap: onShowProvenance,
-                borderRadius: BorderRadius.circular(spacing.r12),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: spacing.s16,
-                    vertical: spacing.s12,
+    return Semantics(
+      // The confidence has to reach a screen reader as words, not as a
+      // colour: acting on a misread value is the actual risk here.
+      label: '$label, ${state.valueText}, ${state.stateWord}',
+      container: true,
+      explicitChildNodes: true,
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(spacing.r20),
+          border: Border.all(color: state.accent, width: 2),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                spacing.s20,
+                spacing.s16,
+                spacing.s12,
+                0,
+              ),
+              child: Row(
+                children: [
+                  ExcludeSemantics(
+                    child: Icon(state.icon, color: state.accent, size: 20),
                   ),
-                  child: Row(
-                    children: [
-                      Icon(state.icon, color: state.accent, size: 24),
-                      SizedBox(width: spacing.s12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              label,
-                              style: theme.textTheme.labelMedium?.copyWith(
-                                color: theme.colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                            SizedBox(height: spacing.s4),
-                            Text(
-                              state.valueText,
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: state.isGap
-                                    ? theme.colorScheme.onSurfaceVariant
-                                    : theme.colorScheme.onSurface,
-                                fontStyle: state.isGap
-                                    ? FontStyle.italic
-                                    : FontStyle.normal,
-                              ),
-                            ),
-                          ],
+                  SizedBox(width: spacing.s8),
+                  Expanded(
+                    child: ExcludeSemantics(
+                      child: Text(
+                        label.toUpperCase(),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: state.accent,
                         ),
                       ),
-                    ],
+                    ),
                   ),
+                  _RowActions(onAccept: onAccept, onDiscard: onDiscard),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: onShowProvenance,
+              borderRadius: BorderRadius.circular(spacing.r20),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  spacing.s20,
+                  spacing.s4,
+                  spacing.s20,
+                  spacing.s16,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ExcludeSemantics(
+                        child: Text(
+                          state.valueText,
+                          style: theme.textTheme.displayMedium?.copyWith(
+                            color: state.valueColour(theme.colorScheme),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Semantics(
+                      label: l10n.actionShowProvenance,
+                      button: true,
+                      child: Icon(
+                        Icons.subject,
+                        size: 20,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          ),
-          if (entry.needsAttention)
-            Padding(
-              padding: EdgeInsets.only(right: spacing.s8),
-              child: _RowActions(onAccept: onAccept, onDiscard: onDiscard),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -152,29 +158,15 @@ class _RowState {
     required this.stateWord,
     required this.icon,
     required this.accent,
-    required this.borderWidth,
-    required this.isGap,
+    required this.isBlocking,
   });
 
   factory _RowState.of(
     ConfirmationEntry entry,
     AppLocalizations l10n,
     StatusColors status,
-    ColorScheme scheme,
   ) {
-    if (entry.isGap) {
-      return _RowState(
-        valueText: l10n.confidenceMissing,
-        stateWord: l10n.confidenceMissing,
-        icon: Icons.remove,
-        accent: status.luecke,
-        borderWidth: 1.5,
-        isGap: true,
-      );
-    }
-
     final proposal = entry.proposal!;
-    final valueText = FieldPresentation.value(l10n, proposal);
 
     if (entry.blocksSaving) {
       // A low-confidence value is shown as the word "decide" rather than as
@@ -184,29 +176,16 @@ class _RowState {
         stateWord: l10n.confidenceLow,
         icon: Icons.priority_high,
         accent: status.entscheiden,
-        borderWidth: 2,
-        isGap: false,
-      );
-    }
-
-    if (entry.needsAttention) {
-      return _RowState(
-        valueText: valueText,
-        stateWord: l10n.confidenceMedium,
-        icon: Icons.visibility_outlined,
-        accent: status.pruefen,
-        borderWidth: 1.5,
-        isGap: false,
+        isBlocking: true,
       );
     }
 
     return _RowState(
-      valueText: valueText,
-      stateWord: l10n.confidenceHigh,
-      icon: Icons.check,
-      accent: scheme.outlineVariant,
-      borderWidth: 1,
-      isGap: false,
+      valueText: FieldPresentation.value(l10n, proposal),
+      stateWord: l10n.confidenceMedium,
+      icon: Icons.visibility_outlined,
+      accent: status.pruefen,
+      isBlocking: false,
     );
   }
 
@@ -214,6 +193,10 @@ class _RowState {
   final String stateWord;
   final IconData icon;
   final Color accent;
-  final double borderWidth;
-  final bool isGap;
+  final bool isBlocking;
+
+  /// A blocking row shows a word, not a value, so it takes the accent; a row
+  /// that only wants a look shows a real value and keeps the text colour.
+  Color valueColour(ColorScheme scheme) =>
+      isBlocking ? accent : scheme.onSurface;
 }

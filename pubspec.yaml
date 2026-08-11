@@ -71,6 +71,18 @@ hooks:
 # The following section is specific to Flutter packages.
 flutter:
   generate: true
+
+  # Both families are bundled while the design direction is being decided;
+  # the loser is removed before the handover. Variable fonts, so one file
+  # carries every weight - see DECISIONS.md.
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter.ttf
+    - family: Geist
+      fonts:
+        - asset: assets/fonts/Geist.ttf
+
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
