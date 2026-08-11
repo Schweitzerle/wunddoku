@@ -3,7 +3,7 @@
 > Wird nach jedem Arbeitspaket nachgezogen. Repo plus diese Datei müssen reichen,
 > damit eine frische Session weitermacht.
 
-**Zuletzt aktualisiert:** 2026-08-10
+**Zuletzt aktualisiert:** 2026-08-11
 
 ## Wo wir stehen
 
@@ -17,8 +17,13 @@ sind durch. Es liegen vor:
 - `lib/domain/catalog/` — sechs Value-Object-Dateien, 32 Tests grün,
   Analyzer sauber
 - Technikentscheidungen für Slice 1 in `DECISIONS.md`
+- verschlüsselte Datenbank samt Patient-Repository
+- Sprachstrecke Stufe 1: Transkript → typisierte Vorschläge, ohne Schlüssel
+- Theme in der Gestaltungsrichtung „Instrument", gebündelte Schrift
+- **Besuchskorridor lauffähig**: Aufnahme (Phase A) → Bestätigung (Phase B),
+  auf dem Gerät belegt
 
-Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
+Offen: Kartenmodus, Foto mit Markierung, Verlauf, PDF-Bericht.
 
 ## Nächste drei Schritte
 
@@ -28,6 +33,30 @@ Noch kein Screen, keine Persistenz, keine Abhängigkeit außer dem Gerüst.
    Unterbrechung übersteht
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Gestaltungsrunde, 2026-08-11)
+
+Anlass war Julians Einwand am fertigen Screen: funktional richtig,
+gestalterisch Standardoptik. Berechtigt — drei Punkte aus `22-design-tokens.md`
+waren verletzt. Begründung und Verworfenes in `DECISIONS.md`.
+
+- **Bestätigungsansicht als Referenzscreen umgebaut**: drei Zonen statt einer
+  flachen Liste. Was eine Entscheidung braucht, wird groß gezeichnet; Lücken
+  fallen zu **einer** aufklappbaren Zeile zusammen; Erledigtes sitzt kompakt am
+  unteren Rand. Damit ist der Gerätebefund vom Vortag behoben.
+- **Anker statt Kleingedrucktem**: „2 Werte brauchen dich" als Headline, die
+  Zahlen darunter. Vorher stand die wichtigste Orientierung in 13 px grau.
+- **Größenkontrast 3:1** wie in `tokens.md` spezifiziert, aber bis dahin nicht
+  umgesetzt (Wert 40 px, Bezeichnung 13 px in Versalien mit offener Laufweite).
+- **Schrift gewählt und gebündelt**: Geist, variabel, OFL-1.1, 169 KB, mit
+  tabellarischen Ziffern. Zwei Kandidaten auf demselben Gerät bei identischem
+  Layout verglichen — `doc/screenshots/schrift-geist.png` und `schrift-inter.png`.
+- **Besuchskorridor verdrahtet**: Aufnahme führt in die Prüfung, Rückkehr setzt
+  den Besuch zurück. Vorher stand jeder Screen für sich.
+
+**Gefundener Layoutfehler:** Der Kopfbereich war zentriert statt links bündig —
+eine `Column` ohne `stretch` schrumpft auf ihre breiteste Zeile, die äußere
+`Column` zentriert sie dann. Behoben.
 
 ## Erledigt (Aufnahme-Screen, 2026-08-11)
 
@@ -105,7 +134,13 @@ brauchen.
   Keystore ohnehin die echte Ablage ist.
 - Goldens laufen mit Testschrift (Kästchen statt Buchstaben). Sie belegen
   Layout, Farbe und Hierarchie, **nicht** die Typografie. Dafür braucht es
-  Screenshots vom Emulator.
+  Screenshots vom Gerät.
+- **Variable Schriften brauchen `FontVariation`.** Mit `FontWeight` allein
+  synthetisiert Flutter den Fettschnitt, statt die echte Gewichtsachse zu
+  benutzen — sichtbar erst auf dem Gerät.
+- **`scrollUntilVisible` reicht für einen Tap nicht.** Es hört auf, sobald das
+  Widget den Viewport berührt; der Tap verfehlt dann. `ensureVisible`
+  hinterherschicken.
 - `find.bySemanticsLabel` findet nur gebaute Zeilen. Was unterhalb der
   Sichtkante liegt, muss im Test erst sichtbar gescrollt werden.
 - **`await` auf echte Futures hängt im Widget-Test.** Wer im Test etwas
