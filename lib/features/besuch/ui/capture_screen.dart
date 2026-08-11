@@ -114,8 +114,12 @@ class _CaptureLayout extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Content gathers at the bottom rather than filling from the top:
+          // this screen is worked one-handed, and everything the nurse might
+          // touch belongs inside the thumb's reach.
           Expanded(
             child: SingleChildScrollView(
+              reverse: true,
               padding: EdgeInsets.fromLTRB(
                 spacing.s24,
                 spacing.s24,
@@ -143,6 +147,37 @@ class _CaptureLayout extends StatelessWidget {
   }
 }
 
+/// The one target on this screen, sized to be hit without looking.
+///
+/// Twice the height of an ordinary button: the nurse presses it with gloves
+/// on, eyes on the wound. Everything else here can be missed; this cannot.
+class _PrimaryCaptureAction extends StatelessWidget {
+  const _PrimaryCaptureAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return SizedBox(
+      height: spacing.s96,
+      child: FilledButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 28),
+        label: Text(label, style: theme.textTheme.titleMedium),
+      ),
+    );
+  }
+}
+
 class _Idle extends StatelessWidget {
   const _Idle({required this.onStart});
 
@@ -155,10 +190,10 @@ class _Idle extends StatelessWidget {
     final spacing = context.spacing;
 
     return _CaptureLayout(
-      action: FilledButton.icon(
+      action: _PrimaryCaptureAction(
+        icon: Icons.mic,
+        label: l10n.captureStart,
         onPressed: onStart,
-        icon: const Icon(Icons.mic),
-        label: Text(l10n.captureStart),
       ),
       children: [
         Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
@@ -189,7 +224,7 @@ class _Example extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: theme.textTheme.bodyMedium?.copyWith(
+        style: theme.textTheme.labelSmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
@@ -214,10 +249,10 @@ class _Recording extends StatelessWidget {
     final seconds = (state.elapsed.inSeconds % 60).toString().padLeft(2, '0');
 
     return _CaptureLayout(
-      action: FilledButton.icon(
+      action: _PrimaryCaptureAction(
+        icon: Icons.stop,
+        label: l10n.captureStop,
         onPressed: onStop,
-        icon: const Icon(Icons.stop),
-        label: Text(l10n.captureStop),
       ),
       children: [
         Semantics(

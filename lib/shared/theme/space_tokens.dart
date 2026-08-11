@@ -23,6 +23,9 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
   double get s48 => 48;
   double get s64 => 64;
 
+  /// Height of the one target that must be hit without looking.
+  double get s96 => 96;
+
   /// Radii: xs / sm / md (cards) / lg. The primary action uses a stadium
   /// shape instead of a radius token.
   double get r4 => 4;
