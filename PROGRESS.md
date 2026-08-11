@@ -22,16 +22,50 @@ sind durch. Es liegen vor:
 - Theme in der Gestaltungsrichtung „Instrument", gebündelte Schrift
 - **Besuchskorridor lauffähig**: Aufnahme (Phase A) → Bestätigung (Phase B),
   auf dem Gerät belegt
+- **Foto mit Markierung**: Sucher mit Geisterbild der Voraufnahme, Markierung
+  als normalisierte Geometrie, eingebrannte Zweitdatei, verschlüsselte
+  Medienablage — auf dem Gerät belegt
 
-Offen: Kartenmodus, Foto mit Markierung, Verlauf, PDF-Bericht.
+Offen: Maße neben dem Foto, Abschluss-Screen, Verlauf, PDF-Bericht.
 
 ## Nächste drei Schritte
 
-1. Foto mit Markierung und Maßen (Phase A, zweite Hälfte)
-2. Abschluss-Screen: Besuch schließen, Lücken sichtbar machen,
+1. Abschluss-Screen: Besuch schließen, Lücken sichtbar machen,
    `completeVisit` aufrufen — bisher wird kein Besuch geschlossen
+2. Verlauf über Besuche: Fotos und Maße nebeneinander, Markierungen
+   übereinander — der Teil, der den klinischen Wert trägt
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Foto, Markierung, Medienablage, 2026-08-11)
+
+- `EncryptedMediaStore` — AES-GCM-256 je Datei, Nonce und MAC in der Datei,
+  Schlüssel per HKDF aus dem Datenbankschlüssel abgeleitet. Löschen entfernt
+  Zeile und beide Dateien.
+- `WoundCamera` als Port; `PhotoScreen` mit Geisterbild der Voraufnahme
+  (35 %, über `Image.opacity` statt `Opacity` — sonst `saveLayer` je Bild über
+  dem laufenden Sucher). Jeder Kamerafehler endet in „Ohne Foto weiter".
+- `MarkingScreen` mit drei Werkzeugen (Ellipse, Punkte, Freihand), Undo,
+  Löschen; Zeichenfläche trägt das Seitenverhältnis des Fotos.
+- Schema v3: `VisitPhotos` hält Handles und Geometrie, keine Bytes.
+- Korridor: Foto → Markierung → Speichern in einem Zug.
+- Gesamtlauf **202 grün**, Analyzer sauber.
+
+### Beleg auf dem Gerät (Motorola edge 30 ultra)
+
+Sucher, Auslöser, Kontrolle und Ellipse durchgespielt. Danach:
+
+```
+$ adb shell run-as de.paschneider.wunddoku ls -l files/media
+-rw------- 882367 markedphoto_5c006eaa96132834c999240b2beb5eb4.bin
+-rw------- 235238 photo_5a9245b6d54ff40f75ec478e706c63e8.bin
+
+$ ... head -c 16 files/media/photo_5a92...bin | xxd
+00000000: 336f 6973 5e4c 8243 68c3 e799 5237 a550
+```
+
+Kein JPEG-Magic (`ff d8 ff`), also verschlüsselt. `cache/` ist leer — die
+Klartext-Zwischendatei des Kamera-Plugins wird nach dem Auslesen gelöscht.
 
 ## Erledigt (Korridor auf der Datenbank, 2026-08-11)
 
@@ -203,6 +237,26 @@ brauchen.
 
 ## Stolpersteine
 
+- **`InteractiveViewer`: `toScene` nur außerhalb des Kindbaums.** Sitzt der
+  Gestenerkenner *im* transformierten Teilbaum, hat Flutter die Zeigerposition
+  schon zurückgerechnet — ein zweiter Aufruf verschiebt die Marke doppelt. Bei
+  Skalierung 1 fällt das nie auf, also auch nicht im Test ohne Zoom.
+- **Zeichenfläche muss das Bildseitenverhältnis tragen.** Sonst normalisiert
+  der Editor gegen die Widget-Box und der Brenner gegen das Bild; bei
+  Letterbox-Balken landet die Marke in der Kopie woanders. Im Golden sichtbar,
+  im Verhaltenstest nicht.
+- **Ein synthetischer Pinch hat nicht die Skalierung, die man setzt.** Der
+  Touch-Slop frisst einen Teil der Bewegung. Für exakte Zoom-Tests den
+  `TransformationController` setzen statt zu ziehen — und um die Bildmitte
+  skalieren, sonst liegt der Tap außerhalb des Bildes.
+- **Die eingebrannte Kopie ist PNG und damit größer als das JPEG-Original**
+  (Beleg auf dem Gerät: 235 KB → 882 KB bei einem dunklen Bild). Bei einem
+  hellen 12-MP-Foto kann das ein Vielfaches werden. Wenn der Speicherbedarf
+  auffällt: die Kopie als JPEG kodieren — das braucht ein Paket und damit eine
+  Runde `/eps:technikwahl`.
+- **Echte Codec-Arbeit kommt in der Fake-Async-Zone nie zurück.** Ein
+  Widget-Test, der Bilder dekodiert oder kodiert, braucht `runAsync` — oder,
+  wenn der Aufruf im Widget steckt, eine Naht wie `VisitCorridor.burn`.
 - Der Trust-Dialog muss einmal interaktiv bestätigt werden (`eps` im
   Projektverzeichnis), sonst greifen die `permissions.allow`-Einträge aus
   `.claude/settings.json` nicht.

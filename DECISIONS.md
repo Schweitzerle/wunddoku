@@ -367,3 +367,52 @@ Scale-Tarif zu. Solange das offen ist, läuft ausschließlich der Beispieladapte
 **Rückholbar:**
 
 -->
+
+---
+
+## 2026-08-11 — Markierung als Geometrie, Fotos als verschlüsselte Dateien
+
+**Gewählt:** Die Markierung wird als normalisierte Kontur (0..1, je Achse)
+gespeichert, nicht als Pixel und nicht als Bild. Die eingebrannte Fassung ist
+eine zweite Datei, die aus dieser Geometrie entsteht. Beide Bilder liegen im
+`EncryptedMediaStore`; in der Datenbank steht nur der Handle plus die Kontur
+als JSON (Schema v3, `VisitPhotos`).
+
+**Warum:** Nur Geometrie überlebt Skalierung, Export, Gerätewechsel und bleibt
+bearbeitbar — und nur so lassen sich zwei Besuche übereinanderlegen. Der
+Vergleich über Wochen ist das, was den klinischen Wert trägt; ein Bild mit
+eingebranntem Strich kann das nicht. Umgekehrt braucht der Büro-Nachprozess
+ein Bild, das die Markierung ohne unsere App zeigt — daher beides.
+
+**Verworfen:** Markierung nur im Bild (nicht vergleichbar, nicht korrigierbar).
+Bilder als Blobs in der Datenbank (siehe Entscheidung vom 10.08.). Das Original
+überschreiben (das Briefing verlangt ausdrücklich beide Fassungen).
+
+**Bekanntes Risiko:** Die eingebrannte Kopie entsteht als PNG und ist damit
+größer als ein JPEG-Original. Notiert in `PROGRESS.md`; ein JPEG-Encoder wäre
+eine eigene Technikentscheidung.
+
+**Rückholbar:** ja. Die Geometrie ist die Quelle, die Kopie jederzeit neu
+erzeugbar.
+
+---
+
+## 2026-08-11 — Kamera hinter einem eigenen Port
+
+**Gewählt:** `WoundCamera` als projekteigene Schnittstelle mit drei Methoden;
+`PackageWoundCamera` benutzt `camera` 0.12.0+2. Der Fehlerfall ist ein
+Rückgabewert (`CameraFailure`), keine Ausnahme. Die Kamera wird pro Besuch am
+Sucher frisch gebaut und beim Verlassen freigegeben.
+
+**Warum:** Der Foto-Screen trägt die tragende Idee des Bildteils — das
+Geisterbild der Voraufnahme — und ist zugleich der einzige Screen, der gegen
+echte Hardware nicht reproduzierbar testbar ist. Hinter dem Port sind Sucher,
+Auslöser, Kontrolle und alle drei Fehlerzustände im Widget-Test belegt. Dass
+jeder Fehlerzustand einen Screen hat, ist der Grund für den Rückgabewert:
+„keine Berechtigung" ist ein Zustand der Oberfläche, keine Ausnahme.
+
+**Verworfen:** `camera` direkt im Screen (nicht testbar). `image_picker`
+(kein Sucher, damit kein Geisterbild).
+
+**Rückholbar:** ja, das ist der Zweck des Ports.
+
