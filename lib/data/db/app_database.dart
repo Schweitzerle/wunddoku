@@ -93,8 +93,60 @@ class Visits extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
+/// What kind of value a row in [VisitValues] holds.
+///
+/// Stored alongside the value so the row can be read back into the right
+/// [VisitValue] without the reader having to know the slot catalogue.
+enum StoredValueKind {
+  /// A length in centimetres, in [VisitValues.number].
+  centimetres,
+
+  /// A share of the wound bed in percent, in [VisitValues.number].
+  percent,
+
+  /// A rating on the 0-10 pain scale, in [VisitValues.number].
+  score,
+
+  /// An [ExudateAmount], by enum name in [VisitValues.code].
+  exudateAmount,
+
+  /// An [ExudateKind], by enum name in [VisitValues.code].
+  exudateKind,
+}
+
+/// One confirmed value of one visit, keyed by its slot.
+///
+/// Key-value rather than a column per field: the slot catalogue grows with
+/// every finding card the client asks for, and eight cards' worth of columns
+/// would mean a migration for each of them. The type is not lost — [kind]
+/// carries it, and the repository maps rows back into the sealed value types.
+///
+/// Autosave writes a single row, which is why saving one field never has to
+/// touch the rest of the visit.
+@DataClassName('VisitValueRow')
+class VisitValues extends Table {
+  TextColumn get visitId =>
+      text().references(Visits, #id, onDelete: KeyAction.cascade)();
+
+  /// Identifies the field; see `FieldProposal.slotId`.
+  TextColumn get slotId => text()();
+
+  TextColumn get kind => textEnum<StoredValueKind>()();
+
+  /// The numeric value, for the kinds that have one.
+  RealColumn get number => real().nullable()();
+
+  /// The enum name, for the kinds that are catalogue entries.
+  TextColumn get code => text().nullable()();
+
+  DateTimeColumn get updatedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {visitId, slotId};
+}
+
 /// The local database, encrypted at rest.
-@DriftDatabase(tables: [Patients, Wounds, Visits])
+@DriftDatabase(tables: [Patients, Wounds, Visits, VisitValues])
 class AppDatabase extends _$AppDatabase {
   /// Opens the production database at [file], encrypted with [hexKey].
   ///
@@ -129,11 +181,14 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) await m.createTable(visitValues);
+    },
     beforeOpen: (details) async {
       // Referential integrity carries the deletion path: removing a patient
       // removes their wounds and visits (Art. 9 requires a working delete).

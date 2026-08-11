@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
+import '../../../data/visit_repository.dart';
 import '../../../domain/catalog/exudation.dart';
+import '../../../domain/model/ids.dart';
 import '../../../domain/catalog/tissue_distribution.dart';
 import '../../../domain/model/visit_draft.dart';
 
@@ -15,9 +19,29 @@ import '../../../domain/model/visit_draft.dart';
 /// resort in a field app (`/eps:field-app-muster`), and with gloves on it is
 /// no resort at all.
 class CardEntryViewModel extends ChangeNotifier {
-  CardEntryViewModel({VisitDraft draft = const VisitDraft()}) : _draft = draft;
+  CardEntryViewModel({
+    VisitDraft draft = const VisitDraft(),
+    VisitRepository? repository,
+    VisitId? visit,
+  }) : _draft = draft,
+       _repository = repository,
+       _visit = visit;
+
+  /// Where each change is written, or null while nothing is persisted yet.
+  ///
+  /// Optional so the screen can be exercised in tests and previews without a
+  /// database; in the app both are always present.
+  final VisitRepository? _repository;
+  final VisitId? _visit;
 
   VisitDraft _draft;
+
+  /// The write in flight, exposed so a test can wait for it.
+  ///
+  /// Saving is not awaited by the callers: a step must feel immediate, and a
+  /// disk write is not something the nurse should wait on.
+  Future<void>? get pendingWrite => _pendingWrite;
+  Future<void>? _pendingWrite;
 
   /// The values entered so far.
   VisitDraft get draft => _draft;
@@ -111,6 +135,16 @@ class CardEntryViewModel extends ChangeNotifier {
     _draft = value == null
         ? _draft.without(slotId)
         : _draft.withValue(slotId, value);
+
+    // Autosave after every single field, per the field-app rules: a phone
+    // call, a flat battery or a stray back gesture must not cost a finding.
+    final repository = _repository;
+    final visit = _visit;
+    if (repository != null && visit != null) {
+      _pendingWrite = repository.saveValue(visit, slotId, value);
+      unawaited(_pendingWrite);
+    }
+
     if (!silent) notifyListeners();
   }
 }

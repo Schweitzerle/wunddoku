@@ -1543,12 +1543,436 @@ class VisitsCompanion extends UpdateCompanion<VisitRow> {
   }
 }
 
+class $VisitValuesTable extends VisitValues
+    with TableInfo<$VisitValuesTable, VisitValueRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VisitValuesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _visitIdMeta = const VerificationMeta(
+    'visitId',
+  );
+  @override
+  late final GeneratedColumn<String> visitId = GeneratedColumn<String>(
+    'visit_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES visits (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _slotIdMeta = const VerificationMeta('slotId');
+  @override
+  late final GeneratedColumn<String> slotId = GeneratedColumn<String>(
+    'slot_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<StoredValueKind, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<StoredValueKind>($VisitValuesTable.$converterkind);
+  static const VerificationMeta _numberMeta = const VerificationMeta('number');
+  @override
+  late final GeneratedColumn<double> number = GeneratedColumn<double>(
+    'number',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _codeMeta = const VerificationMeta('code');
+  @override
+  late final GeneratedColumn<String> code = GeneratedColumn<String>(
+    'code',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    visitId,
+    slotId,
+    kind,
+    number,
+    code,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'visit_values';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VisitValueRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('visit_id')) {
+      context.handle(
+        _visitIdMeta,
+        visitId.isAcceptableOrUnknown(data['visit_id']!, _visitIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_visitIdMeta);
+    }
+    if (data.containsKey('slot_id')) {
+      context.handle(
+        _slotIdMeta,
+        slotId.isAcceptableOrUnknown(data['slot_id']!, _slotIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_slotIdMeta);
+    }
+    if (data.containsKey('number')) {
+      context.handle(
+        _numberMeta,
+        number.isAcceptableOrUnknown(data['number']!, _numberMeta),
+      );
+    }
+    if (data.containsKey('code')) {
+      context.handle(
+        _codeMeta,
+        code.isAcceptableOrUnknown(data['code']!, _codeMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {visitId, slotId};
+  @override
+  VisitValueRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VisitValueRow(
+      visitId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}visit_id'],
+      )!,
+      slotId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}slot_id'],
+      )!,
+      kind: $VisitValuesTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      number: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}number'],
+      ),
+      code: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}code'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $VisitValuesTable createAlias(String alias) {
+    return $VisitValuesTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<StoredValueKind, String, String> $converterkind =
+      const EnumNameConverter<StoredValueKind>(StoredValueKind.values);
+}
+
+class VisitValueRow extends DataClass implements Insertable<VisitValueRow> {
+  final String visitId;
+
+  /// Identifies the field; see `FieldProposal.slotId`.
+  final String slotId;
+  final StoredValueKind kind;
+
+  /// The numeric value, for the kinds that have one.
+  final double? number;
+
+  /// The enum name, for the kinds that are catalogue entries.
+  final String? code;
+  final DateTime updatedAt;
+  const VisitValueRow({
+    required this.visitId,
+    required this.slotId,
+    required this.kind,
+    this.number,
+    this.code,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['visit_id'] = Variable<String>(visitId);
+    map['slot_id'] = Variable<String>(slotId);
+    {
+      map['kind'] = Variable<String>(
+        $VisitValuesTable.$converterkind.toSql(kind),
+      );
+    }
+    if (!nullToAbsent || number != null) {
+      map['number'] = Variable<double>(number);
+    }
+    if (!nullToAbsent || code != null) {
+      map['code'] = Variable<String>(code);
+    }
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  VisitValuesCompanion toCompanion(bool nullToAbsent) {
+    return VisitValuesCompanion(
+      visitId: Value(visitId),
+      slotId: Value(slotId),
+      kind: Value(kind),
+      number: number == null && nullToAbsent
+          ? const Value.absent()
+          : Value(number),
+      code: code == null && nullToAbsent ? const Value.absent() : Value(code),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory VisitValueRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VisitValueRow(
+      visitId: serializer.fromJson<String>(json['visitId']),
+      slotId: serializer.fromJson<String>(json['slotId']),
+      kind: $VisitValuesTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      number: serializer.fromJson<double?>(json['number']),
+      code: serializer.fromJson<String?>(json['code']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'visitId': serializer.toJson<String>(visitId),
+      'slotId': serializer.toJson<String>(slotId),
+      'kind': serializer.toJson<String>(
+        $VisitValuesTable.$converterkind.toJson(kind),
+      ),
+      'number': serializer.toJson<double?>(number),
+      'code': serializer.toJson<String?>(code),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  VisitValueRow copyWith({
+    String? visitId,
+    String? slotId,
+    StoredValueKind? kind,
+    Value<double?> number = const Value.absent(),
+    Value<String?> code = const Value.absent(),
+    DateTime? updatedAt,
+  }) => VisitValueRow(
+    visitId: visitId ?? this.visitId,
+    slotId: slotId ?? this.slotId,
+    kind: kind ?? this.kind,
+    number: number.present ? number.value : this.number,
+    code: code.present ? code.value : this.code,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  VisitValueRow copyWithCompanion(VisitValuesCompanion data) {
+    return VisitValueRow(
+      visitId: data.visitId.present ? data.visitId.value : this.visitId,
+      slotId: data.slotId.present ? data.slotId.value : this.slotId,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      number: data.number.present ? data.number.value : this.number,
+      code: data.code.present ? data.code.value : this.code,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VisitValueRow(')
+          ..write('visitId: $visitId, ')
+          ..write('slotId: $slotId, ')
+          ..write('kind: $kind, ')
+          ..write('number: $number, ')
+          ..write('code: $code, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(visitId, slotId, kind, number, code, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VisitValueRow &&
+          other.visitId == this.visitId &&
+          other.slotId == this.slotId &&
+          other.kind == this.kind &&
+          other.number == this.number &&
+          other.code == this.code &&
+          other.updatedAt == this.updatedAt);
+}
+
+class VisitValuesCompanion extends UpdateCompanion<VisitValueRow> {
+  final Value<String> visitId;
+  final Value<String> slotId;
+  final Value<StoredValueKind> kind;
+  final Value<double?> number;
+  final Value<String?> code;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const VisitValuesCompanion({
+    this.visitId = const Value.absent(),
+    this.slotId = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.number = const Value.absent(),
+    this.code = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VisitValuesCompanion.insert({
+    required String visitId,
+    required String slotId,
+    required StoredValueKind kind,
+    this.number = const Value.absent(),
+    this.code = const Value.absent(),
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  }) : visitId = Value(visitId),
+       slotId = Value(slotId),
+       kind = Value(kind),
+       updatedAt = Value(updatedAt);
+  static Insertable<VisitValueRow> custom({
+    Expression<String>? visitId,
+    Expression<String>? slotId,
+    Expression<String>? kind,
+    Expression<double>? number,
+    Expression<String>? code,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (visitId != null) 'visit_id': visitId,
+      if (slotId != null) 'slot_id': slotId,
+      if (kind != null) 'kind': kind,
+      if (number != null) 'number': number,
+      if (code != null) 'code': code,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VisitValuesCompanion copyWith({
+    Value<String>? visitId,
+    Value<String>? slotId,
+    Value<StoredValueKind>? kind,
+    Value<double?>? number,
+    Value<String?>? code,
+    Value<DateTime>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return VisitValuesCompanion(
+      visitId: visitId ?? this.visitId,
+      slotId: slotId ?? this.slotId,
+      kind: kind ?? this.kind,
+      number: number ?? this.number,
+      code: code ?? this.code,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (visitId.present) {
+      map['visit_id'] = Variable<String>(visitId.value);
+    }
+    if (slotId.present) {
+      map['slot_id'] = Variable<String>(slotId.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $VisitValuesTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (number.present) {
+      map['number'] = Variable<double>(number.value);
+    }
+    if (code.present) {
+      map['code'] = Variable<String>(code.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VisitValuesCompanion(')
+          ..write('visitId: $visitId, ')
+          ..write('slotId: $slotId, ')
+          ..write('kind: $kind, ')
+          ..write('number: $number, ')
+          ..write('code: $code, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $PatientsTable patients = $PatientsTable(this);
   late final $WoundsTable wounds = $WoundsTable(this);
   late final $VisitsTable visits = $VisitsTable(this);
+  late final $VisitValuesTable visitValues = $VisitValuesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1557,6 +1981,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     patients,
     wounds,
     visits,
+    visitValues,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -1573,6 +1998,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('visits', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('visit_values', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -2437,6 +2869,24 @@ final class $$VisitsTableReferences
       manager.$state.copyWith(prefetchedData: [item]),
     );
   }
+
+  static MultiTypedResultKey<$VisitValuesTable, List<VisitValueRow>>
+  _visitValuesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.visitValues,
+    aliasName: 'visits__id__visit_values__visit_id',
+  );
+
+  $$VisitValuesTableProcessedTableManager get visitValuesRefs {
+    final manager = $$VisitValuesTableTableManager(
+      $_db,
+      $_db.visitValues,
+    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_visitValuesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$VisitsTableFilterComposer
@@ -2500,6 +2950,31 @@ class $$VisitsTableFilterComposer
           ),
     );
     return composer;
+  }
+
+  Expression<bool> visitValuesRefs(
+    Expression<bool> Function($$VisitValuesTableFilterComposer f) f,
+  ) {
+    final $$VisitValuesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.visitValues,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitValuesTableFilterComposer(
+            $db: $db,
+            $table: $db.visitValues,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
   }
 }
 
@@ -2621,6 +3096,31 @@ class $$VisitsTableAnnotationComposer
     );
     return composer;
   }
+
+  Expression<T> visitValuesRefs<T extends Object>(
+    Expression<T> Function($$VisitValuesTableAnnotationComposer a) f,
+  ) {
+    final $$VisitValuesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.visitValues,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitValuesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.visitValues,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$VisitsTableTableManager
@@ -2636,7 +3136,7 @@ class $$VisitsTableTableManager
           $$VisitsTableUpdateCompanionBuilder,
           (VisitRow, $$VisitsTableReferences),
           VisitRow,
-          PrefetchHooks Function({bool woundId})
+          PrefetchHooks Function({bool woundId, bool visitValuesRefs})
         > {
   $$VisitsTableTableManager(_$AppDatabase db, $VisitsTable table)
     : super(
@@ -2695,10 +3195,10 @@ class $$VisitsTableTableManager
                     (e.readTable(table), $$VisitsTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({woundId = false}) {
+          prefetchHooksCallback: ({woundId = false, visitValuesRefs = false}) {
             return PrefetchHooks(
               db: db,
-              explicitlyWatchedTables: [],
+              explicitlyWatchedTables: [if (visitValuesRefs) db.visitValues],
               addJoins:
                   <
                     T extends TableManagerState<
@@ -2732,7 +3232,26 @@ class $$VisitsTableTableManager
                     return state;
                   },
               getPrefetchedDataCallback: (items) async {
-                return [];
+                return [
+                  if (visitValuesRefs)
+                    await $_getPrefetchedData<
+                      VisitRow,
+                      $VisitsTable,
+                      VisitValueRow
+                    >(
+                      currentTable: table,
+                      referencedTable: $$VisitsTableReferences
+                          ._visitValuesRefsTable(db),
+                      managerFromTypedResult: (p0) => $$VisitsTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).visitValuesRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.visitId == item.id),
+                      typedResults: items,
+                    ),
+                ];
               },
             );
           },
@@ -2752,7 +3271,344 @@ typedef $$VisitsTableProcessedTableManager =
       $$VisitsTableUpdateCompanionBuilder,
       (VisitRow, $$VisitsTableReferences),
       VisitRow,
-      PrefetchHooks Function({bool woundId})
+      PrefetchHooks Function({bool woundId, bool visitValuesRefs})
+    >;
+typedef $$VisitValuesTableCreateCompanionBuilder =
+    VisitValuesCompanion Function({
+      required String visitId,
+      required String slotId,
+      required StoredValueKind kind,
+      Value<double?> number,
+      Value<String?> code,
+      required DateTime updatedAt,
+      Value<int> rowid,
+    });
+typedef $$VisitValuesTableUpdateCompanionBuilder =
+    VisitValuesCompanion Function({
+      Value<String> visitId,
+      Value<String> slotId,
+      Value<StoredValueKind> kind,
+      Value<double?> number,
+      Value<String?> code,
+      Value<DateTime> updatedAt,
+      Value<int> rowid,
+    });
+
+final class $$VisitValuesTableReferences
+    extends BaseReferences<_$AppDatabase, $VisitValuesTable, VisitValueRow> {
+  $$VisitValuesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $VisitsTable _visitIdTable(_$AppDatabase db) =>
+      db.visits.createAlias('visit_values__visit_id__visits__id');
+
+  $$VisitsTableProcessedTableManager get visitId {
+    final $_column = $_itemColumn<String>('visit_id')!;
+
+    final manager = $$VisitsTableTableManager(
+      $_db,
+      $_db.visits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$VisitValuesTableFilterComposer
+    extends Composer<_$AppDatabase, $VisitValuesTable> {
+  $$VisitValuesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get slotId => $composableBuilder(
+    column: $table.slotId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<StoredValueKind, StoredValueKind, String>
+  get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<double> get number => $composableBuilder(
+    column: $table.number,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$VisitsTableFilterComposer get visitId {
+    final $$VisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VisitValuesTableOrderingComposer
+    extends Composer<_$AppDatabase, $VisitValuesTable> {
+  $$VisitValuesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get slotId => $composableBuilder(
+    column: $table.slotId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get number => $composableBuilder(
+    column: $table.number,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get code => $composableBuilder(
+    column: $table.code,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$VisitsTableOrderingComposer get visitId {
+    final $$VisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VisitValuesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VisitValuesTable> {
+  $$VisitValuesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get slotId =>
+      $composableBuilder(column: $table.slotId, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<StoredValueKind, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<double> get number =>
+      $composableBuilder(column: $table.number, builder: (column) => column);
+
+  GeneratedColumn<String> get code =>
+      $composableBuilder(column: $table.code, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  $$VisitsTableAnnotationComposer get visitId {
+    final $$VisitsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VisitValuesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VisitValuesTable,
+          VisitValueRow,
+          $$VisitValuesTableFilterComposer,
+          $$VisitValuesTableOrderingComposer,
+          $$VisitValuesTableAnnotationComposer,
+          $$VisitValuesTableCreateCompanionBuilder,
+          $$VisitValuesTableUpdateCompanionBuilder,
+          (VisitValueRow, $$VisitValuesTableReferences),
+          VisitValueRow,
+          PrefetchHooks Function({bool visitId})
+        > {
+  $$VisitValuesTableTableManager(_$AppDatabase db, $VisitValuesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VisitValuesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VisitValuesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VisitValuesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> visitId = const Value.absent(),
+                Value<String> slotId = const Value.absent(),
+                Value<StoredValueKind> kind = const Value.absent(),
+                Value<double?> number = const Value.absent(),
+                Value<String?> code = const Value.absent(),
+                Value<DateTime> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VisitValuesCompanion(
+                visitId: visitId,
+                slotId: slotId,
+                kind: kind,
+                number: number,
+                code: code,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String visitId,
+                required String slotId,
+                required StoredValueKind kind,
+                Value<double?> number = const Value.absent(),
+                Value<String?> code = const Value.absent(),
+                required DateTime updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => VisitValuesCompanion.insert(
+                visitId: visitId,
+                slotId: slotId,
+                kind: kind,
+                number: number,
+                code: code,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$VisitValuesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({visitId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (visitId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.visitId,
+                                referencedTable: $$VisitValuesTableReferences
+                                    ._visitIdTable(db),
+                                referencedColumn: $$VisitValuesTableReferences
+                                    ._visitIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$VisitValuesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VisitValuesTable,
+      VisitValueRow,
+      $$VisitValuesTableFilterComposer,
+      $$VisitValuesTableOrderingComposer,
+      $$VisitValuesTableAnnotationComposer,
+      $$VisitValuesTableCreateCompanionBuilder,
+      $$VisitValuesTableUpdateCompanionBuilder,
+      (VisitValueRow, $$VisitValuesTableReferences),
+      VisitValueRow,
+      PrefetchHooks Function({bool visitId})
     >;
 
 class $AppDatabaseManager {
@@ -2764,4 +3620,6 @@ class $AppDatabaseManager {
       $$WoundsTableTableManager(_db, _db.wounds);
   $$VisitsTableTableManager get visits =>
       $$VisitsTableTableManager(_db, _db.visits);
+  $$VisitValuesTableTableManager get visitValues =>
+      $$VisitValuesTableTableManager(_db, _db.visitValues);
 }
