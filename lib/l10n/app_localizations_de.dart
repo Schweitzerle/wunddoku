@@ -241,4 +241,45 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get cardsTitle => 'Befund erfassen';
+
+  @override
+  String get cardsWoundBed => 'Wundgrund';
+
+  @override
+  String get cardsMeasurements => 'Maße';
+
+  @override
+  String get cardsExudation => 'Exsudation';
+
+  @override
+  String cardsTissueRemainder(int percent) {
+    return '$percent % nicht vergeben';
+  }
+
+  @override
+  String cardsTissueOver(Object percent) {
+    return '$percent % zu viel vergeben';
+  }
+
+  @override
+  String get cardsTissueComplete => 'Vollständig verteilt';
+
+  @override
+  String cardsIncrease(String field) {
+    return '$field erhöhen';
+  }
+
+  @override
+  String cardsDecrease(String field) {
+    return '$field verringern';
+  }
+
+  @override
+  String get cardsNotEnteredShort => '—';
+
+  @override
+  String get cardsDone => 'Fertig';
 }

@@ -87,7 +87,10 @@ class _CaptureScreenState extends State<CaptureScreen> {
             state: state,
             onStop: _toggleRecording,
           ),
-          _ => _Idle(onStart: _toggleRecording),
+          _ => _Idle(
+            onStart: _toggleRecording,
+            onUseCards: widget.onUseCards,
+          ),
         },
       ),
     );
@@ -184,9 +187,16 @@ class _PrimaryCaptureAction extends StatelessWidget {
 }
 
 class _Idle extends StatelessWidget {
-  const _Idle({required this.onStart});
+  const _Idle({required this.onStart, required this.onUseCards});
 
   final VoidCallback onStart;
+
+  /// The path without speech, offered here and not only after a refusal.
+  ///
+  /// Speech is the shortcut, never the only way (`23-a11y.md`): the patient
+  /// may not want to be recorded, the room may be too loud, or three taps may
+  /// simply be faster than a sentence.
+  final VoidCallback? onUseCards;
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +216,15 @@ class _Idle extends StatelessWidget {
         _Example(text: l10n.captureExampleOne),
         SizedBox(height: spacing.s8),
         _Example(text: l10n.captureExampleTwo),
+        SizedBox(height: spacing.s16),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: onUseCards,
+            icon: const Icon(Icons.checklist),
+            label: Text(l10n.captureUseCards),
+          ),
+        ),
       ],
     );
   }

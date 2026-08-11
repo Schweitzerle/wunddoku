@@ -284,5 +284,64 @@
   "confirmationNeedsDecision": "{count, plural, =1{1 Wert braucht dich} other{{count} Werte brauchen dich}}",
   "@confirmationNeedsDecision": {
     "description": "Anker am Kopf der Bestätigungsansicht: wie viele Werte noch eine Entscheidung oder einen Blick brauchen. Wichtigste Orientierung des Screens."
+  },
+  "cardsTitle": "Befund erfassen",
+  "@cardsTitle": {
+    "description": "Titel des Kartenmodus — der Erfassung ohne Sprache."
+  },
+  "cardsWoundBed": "Wundgrund",
+  "@cardsWoundBed": {
+    "description": "Überschrift der Karte für die Gewebeanteile am Wundgrund. Fachbegriff des Kunden."
+  },
+  "cardsMeasurements": "Maße",
+  "@cardsMeasurements": {
+    "description": "Überschrift der Karte für Länge, Breite und Tiefe."
+  },
+  "cardsExudation": "Exsudation",
+  "@cardsExudation": {
+    "description": "Überschrift der Karte für Menge und Art des Exsudats."
+  },
+  "cardsTissueRemainder": "{percent} % nicht vergeben",
+  "@cardsTissueRemainder": {
+    "description": "Restanzeige über den Gewebeanteilen. Der Wundgrund ist ein Ganzes; angezeigt wird, was noch zu verteilen ist, statt einen Fehler zu melden.",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "cardsTissueOver": "{percent} % zu viel vergeben",
+  "@cardsTissueOver": {
+    "description": "Restanzeige, wenn mehr als 100 % verteilt wurden."
+  },
+  "cardsTissueComplete": "Vollständig verteilt",
+  "@cardsTissueComplete": {
+    "description": "Restanzeige, wenn die Gewebeanteile genau 100 % ergeben."
+  },
+  "cardsIncrease": "{field} erhöhen",
+  "@cardsIncrease": {
+    "description": "Semantik-Label des Plus-Knopfes an einem Wert.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "cardsDecrease": "{field} verringern",
+  "@cardsDecrease": {
+    "description": "Semantik-Label des Minus-Knopfes an einem Wert.",
+    "placeholders": {
+      "field": {
+        "type": "String"
+      }
+    }
+  },
+  "cardsNotEnteredShort": "—",
+  "@cardsNotEnteredShort": {
+    "description": "Platzhalter anstelle eines Werts, der noch nicht erfasst wurde. Bewusst leer statt null."
+  },
+  "cardsDone": "Fertig",
+  "@cardsDone": {
+    "description": "Primäre Aktion des Kartenmodus: die erfassten Werte übernehmen."
   }
 }

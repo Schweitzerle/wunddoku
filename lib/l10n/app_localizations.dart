@@ -447,6 +447,72 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, =1{1 Wert braucht dich} other{{count} Werte brauchen dich}}'**
   String confirmationNeedsDecision(num count);
+
+  /// Titel des Kartenmodus — der Erfassung ohne Sprache.
+  ///
+  /// In de, this message translates to:
+  /// **'Befund erfassen'**
+  String get cardsTitle;
+
+  /// Überschrift der Karte für die Gewebeanteile am Wundgrund. Fachbegriff des Kunden.
+  ///
+  /// In de, this message translates to:
+  /// **'Wundgrund'**
+  String get cardsWoundBed;
+
+  /// Überschrift der Karte für Länge, Breite und Tiefe.
+  ///
+  /// In de, this message translates to:
+  /// **'Maße'**
+  String get cardsMeasurements;
+
+  /// Überschrift der Karte für Menge und Art des Exsudats.
+  ///
+  /// In de, this message translates to:
+  /// **'Exsudation'**
+  String get cardsExudation;
+
+  /// Restanzeige über den Gewebeanteilen. Der Wundgrund ist ein Ganzes; angezeigt wird, was noch zu verteilen ist, statt einen Fehler zu melden.
+  ///
+  /// In de, this message translates to:
+  /// **'{percent} % nicht vergeben'**
+  String cardsTissueRemainder(int percent);
+
+  /// Restanzeige, wenn mehr als 100 % verteilt wurden.
+  ///
+  /// In de, this message translates to:
+  /// **'{percent} % zu viel vergeben'**
+  String cardsTissueOver(Object percent);
+
+  /// Restanzeige, wenn die Gewebeanteile genau 100 % ergeben.
+  ///
+  /// In de, this message translates to:
+  /// **'Vollständig verteilt'**
+  String get cardsTissueComplete;
+
+  /// Semantik-Label des Plus-Knopfes an einem Wert.
+  ///
+  /// In de, this message translates to:
+  /// **'{field} erhöhen'**
+  String cardsIncrease(String field);
+
+  /// Semantik-Label des Minus-Knopfes an einem Wert.
+  ///
+  /// In de, this message translates to:
+  /// **'{field} verringern'**
+  String cardsDecrease(String field);
+
+  /// Platzhalter anstelle eines Werts, der noch nicht erfasst wurde. Bewusst leer statt null.
+  ///
+  /// In de, this message translates to:
+  /// **'—'**
+  String get cardsNotEnteredShort;
+
+  /// Primäre Aktion des Kartenmodus: die erfassten Werte übernehmen.
+  ///
+  /// In de, this message translates to:
+  /// **'Fertig'**
+  String get cardsDone;
 }
 
 class _AppLocalizationsDelegate

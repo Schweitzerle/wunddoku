@@ -41,6 +41,18 @@ abstract final class FieldPresentation {
         ExudateKindProposal(:final kind) => _kind(l10n, kind),
       };
 
+  /// A length in centimetres, as the nurse reads it.
+  static String centimetres(AppLocalizations l10n, double value) =>
+      l10n.valueCentimetres(_formatCentimetres(value));
+
+  /// The exudate amount in the customer's wording.
+  static String exudateAmount(AppLocalizations l10n, ExudateAmount amount) =>
+      _amount(l10n, amount);
+
+  /// The exudate kind in the customer's wording.
+  static String exudateKind(AppLocalizations l10n, ExudateKind kind) =>
+      _kind(l10n, kind);
+
   /// German decimal notation, without a trailing zero on whole numbers.
   ///
   /// `3.5` reads as `3,5`, `2.0` as `2` — a measurement written `2,0 cm`

@@ -6,10 +6,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data/capture/audio_recorder.dart';
 import 'data/capture/speech_recognizer.dart';
 import 'features/besuch/ui/capture_screen.dart';
+import 'features/besuch/ui/card_entry_screen.dart';
+import 'features/besuch/ui/card_entry_view_model.dart';
 import 'features/besuch/ui/capture_view_model.dart';
 import 'features/besuch/ui/confirmation_screen.dart';
 import 'features/besuch/ui/confirmation_view_model.dart';
 import 'features/besuch/ui/field_presentation.dart';
+import 'domain/model/visit_draft.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -68,6 +71,9 @@ class VisitCorridor extends StatefulWidget {
 class _VisitCorridorState extends State<VisitCorridor> {
   late final CaptureViewModel _capture;
 
+  /// The values confirmed so far, whichever way they were entered.
+  VisitDraft _draft = const VisitDraft();
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +93,29 @@ class _VisitCorridorState extends State<VisitCorridor> {
     super.dispose();
   }
 
+  /// The equal path without speech.
+  ///
+  /// Reachable from every dead end of the spoken path — a refused microphone,
+  /// an unreachable recogniser — and from the idle screen itself, because
+  /// sometimes three taps are simply faster than a sentence.
+  Future<void> _openCards() async {
+    final entry = CardEntryViewModel(draft: _draft);
+    final result = await Navigator.of(context).push<VisitDraft>(
+      MaterialPageRoute<VisitDraft>(
+        builder: (_) => CardEntryScreen(
+          viewModel: entry,
+          onDone: (draft) => Navigator.of(context).pop(draft),
+        ),
+      ),
+    );
+    entry.dispose();
+
+    if (result != null && mounted) {
+      setState(() => _draft = result);
+      _capture.reset();
+    }
+  }
+
   Future<void> _openConfirmation() async {
     final state = _capture.state;
     if (state is! CaptureDone) return;
@@ -98,7 +127,15 @@ class _VisitCorridorState extends State<VisitCorridor> {
             expectedSlots: FieldPresentation.woundBedSlots,
             result: state.result,
           ),
-          onAccept: () => Navigator.of(context).pop(),
+          onAccept: () {
+            // Accepted values join whatever the card mode already holds.
+            setState(
+              () => _draft = _draft.withProposals(
+                state.result.proposals,
+              ),
+            );
+            Navigator.of(context).pop();
+          },
         ),
       ),
     );
@@ -108,6 +145,9 @@ class _VisitCorridorState extends State<VisitCorridor> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      CaptureScreen(viewModel: _capture, onInterpreted: _openConfirmation);
+  Widget build(BuildContext context) => CaptureScreen(
+    viewModel: _capture,
+    onInterpreted: _openConfirmation,
+    onUseCards: _openCards,
+  );
 }
