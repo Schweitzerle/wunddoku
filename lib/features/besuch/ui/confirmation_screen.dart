@@ -37,10 +37,7 @@ class ConfirmationScreen extends StatelessWidget {
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) => viewModel.hasRecording
-            ? _ConfirmationBody(
-                viewModel: viewModel,
-                onAccept: onAccept,
-              )
+            ? _ConfirmationBody(viewModel: viewModel, onAccept: onAccept)
             : _EmptyState(onBackToCapture: onBackToCapture),
       ),
     );

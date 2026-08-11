@@ -120,10 +120,7 @@ void main() {
       final sheet = tester.widget<ProvenanceSheet>(
         find.byType(ProvenanceSheet),
       );
-      expect(
-        sheet.span!.textIn(sheet.transcript),
-        'Länge drei Komma fünf',
-      );
+      expect(sheet.span!.textIn(sheet.transcript), 'Länge drei Komma fünf');
     });
 
     testWidgets('the summary counts what is settled, open and missing', (

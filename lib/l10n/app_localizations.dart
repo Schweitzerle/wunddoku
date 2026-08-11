@@ -327,6 +327,96 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Schließen'**
   String get close;
+
+  /// Titel des Aufnahme-Screens, auf dem der Befund am offenen Verband diktiert wird.
+  ///
+  /// In de, this message translates to:
+  /// **'Befund sprechen'**
+  String get captureTitle;
+
+  /// Erklärender Satz im Leerzustand des Aufnahme-Screens. Sagt, was gesprochen werden kann.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprich Maße, Wundgrund, Exsudat und Schmerz — in beliebiger Reihenfolge.'**
+  String get captureIdleHint;
+
+  /// Erster Beispielsatz im Leerzustand des Aufnahme-Screens. Fachvokabular des Kunden, nicht umformulieren.
+  ///
+  /// In de, this message translates to:
+  /// **'„Länge drei Komma fünf, Breite zwei, Tiefe null Komma fünf.“'**
+  String get captureExampleOne;
+
+  /// Zweiter Beispielsatz im Leerzustand des Aufnahme-Screens.
+  ///
+  /// In de, this message translates to:
+  /// **'„Granulation sechzig Prozent, Fibrin vierzig Prozent. Exsudat gering, serös.“'**
+  String get captureExampleTwo;
+
+  /// Primäre Aktion des Aufnahme-Screens. Großer Knopf im unteren Bereich, einhändig erreichbar.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme starten'**
+  String get captureStart;
+
+  /// Beendet die laufende Aufnahme.
+  ///
+  /// In de, this message translates to:
+  /// **'Fertig'**
+  String get captureStop;
+
+  /// Zustandsanzeige, solange das Mikrofon offen ist. Muss unübersehbar sein, weil in fremden Wohnungen Dritte mithören.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme läuft'**
+  String get captureRecording;
+
+  /// Mitlaufende Aufnahmedauer, Minuten und Sekunden zweistellig.
+  ///
+  /// In de, this message translates to:
+  /// **'{minutes}:{seconds}'**
+  String captureElapsed(String minutes, String seconds);
+
+  /// Zustand zwischen dem Ende der Aufnahme und der Bestätigungsansicht.
+  ///
+  /// In de, this message translates to:
+  /// **'Wird ausgewertet …'**
+  String get captureInterpreting;
+
+  /// Hinweis, wenn ohne Netz aufgenommen wurde. Die Aufnahme ist gesichert, die Auswertung kommt später.
+  ///
+  /// In de, this message translates to:
+  /// **'1 Aufnahme wartet auf Auswertung.'**
+  String get captureQueued;
+
+  /// Erklärung unter dem Warteschlangen-Hinweis: was jetzt möglich ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Aufnahme ist gespeichert. Du kannst den Befund jetzt über die Karten erfassen.'**
+  String get captureQueuedHint;
+
+  /// Überschrift, wenn die Mikrofonberechtigung fehlt. Bewusst kein Fehlerton — der Kartenmodus ist gleichwertig.
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Mikrofon geht es auch.'**
+  String get captureNoMicrophone;
+
+  /// Erklärt, wofür das Mikrofon gebraucht wird und was ohne es geht. Steht anstelle einer bloßen Berechtigungsmeldung.
+  ///
+  /// In de, this message translates to:
+  /// **'Das Mikrofon nimmt nur auf, während du den Knopf gedrückt hältst — für den Befund am offenen Verband. Ohne Mikrofon erfasst du denselben Befund über die Karten.'**
+  String get captureNoMicrophoneHint;
+
+  /// Aktion, die zum Kartenmodus führt — der gleichwertige Weg ohne Sprache.
+  ///
+  /// In de, this message translates to:
+  /// **'Über Karten erfassen'**
+  String get captureUseCards;
+
+  /// Zwischenstand während der Aufnahme. Blick darauf ist möglich, aber nicht nötig.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0{Noch nichts erkannt} =1{1 Angabe erkannt} other{{count} Angaben erkannt}}'**
+  String captureRecognizedSoFar(int count);
 }
 
 class _AppLocalizationsDelegate

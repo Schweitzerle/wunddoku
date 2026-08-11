@@ -141,4 +141,65 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get close => 'Schließen';
+
+  @override
+  String get captureTitle => 'Befund sprechen';
+
+  @override
+  String get captureIdleHint =>
+      'Sprich Maße, Wundgrund, Exsudat und Schmerz — in beliebiger Reihenfolge.';
+
+  @override
+  String get captureExampleOne =>
+      '„Länge drei Komma fünf, Breite zwei, Tiefe null Komma fünf.“';
+
+  @override
+  String get captureExampleTwo =>
+      '„Granulation sechzig Prozent, Fibrin vierzig Prozent. Exsudat gering, serös.“';
+
+  @override
+  String get captureStart => 'Aufnahme starten';
+
+  @override
+  String get captureStop => 'Fertig';
+
+  @override
+  String get captureRecording => 'Aufnahme läuft';
+
+  @override
+  String captureElapsed(String minutes, String seconds) {
+    return '$minutes:$seconds';
+  }
+
+  @override
+  String get captureInterpreting => 'Wird ausgewertet …';
+
+  @override
+  String get captureQueued => '1 Aufnahme wartet auf Auswertung.';
+
+  @override
+  String get captureQueuedHint =>
+      'Die Aufnahme ist gespeichert. Du kannst den Befund jetzt über die Karten erfassen.';
+
+  @override
+  String get captureNoMicrophone => 'Ohne Mikrofon geht es auch.';
+
+  @override
+  String get captureNoMicrophoneHint =>
+      'Das Mikrofon nimmt nur auf, während du den Knopf gedrückt hältst — für den Befund am offenen Verband. Ohne Mikrofon erfasst du denselben Befund über die Karten.';
+
+  @override
+  String get captureUseCards => 'Über Karten erfassen';
+
+  @override
+  String captureRecognizedSoFar(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Angaben erkannt',
+      one: '1 Angabe erkannt',
+      zero: 'Noch nichts erkannt',
+    );
+    return '$_temp0';
+  }
 }

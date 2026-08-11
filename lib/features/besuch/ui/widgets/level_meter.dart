@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+
+import '../../../../shared/theme/app_theme.dart';
+
+/// Input level of the open microphone as a row of bars.
+///
+/// Large enough to register from arm's length with a glance, because that is
+/// all the attention it will get. It is decoration for a screen reader — the
+/// recording state itself is announced by the surrounding live region — so it
+/// is excluded from semantics rather than read out as a number.
+class LevelMeter extends StatelessWidget {
+  const LevelMeter({required this.level, this.barCount = 24, super.key});
+
+  /// Input level between 0 and 1.
+  final double level;
+
+  final int barCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final status = context.statusColors;
+    final spacing = context.spacing;
+    final lit = (level.clamp(0.0, 1.0) * barCount).round();
+
+    return ExcludeSemantics(
+      child: SizedBox(
+        height: spacing.s48,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            for (var i = 0; i < barCount; i++)
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 1.5),
+                  child: AnimatedContainer(
+                    duration: context.motion.kurz,
+                    curve: context.motion.kurzCurve,
+                    height: i < lit ? spacing.s48 : spacing.s8,
+                    decoration: BoxDecoration(
+                      color: i < lit
+                          ? status.entscheiden
+                          : theme.colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(spacing.r4),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
