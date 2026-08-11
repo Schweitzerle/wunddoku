@@ -21,6 +21,7 @@ class CaptureScreen extends StatefulWidget {
     this.onUseCards,
     this.onTakePhoto,
     this.onFinishVisit,
+    this.onShowHistory,
     super.key,
   });
 
@@ -31,6 +32,9 @@ class CaptureScreen extends StatefulWidget {
 
   /// Called for the equal path without speech.
   final VoidCallback? onUseCards;
+
+  /// Called to show the visits recorded so far.
+  final VoidCallback? onShowHistory;
 
   /// Called to close the visit.
   ///
@@ -115,6 +119,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             onStart: _toggleRecording,
             onUseCards: widget.onUseCards,
             onTakePhoto: widget.onTakePhoto,
+            onShowHistory: widget.onShowHistory,
           ),
         },
       ),
@@ -216,6 +221,7 @@ class _Idle extends StatelessWidget {
     required this.onStart,
     required this.onUseCards,
     required this.onTakePhoto,
+    required this.onShowHistory,
   });
 
   final VoidCallback onStart;
@@ -229,6 +235,12 @@ class _Idle extends StatelessWidget {
 
   /// Photographing the wound, the other half of phase A.
   final VoidCallback? onTakePhoto;
+
+  /// The course so far.
+  ///
+  /// Reachable before the recording on purpose: what the wound looked like a
+  /// week ago is what the nurse compares against while the dressing is off.
+  final VoidCallback? onShowHistory;
 
   @override
   Widget build(BuildContext context) {
@@ -263,6 +275,14 @@ class _Idle extends StatelessWidget {
             onPressed: onTakePhoto,
             icon: const Icon(Icons.photo_camera_outlined),
             label: Text(l10n.captureTakePhoto),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: onShowHistory,
+            icon: const Icon(Icons.timeline),
+            label: Text(l10n.captureShowHistory),
           ),
         ),
       ],

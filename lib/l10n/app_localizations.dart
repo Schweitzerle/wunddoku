@@ -753,6 +753,102 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Besuch abschließen'**
   String get captureFinishVisit;
+
+  /// Titel der Wundakte: alle Besuche dieser Wunde in ihrer zeitlichen Folge.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get historyTitle;
+
+  /// Leerzustand der Wundakte.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch kein Besuch dokumentiert.'**
+  String get historyEmpty;
+
+  /// Erklärung im Leerzustand: wofür der Verlauf da ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Besuch hält Maße, Wundgrund und ein Foto fest. Ab dem zweiten Besuch zeigt der Verlauf, ob die Wunde kleiner wird.'**
+  String get historyEmptyHint;
+
+  /// Hinweis, wenn erst ein Besuch dokumentiert ist. Aus einem Punkt wird keine Kurve gezeichnet.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Vergleich entsteht ab dem zweiten Besuch.'**
+  String get historySingleHint;
+
+  /// Datum eines Besuchs in der Verlaufsliste.
+  ///
+  /// In de, this message translates to:
+  /// **'{date}'**
+  String historyDate(DateTime date);
+
+  /// Bezeichnung der Wundfläche in der Verlaufsliste und über der Kurve.
+  ///
+  /// In de, this message translates to:
+  /// **'Fläche'**
+  String get historyAreaLabel;
+
+  /// Die Wundfläche in Quadratzentimetern.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} cm²'**
+  String historyArea(num value);
+
+  /// Sagt, wie die Fläche entsteht. Sie ist kein gemessener Wert, und das muss dranstehen.
+  ///
+  /// In de, this message translates to:
+  /// **'Fläche als Näherung: Länge × Breite.'**
+  String get historyAreaApprox;
+
+  /// Veränderung der Fläche gegenüber dem vorherigen Besuch; das Vorzeichen steckt in der Zahl.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} cm² zum vorigen Besuch'**
+  String historyAreaChange(num value);
+
+  /// Die Wundtiefe in Zentimetern.
+  ///
+  /// In de, this message translates to:
+  /// **'Tiefe {value} cm'**
+  String historyDepth(num value);
+
+  /// Zeile für einen Besuch ohne Maße. Bewusst leer statt geschätzt.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Maße erfasst'**
+  String get historyNoMeasurements;
+
+  /// Kennzeichnet den Besuch, an dem gerade gearbeitet wird.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch offen'**
+  String get historyVisitOpen;
+
+  /// Kennzeichnet einen Besuch, der bewusst unvollständig abgeschlossen wurde.
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Lücken abgeschlossen'**
+  String get historyVisitWithGaps;
+
+  /// Platzhalter, wenn die Bilddatei fehlt oder nicht entschlüsselt werden kann. Die übrigen Daten des Besuchs bleiben nutzbar.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto nicht lesbar'**
+  String get historyPhotoMissing;
+
+  /// Platzhalter für einen Besuch ohne Foto in der Verlaufsliste.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Foto'**
+  String get historyNoPhoto;
+
+  /// Aktion im Aufnahme-Screen: die bisherigen Besuche dieser Wunde ansehen.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get captureShowHistory;
 }
 
 class _AppLocalizationsDelegate

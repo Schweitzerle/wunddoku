@@ -7,6 +7,7 @@ import '../domain/catalog/exudation.dart';
 import '../domain/model/ids.dart';
 import '../domain/model/image_marking.dart';
 import '../domain/model/visit_draft.dart';
+import '../domain/model/wound_history.dart';
 import 'db/app_database.dart';
 import 'media/media_store.dart';
 
@@ -254,6 +255,54 @@ class VisitRepository {
       marking: marking,
       takenAt: row.takenAt,
     );
+  }
+
+  /// Every visit of [wound] with its values and photo handles, oldest first.
+  ///
+  /// One query per table rather than per visit: a wound documented weekly for
+  /// a year is fifty visits, and a round trip each would be felt on the
+  /// phones in the field.
+  Future<WoundHistory> historyOf(WoundId wound) async {
+    final visits =
+        await (_db.select(_db.visits)
+              ..where((v) => v.woundId.equals(wound.value))
+              ..orderBy([(v) => OrderingTerm.asc(v.startedAt)]))
+            .get();
+    if (visits.isEmpty) return const WoundHistory([]);
+
+    final ids = [for (final visit in visits) visit.id];
+    final values = await (_db.select(
+      _db.visitValues,
+    )..where((v) => v.visitId.isIn(ids))).get();
+    final photos =
+        await (_db.select(_db.visitPhotos)
+              ..where((p) => p.visitId.isIn(ids))
+              ..orderBy([(p) => OrderingTerm.asc(p.takenAt)]))
+            .get();
+
+    final valuesByVisit = <String, Map<String, VisitValue>>{};
+    for (final row in values) {
+      final value = _decode(row);
+      if (value == null) continue;
+      valuesByVisit.putIfAbsent(row.visitId, () => {})[row.slotId] = value;
+    }
+
+    // The last photo of a visit is the one that counts: an earlier one was
+    // retaken, and a retake is a correction, not a second finding.
+    final photoByVisit = {for (final row in photos) row.visitId: row};
+
+    return WoundHistory([
+      for (final visit in visits)
+        HistoryEntry(
+          visit: VisitId(visit.id),
+          recordedAt: visit.completedAt ?? visit.startedAt,
+          draft: VisitDraft(values: valuesByVisit[visit.id] ?? const {}),
+          closedWithGaps: visit.status == VisitStatus.completeWithGaps,
+          isOpen: visit.status == VisitStatus.draft,
+          photoRef: photoByVisit[visit.id]?.originalRef,
+          markedPhotoRef: photoByVisit[visit.id]?.markedRef,
+        ),
+    ]);
   }
 
   /// Stores the verbatim transcript with the visit.

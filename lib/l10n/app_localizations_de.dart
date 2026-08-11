@@ -437,4 +437,77 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get captureFinishVisit => 'Besuch abschließen';
+
+  @override
+  String get historyTitle => 'Verlauf';
+
+  @override
+  String get historyEmpty => 'Noch kein Besuch dokumentiert.';
+
+  @override
+  String get historyEmptyHint =>
+      'Ein Besuch hält Maße, Wundgrund und ein Foto fest. Ab dem zweiten Besuch zeigt der Verlauf, ob die Wunde kleiner wird.';
+
+  @override
+  String get historySingleHint =>
+      'Der Vergleich entsteht ab dem zweiten Besuch.';
+
+  @override
+  String historyDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return '$dateString';
+  }
+
+  @override
+  String get historyAreaLabel => 'Fläche';
+
+  @override
+  String historyArea(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return '$valueString cm²';
+  }
+
+  @override
+  String get historyAreaApprox => 'Fläche als Näherung: Länge × Breite.';
+
+  @override
+  String historyAreaChange(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return '$valueString cm² zum vorigen Besuch';
+  }
+
+  @override
+  String historyDepth(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return 'Tiefe $valueString cm';
+  }
+
+  @override
+  String get historyNoMeasurements => 'Keine Maße erfasst';
+
+  @override
+  String get historyVisitOpen => 'Besuch offen';
+
+  @override
+  String get historyVisitWithGaps => 'Mit Lücken abgeschlossen';
+
+  @override
+  String get historyPhotoMissing => 'Foto nicht lesbar';
+
+  @override
+  String get historyNoPhoto => 'Kein Foto';
+
+  @override
+  String get captureShowHistory => 'Verlauf';
 }

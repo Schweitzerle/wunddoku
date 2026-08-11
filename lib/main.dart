@@ -25,6 +25,7 @@ import 'features/besuch/ui/confirmation_view_model.dart';
 import 'features/besuch/ui/field_presentation.dart';
 import 'features/besuch/ui/marking_screen.dart';
 import 'features/besuch/ui/photo_screen.dart';
+import 'features/verlauf/ui/history_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -268,6 +269,24 @@ class _VisitCorridorState extends State<VisitCorridor> {
     if (mounted) _capture.reset();
   }
 
+  /// Shows the visits recorded for this wound.
+  ///
+  /// Read before the dressing comes off: the course is what says whether the
+  /// treatment works, and a single finding cannot.
+  Future<void> _showHistory() async {
+    final history = await _visits.historyOf(widget.dependencies.demoWound);
+    if (!mounted) return;
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => HistoryScreen(
+          history: history,
+          loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
+        ),
+      ),
+    );
+  }
+
   /// Closes the visit, after showing what travels with it.
   ///
   /// The gaps are named here and never block: a nurse who cannot close leaves
@@ -405,5 +424,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     onUseCards: _visit == null ? null : _openCards,
     onTakePhoto: _visit == null ? null : _takePhoto,
     onFinishVisit: _visit == null ? null : _finishVisit,
+    onShowHistory: _visit == null ? null : _showHistory,
   );
 }

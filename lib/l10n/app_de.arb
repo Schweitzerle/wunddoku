@@ -528,5 +528,93 @@
   "captureFinishVisit": "Besuch abschließen",
   "@captureFinishVisit": {
     "description": "Aktion im Aufnahme-Screen: zum Abschluss wechseln, wenn alles erfasst ist."
+  },
+  "historyTitle": "Verlauf",
+  "@historyTitle": {
+    "description": "Titel der Wundakte: alle Besuche dieser Wunde in ihrer zeitlichen Folge."
+  },
+  "historyEmpty": "Noch kein Besuch dokumentiert.",
+  "@historyEmpty": {
+    "description": "Leerzustand der Wundakte."
+  },
+  "historyEmptyHint": "Ein Besuch hält Maße, Wundgrund und ein Foto fest. Ab dem zweiten Besuch zeigt der Verlauf, ob die Wunde kleiner wird.",
+  "@historyEmptyHint": {
+    "description": "Erklärung im Leerzustand: wofür der Verlauf da ist."
+  },
+  "historySingleHint": "Der Vergleich entsteht ab dem zweiten Besuch.",
+  "@historySingleHint": {
+    "description": "Hinweis, wenn erst ein Besuch dokumentiert ist. Aus einem Punkt wird keine Kurve gezeichnet."
+  },
+  "historyDate": "{date}",
+  "@historyDate": {
+    "description": "Datum eines Besuchs in der Verlaufsliste.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd"
+      }
+    }
+  },
+  "historyAreaLabel": "Fläche",
+  "@historyAreaLabel": {
+    "description": "Bezeichnung der Wundfläche in der Verlaufsliste und über der Kurve."
+  },
+  "historyArea": "{value} cm²",
+  "@historyArea": {
+    "description": "Die Wundfläche in Quadratzentimetern.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "historyAreaApprox": "Fläche als Näherung: Länge × Breite.",
+  "@historyAreaApprox": {
+    "description": "Sagt, wie die Fläche entsteht. Sie ist kein gemessener Wert, und das muss dranstehen."
+  },
+  "historyAreaChange": "{value} cm² zum vorigen Besuch",
+  "@historyAreaChange": {
+    "description": "Veränderung der Fläche gegenüber dem vorherigen Besuch; das Vorzeichen steckt in der Zahl.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "historyDepth": "Tiefe {value} cm",
+  "@historyDepth": {
+    "description": "Die Wundtiefe in Zentimetern.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "historyNoMeasurements": "Keine Maße erfasst",
+  "@historyNoMeasurements": {
+    "description": "Zeile für einen Besuch ohne Maße. Bewusst leer statt geschätzt."
+  },
+  "historyVisitOpen": "Besuch offen",
+  "@historyVisitOpen": {
+    "description": "Kennzeichnet den Besuch, an dem gerade gearbeitet wird."
+  },
+  "historyVisitWithGaps": "Mit Lücken abgeschlossen",
+  "@historyVisitWithGaps": {
+    "description": "Kennzeichnet einen Besuch, der bewusst unvollständig abgeschlossen wurde."
+  },
+  "historyPhotoMissing": "Foto nicht lesbar",
+  "@historyPhotoMissing": {
+    "description": "Platzhalter, wenn die Bilddatei fehlt oder nicht entschlüsselt werden kann. Die übrigen Daten des Besuchs bleiben nutzbar."
+  },
+  "historyNoPhoto": "Kein Foto",
+  "@historyNoPhoto": {
+    "description": "Platzhalter für einen Besuch ohne Foto in der Verlaufsliste."
+  },
+  "captureShowHistory": "Verlauf",
+  "@captureShowHistory": {
+    "description": "Aktion im Aufnahme-Screen: die bisherigen Besuche dieser Wunde ansehen."
   }
 }

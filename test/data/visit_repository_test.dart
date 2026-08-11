@@ -333,4 +333,87 @@ void main() {
       expect(media.files, isEmpty);
     });
   });
+
+  group('history', () {
+    final photo = Uint8List.fromList([1, 2, 3]);
+
+    test('is empty for a wound nobody has visited', () async {
+      final history = await repository.historyOf(wound);
+
+      expect(history.isEmpty, isTrue);
+      expect(history.isComparable, isFalse);
+    });
+
+    test('runs oldest first and carries values and photos', () async {
+      final first = await repository.startVisit(wound);
+      await repository.saveValue(
+        first,
+        'measurement.lengthCm',
+        const CentimetreValue(4),
+      );
+      await repository.saveValue(
+        first,
+        'measurement.widthCm',
+        const CentimetreValue(3),
+      );
+      await repository.savePhoto(first, photo, marked: photo);
+      await repository.completeVisit(first, withGaps: true);
+
+      final second = await repository.startVisit(wound);
+      await repository.saveValue(
+        second,
+        'measurement.lengthCm',
+        const CentimetreValue(3),
+      );
+      await repository.saveValue(
+        second,
+        'measurement.widthCm',
+        const CentimetreValue(2),
+      );
+
+      final history = await repository.historyOf(wound);
+      expect(history.entries.map((e) => e.visit), [first, second]);
+      expect(history.entries.first.areaCm2, 12);
+      expect(history.entries.first.closedWithGaps, isTrue);
+      expect(history.entries.first.markedPhotoRef, isNotNull);
+      expect(history.entries.last.isOpen, isTrue);
+
+      // The number that answers "is it getting better": four square
+      // centimetres less than the visit before.
+      expect(history.areaChangeBefore(history.entries.last), -6);
+    });
+
+    test('a visit without measurements leaves a gap, not a guess', () async {
+      final first = await repository.startVisit(wound);
+      await repository.saveValue(
+        first,
+        'measurement.lengthCm',
+        const CentimetreValue(4),
+      );
+      await repository.saveValue(
+        first,
+        'measurement.widthCm',
+        const CentimetreValue(3),
+      );
+      await repository.completeVisit(first, withGaps: false);
+
+      final second = await repository.startVisit(wound);
+      await repository.completeVisit(second, withGaps: true);
+
+      final history = await repository.historyOf(wound);
+
+      // Interpolating here would draw a measurement nobody took.
+      expect(history.areaSeries, [12, null]);
+      expect(history.areaChangeBefore(history.entries.last), isNull);
+    });
+
+    test('a retaken photo replaces the earlier one in the history', () async {
+      final visit = await repository.startVisit(wound);
+      await repository.savePhoto(visit, photo);
+      final retake = await repository.savePhoto(visit, photo);
+
+      final history = await repository.historyOf(wound);
+      expect(history.entries.single.photoRef, retake.originalRef.name);
+    });
+  });
 }
