@@ -27,12 +27,51 @@ Offen: Kartenmodus, Foto mit Markierung, Verlauf, PDF-Bericht.
 
 ## Nächste drei Schritte
 
-1. Korridor an die Persistenz hängen — Besuch anlegen, Entwurf beim Start
-   laden, beim Abschluss schließen. Das Repository steht, der Korridor
-   benutzt es noch nicht.
-2. Foto mit Markierung und Maßen (Phase A, zweite Hälfte)
+1. Foto mit Markierung und Maßen (Phase A, zweite Hälfte)
+2. Abschluss-Screen: Besuch schließen, Lücken sichtbar machen,
+   `completeVisit` aufrufen — bisher wird kein Besuch geschlossen
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Korridor auf der Datenbank, 2026-08-11)
+
+- `lib/app/bootstrap.dart`: öffnet die verschlüsselte Datenbank mit dem
+  Schlüssel aus dem Keystore und baut die Repositories. Async, deshalb ein
+  Ladezustand in der Hülle.
+- **Wiedereinstieg aus dem Datensatz**, nicht aus dem Navigationsstapel: beim
+  Start wird der unfertige Besuch fortgesetzt, sonst einer angelegt; der
+  Entwurf wird zurückgelesen.
+- Übernommene Vorschläge und das wörtliche Transkript werden durchgeschrieben.
+- **Fehlgeschlagener Start ist bewusst eine Sackgasse.** Wenn der
+  Verschlüsselungs-Selbsttest verweigert, sagt die App das und verweist auf
+  Papier, statt den Korridor zu öffnen — weiterzumachen hieße,
+  Gesundheitsdaten ungeschützt abzulegen.
+- Demo-Patient und -Wunde werden beim ersten Start angelegt (synthetisch),
+  solange es keine Patientenliste gibt.
+- 4 neue Tests, darunter „unfertiger Besuch wird fortgesetzt" und
+  „abgeschlossener Besuch wird nicht wieder aufgenommen". Gesamtlauf
+  **147 grün**.
+
+### Beleg auf dem Gerät
+
+**Unterbrechung überlebt.** Im Kartenmodus Granulation 60 % und Fibrin 20 %
+erfasst, dann `adb shell am force-stop` — kein sauberes Beenden, wie bei
+leerem Akku. Nach dem Neustart steht derselbe Stand da, inklusive
+„20 % nicht vergeben":
+`doc/screenshots/persistenz-vorher.png` und `persistenz-nachher.png`
+(der zweite ist ein Geräte-Screenshot mit Statusleiste, kein Driver-Bild).
+
+**Die Datei ist wirklich verschlüsselt.** Erste 16 Bytes der Datenbank auf
+dem Gerät:
+
+```
+$ adb shell run-as de.paschneider.wunddoku cat app_flutter/wunddoku.sqlite | head -c 16 | xxd
+00000000: 605a d77a 4142 17a1 4fa8 6110 653e 0e5b  `Z.zAB..O.a.e>.[
+```
+
+Unverschlüsselt stünde dort `53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33`
+(„SQLite format 3"). Damit ist die Art.-9-Anforderung nicht nur konfiguriert,
+sondern am Artefakt nachgewiesen.
 
 ## Erledigt (Persistenz des Besuchsentwurfs, 2026-08-11)
 
