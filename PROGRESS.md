@@ -26,16 +26,38 @@ sind durch. Es liegen vor:
   als normalisierte Geometrie, eingebrannte Zweitdatei, verschlüsselte
   Medienablage — auf dem Gerät belegt
 
-Offen: Maße neben dem Foto, Abschluss-Screen, Verlauf, PDF-Bericht.
+- **Abschluss**: Lücken benannt, Abschluss nie gesperrt, Besuch wird als
+  vollständig oder als „mit Lücken" geführt; danach beginnt der nächste Besuch
+
+Offen: Maße neben dem Foto, Verlauf, PDF-Bericht.
 
 ## Nächste drei Schritte
 
-1. Abschluss-Screen: Besuch schließen, Lücken sichtbar machen,
-   `completeVisit` aufrufen — bisher wird kein Besuch geschlossen
-2. Verlauf über Besuche: Fotos und Maße nebeneinander, Markierungen
+1. Verlauf über Besuche: Fotos und Maße nebeneinander, Markierungen
    übereinander — der Teil, der den klinischen Wert trägt
+2. PDF-Bericht für den Büro-Nachprozess (`pdf` + `printing`, in
+   `DECISIONS.md` schon gewählt)
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Abschluss des Besuchs, 2026-08-11)
+
+- `ClosingSummary` als reine Ableitung aus dem Entwurf — die tragende Regel
+  ist ohne Widget prüfbar.
+- `ClosingScreen`: Ankerzeile, Fotozeile, Gewebe-Rest, Lückenliste (jede Zeile
+  führt zurück in die Erfassung), Abschluss mit zwei Beschriftungen.
+- Gewebe-Rest wird nur gemeldet, wenn überhaupt ein Anteil erfasst wurde —
+  sonst doppelt der Hinweis die Lückenliste.
+- Korridor ruft `completeVisit` und startet den nächsten Besuch.
+- 14 neue Tests plus ein Korridor-Test auf den Datenbankstatus. Gesamtlauf
+  **217 grün**.
+
+### Beleg auf dem Gerät
+
+Der offene Besuch aus der Vorsitzung zeigte 7 fehlende Angaben, „Ein Foto ·
+mit Markierung" und 80 % Gewebeanteile — also hat das Foto den App-Neustart
+überlebt. Nach „Mit Lücken abschließen" meldet derselbe Screen einen frischen
+Besuch: 9 fehlende Angaben, kein Foto.
 
 ## Erledigt (Foto, Markierung, Medienablage, 2026-08-11)
 
