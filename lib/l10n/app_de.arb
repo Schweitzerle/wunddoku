@@ -659,7 +659,23 @@
   },
   "reportCreatedAt": "Erstellt am {date}",
   "@reportCreatedAt": {
-    "description": "Erstellungsdatum in der Fußzeile jeder Seite."
+    "description": "Erstellungsdatum in der Fußzeile jeder Seite.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "reportDepthValue": "{value} cm",
+  "@reportDepthValue": {
+    "description": "Die Tiefe als reiner Wert für die Verlaufstabelle, deren Spalte schon „Tiefe“ heißt.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
   },
   "reportPage": "Seite {page} von {total}",
   "@reportPage": {

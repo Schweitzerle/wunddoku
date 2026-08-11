@@ -890,7 +890,13 @@ abstract class AppLocalizations {
   ///
   /// In de, this message translates to:
   /// **'Erstellt am {date}'**
-  String reportCreatedAt(Object date);
+  String reportCreatedAt(DateTime date);
+
+  /// Die Tiefe als reiner Wert für die Verlaufstabelle, deren Spalte schon „Tiefe“ heißt.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} cm'**
+  String reportDepthValue(num value);
 
   /// Seitenzahl in der Fußzeile.
   ///

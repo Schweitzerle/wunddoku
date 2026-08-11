@@ -542,8 +542,20 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String reportCreatedAt(Object date) {
-    return 'Erstellt am $date';
+  String reportCreatedAt(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Erstellt am $dateString';
+  }
+
+  @override
+  String reportDepthValue(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return '$valueString cm';
   }
 
   @override

@@ -157,7 +157,9 @@ abstract final class WoundReportDocument {
                   : l10n.historyArea(_rounded(visit.areaCm2!)),
               visit.depthCm == null
                   ? l10n.confidenceMissing
-                  : l10n.historyDepth(_rounded(visit.depthCm!)),
+                  // The column is already headed "Tiefe"; repeating it in
+                  // every cell is noise in a table a doctor scans.
+                  : l10n.reportDepthValue(_rounded(visit.depthCm!)),
               visit.gapSlots.isEmpty
                   ? l10n.reportStatusComplete
                   : l10n.reportStatusGaps(visit.gapSlots.length),
