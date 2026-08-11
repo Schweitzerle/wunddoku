@@ -76,9 +76,7 @@ void main() {
       expect(find.text('Aufnahme starten'), findsOneWidget);
     });
 
-    testWidgets('starting shows an unmissable recording state', (
-      tester,
-    ) async {
+    testWidgets('starting shows an unmissable recording state', (tester) async {
       final vm = model();
       await tester.pumpWidget(TestApp(child: CaptureScreen(viewModel: vm)));
 
@@ -167,10 +165,7 @@ void main() {
       expect(find.text('1 Aufnahme wartet auf Auswertung.'), findsOneWidget);
       expect(vm.state, isA<CaptureQueued>());
       // The audio survives; nothing is lost because the network was absent.
-      expect(
-        (vm.state as CaptureQueued).audio.path,
-        endsWith(_exampleName),
-      );
+      expect((vm.state as CaptureQueued).audio.path, endsWith(_exampleName));
     });
   });
 

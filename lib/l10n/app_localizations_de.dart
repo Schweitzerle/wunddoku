@@ -358,4 +358,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get photoRetry => 'Erneut versuchen';
+
+  @override
+  String get captureTakePhoto => 'Wunde fotografieren';
 }

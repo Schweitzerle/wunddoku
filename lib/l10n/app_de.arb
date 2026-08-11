@@ -439,5 +439,9 @@
   "photoRetry": "Erneut versuchen",
   "@photoRetry": {
     "description": "Startet die Kamera nach einem Fehler noch einmal."
+  },
+  "captureTakePhoto": "Wunde fotografieren",
+  "@captureTakePhoto": {
+    "description": "Aktion im Aufnahme-Screen: zum Sucher wechseln. Gehört in Phase A, weil das Foto nach dem Verband nichts mehr wert ist."
   }
 }

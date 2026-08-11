@@ -83,14 +83,13 @@ sealed class VisitValue {
   const VisitValue();
 
   /// Lifts a confirmed [proposal] into a stored value.
-  factory VisitValue.fromProposal(FieldProposal proposal) =>
-      switch (proposal) {
-        MeasurementProposal(:final centimetres) => CentimetreValue(centimetres),
-        TissueShareProposal(:final percent) => PercentValue(percent),
-        PainScoreProposal(:final score) => ScoreValue(score),
-        ExudateAmountProposal(:final amount) => ExudateAmountValue(amount),
-        ExudateKindProposal(:final kind) => ExudateKindValue(kind),
-      };
+  factory VisitValue.fromProposal(FieldProposal proposal) => switch (proposal) {
+    MeasurementProposal(:final centimetres) => CentimetreValue(centimetres),
+    TissueShareProposal(:final percent) => PercentValue(percent),
+    PainScoreProposal(:final score) => ScoreValue(score),
+    ExudateAmountProposal(:final amount) => ExudateAmountValue(amount),
+    ExudateKindProposal(:final kind) => ExudateKindValue(kind),
+  };
 }
 
 /// A length in centimetres.

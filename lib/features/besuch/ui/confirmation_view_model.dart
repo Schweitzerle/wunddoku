@@ -143,9 +143,8 @@ class ConfirmationViewModel extends ChangeNotifier {
   ///
   /// These are the only rows drawn at full size — the screen gives its space
   /// to what still needs the nurse, not to what is already done.
-  List<ConfirmationEntry> get attentionEntries => List.unmodifiable(
-    entries.where((e) => e.needsAttention),
-  );
+  List<ConfirmationEntry> get attentionEntries =>
+      List.unmodifiable(entries.where((e) => e.needsAttention));
 
   /// Rows that will stay empty, in the declared order.
   List<ConfirmationEntry> get gapEntries =>

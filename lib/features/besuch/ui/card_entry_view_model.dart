@@ -85,18 +85,12 @@ class CardEntryViewModel extends ChangeNotifier {
   /// another, which is slower and teaches nothing.
   void adjustTissue(TissueType type, int step) {
     final next = (tissueShare(type) + step).clamp(0, 100);
-    _write(
-      'tissue.${type.name}',
-      next == 0 ? null : PercentValue(next),
-    );
+    _write('tissue.${type.name}', next == 0 ? null : PercentValue(next));
   }
 
   /// Sets the measurement for [slotId]; null clears it back to a gap.
   void setMeasurement(String slotId, double? centimetres) {
-    _write(
-      slotId,
-      centimetres == null ? null : CentimetreValue(centimetres),
-    );
+    _write(slotId, centimetres == null ? null : CentimetreValue(centimetres));
   }
 
   /// Adds [step] centimetres to [slotId], never below zero.

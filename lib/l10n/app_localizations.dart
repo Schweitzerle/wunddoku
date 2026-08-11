@@ -657,6 +657,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Erneut versuchen'**
   String get photoRetry;
+
+  /// Aktion im Aufnahme-Screen: zum Sucher wechseln. Gehört in Phase A, weil das Foto nach dem Verband nichts mehr wert ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunde fotografieren'**
+  String get captureTakePhoto;
 }
 
 class _AppLocalizationsDelegate

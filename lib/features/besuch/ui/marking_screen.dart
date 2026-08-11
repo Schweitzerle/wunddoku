@@ -96,9 +96,8 @@ class _MarkingScreenState extends State<MarkingScreen> {
               onToolChanged: (tool) => setState(() => _tool = tool),
               onUndo: _marking == null || _marking!.outline.isEmpty
                   ? null
-                  : () => setState(
-                      () => _marking = _marking!.withoutLastPoint(),
-                    ),
+                  : () =>
+                        setState(() => _marking = _marking!.withoutLastPoint()),
               onClear: _marking == null
                   ? null
                   : () => setState(() => _marking = null),

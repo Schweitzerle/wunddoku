@@ -160,10 +160,7 @@ void main() {
 
       // Comparing across weeks only works if the nurse knows the faint
       // outline is last week's, not part of the photo.
-      expect(
-        find.text('Voriger Besuch ist mit eingeblendet'),
-        findsOneWidget,
-      );
+      expect(find.text('Voriger Besuch ist mit eingeblendet'), findsOneWidget);
     });
   });
 

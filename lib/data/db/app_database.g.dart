@@ -1966,6 +1966,492 @@ class VisitValuesCompanion extends UpdateCompanion<VisitValueRow> {
   }
 }
 
+class $VisitPhotosTable extends VisitPhotos
+    with TableInfo<$VisitPhotosTable, VisitPhotoRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VisitPhotosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _visitIdMeta = const VerificationMeta(
+    'visitId',
+  );
+  @override
+  late final GeneratedColumn<String> visitId = GeneratedColumn<String>(
+    'visit_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES visits (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _originalRefMeta = const VerificationMeta(
+    'originalRef',
+  );
+  @override
+  late final GeneratedColumn<String> originalRef = GeneratedColumn<String>(
+    'original_ref',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _markedRefMeta = const VerificationMeta(
+    'markedRef',
+  );
+  @override
+  late final GeneratedColumn<String> markedRef = GeneratedColumn<String>(
+    'marked_ref',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _markingMeta = const VerificationMeta(
+    'marking',
+  );
+  @override
+  late final GeneratedColumn<String> marking = GeneratedColumn<String>(
+    'marking',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _takenAtMeta = const VerificationMeta(
+    'takenAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> takenAt = GeneratedColumn<DateTime>(
+    'taken_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _synchronizedMeta = const VerificationMeta(
+    'synchronized',
+  );
+  @override
+  late final GeneratedColumn<bool> synchronized = GeneratedColumn<bool>(
+    'synchronized',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("synchronized" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    visitId,
+    originalRef,
+    markedRef,
+    marking,
+    takenAt,
+    synchronized,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'visit_photos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VisitPhotoRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('visit_id')) {
+      context.handle(
+        _visitIdMeta,
+        visitId.isAcceptableOrUnknown(data['visit_id']!, _visitIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_visitIdMeta);
+    }
+    if (data.containsKey('original_ref')) {
+      context.handle(
+        _originalRefMeta,
+        originalRef.isAcceptableOrUnknown(
+          data['original_ref']!,
+          _originalRefMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_originalRefMeta);
+    }
+    if (data.containsKey('marked_ref')) {
+      context.handle(
+        _markedRefMeta,
+        markedRef.isAcceptableOrUnknown(data['marked_ref']!, _markedRefMeta),
+      );
+    }
+    if (data.containsKey('marking')) {
+      context.handle(
+        _markingMeta,
+        marking.isAcceptableOrUnknown(data['marking']!, _markingMeta),
+      );
+    }
+    if (data.containsKey('taken_at')) {
+      context.handle(
+        _takenAtMeta,
+        takenAt.isAcceptableOrUnknown(data['taken_at']!, _takenAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_takenAtMeta);
+    }
+    if (data.containsKey('synchronized')) {
+      context.handle(
+        _synchronizedMeta,
+        synchronized.isAcceptableOrUnknown(
+          data['synchronized']!,
+          _synchronizedMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  VisitPhotoRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VisitPhotoRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      visitId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}visit_id'],
+      )!,
+      originalRef: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}original_ref'],
+      )!,
+      markedRef: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}marked_ref'],
+      ),
+      marking: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}marking'],
+      ),
+      takenAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}taken_at'],
+      )!,
+      synchronized: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}synchronized'],
+      )!,
+    );
+  }
+
+  @override
+  $VisitPhotosTable createAlias(String alias) {
+    return $VisitPhotosTable(attachedDatabase, alias);
+  }
+}
+
+class VisitPhotoRow extends DataClass implements Insertable<VisitPhotoRow> {
+  final String id;
+  final String visitId;
+
+  /// Handle of the photo as the camera took it. Never overwritten.
+  final String originalRef;
+
+  /// Handle of the copy with the outline burnt in, once one was drawn.
+  final String? markedRef;
+
+  /// The outline as JSON, normalised to the image; see [ImageMarking.toJson].
+  final String? marking;
+  final DateTime takenAt;
+  final bool synchronized;
+  const VisitPhotoRow({
+    required this.id,
+    required this.visitId,
+    required this.originalRef,
+    this.markedRef,
+    this.marking,
+    required this.takenAt,
+    required this.synchronized,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['visit_id'] = Variable<String>(visitId);
+    map['original_ref'] = Variable<String>(originalRef);
+    if (!nullToAbsent || markedRef != null) {
+      map['marked_ref'] = Variable<String>(markedRef);
+    }
+    if (!nullToAbsent || marking != null) {
+      map['marking'] = Variable<String>(marking);
+    }
+    map['taken_at'] = Variable<DateTime>(takenAt);
+    map['synchronized'] = Variable<bool>(synchronized);
+    return map;
+  }
+
+  VisitPhotosCompanion toCompanion(bool nullToAbsent) {
+    return VisitPhotosCompanion(
+      id: Value(id),
+      visitId: Value(visitId),
+      originalRef: Value(originalRef),
+      markedRef: markedRef == null && nullToAbsent
+          ? const Value.absent()
+          : Value(markedRef),
+      marking: marking == null && nullToAbsent
+          ? const Value.absent()
+          : Value(marking),
+      takenAt: Value(takenAt),
+      synchronized: Value(synchronized),
+    );
+  }
+
+  factory VisitPhotoRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VisitPhotoRow(
+      id: serializer.fromJson<String>(json['id']),
+      visitId: serializer.fromJson<String>(json['visitId']),
+      originalRef: serializer.fromJson<String>(json['originalRef']),
+      markedRef: serializer.fromJson<String?>(json['markedRef']),
+      marking: serializer.fromJson<String?>(json['marking']),
+      takenAt: serializer.fromJson<DateTime>(json['takenAt']),
+      synchronized: serializer.fromJson<bool>(json['synchronized']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'visitId': serializer.toJson<String>(visitId),
+      'originalRef': serializer.toJson<String>(originalRef),
+      'markedRef': serializer.toJson<String?>(markedRef),
+      'marking': serializer.toJson<String?>(marking),
+      'takenAt': serializer.toJson<DateTime>(takenAt),
+      'synchronized': serializer.toJson<bool>(synchronized),
+    };
+  }
+
+  VisitPhotoRow copyWith({
+    String? id,
+    String? visitId,
+    String? originalRef,
+    Value<String?> markedRef = const Value.absent(),
+    Value<String?> marking = const Value.absent(),
+    DateTime? takenAt,
+    bool? synchronized,
+  }) => VisitPhotoRow(
+    id: id ?? this.id,
+    visitId: visitId ?? this.visitId,
+    originalRef: originalRef ?? this.originalRef,
+    markedRef: markedRef.present ? markedRef.value : this.markedRef,
+    marking: marking.present ? marking.value : this.marking,
+    takenAt: takenAt ?? this.takenAt,
+    synchronized: synchronized ?? this.synchronized,
+  );
+  VisitPhotoRow copyWithCompanion(VisitPhotosCompanion data) {
+    return VisitPhotoRow(
+      id: data.id.present ? data.id.value : this.id,
+      visitId: data.visitId.present ? data.visitId.value : this.visitId,
+      originalRef: data.originalRef.present
+          ? data.originalRef.value
+          : this.originalRef,
+      markedRef: data.markedRef.present ? data.markedRef.value : this.markedRef,
+      marking: data.marking.present ? data.marking.value : this.marking,
+      takenAt: data.takenAt.present ? data.takenAt.value : this.takenAt,
+      synchronized: data.synchronized.present
+          ? data.synchronized.value
+          : this.synchronized,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VisitPhotoRow(')
+          ..write('id: $id, ')
+          ..write('visitId: $visitId, ')
+          ..write('originalRef: $originalRef, ')
+          ..write('markedRef: $markedRef, ')
+          ..write('marking: $marking, ')
+          ..write('takenAt: $takenAt, ')
+          ..write('synchronized: $synchronized')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    visitId,
+    originalRef,
+    markedRef,
+    marking,
+    takenAt,
+    synchronized,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VisitPhotoRow &&
+          other.id == this.id &&
+          other.visitId == this.visitId &&
+          other.originalRef == this.originalRef &&
+          other.markedRef == this.markedRef &&
+          other.marking == this.marking &&
+          other.takenAt == this.takenAt &&
+          other.synchronized == this.synchronized);
+}
+
+class VisitPhotosCompanion extends UpdateCompanion<VisitPhotoRow> {
+  final Value<String> id;
+  final Value<String> visitId;
+  final Value<String> originalRef;
+  final Value<String?> markedRef;
+  final Value<String?> marking;
+  final Value<DateTime> takenAt;
+  final Value<bool> synchronized;
+  final Value<int> rowid;
+  const VisitPhotosCompanion({
+    this.id = const Value.absent(),
+    this.visitId = const Value.absent(),
+    this.originalRef = const Value.absent(),
+    this.markedRef = const Value.absent(),
+    this.marking = const Value.absent(),
+    this.takenAt = const Value.absent(),
+    this.synchronized = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VisitPhotosCompanion.insert({
+    required String id,
+    required String visitId,
+    required String originalRef,
+    this.markedRef = const Value.absent(),
+    this.marking = const Value.absent(),
+    required DateTime takenAt,
+    this.synchronized = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       visitId = Value(visitId),
+       originalRef = Value(originalRef),
+       takenAt = Value(takenAt);
+  static Insertable<VisitPhotoRow> custom({
+    Expression<String>? id,
+    Expression<String>? visitId,
+    Expression<String>? originalRef,
+    Expression<String>? markedRef,
+    Expression<String>? marking,
+    Expression<DateTime>? takenAt,
+    Expression<bool>? synchronized,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (visitId != null) 'visit_id': visitId,
+      if (originalRef != null) 'original_ref': originalRef,
+      if (markedRef != null) 'marked_ref': markedRef,
+      if (marking != null) 'marking': marking,
+      if (takenAt != null) 'taken_at': takenAt,
+      if (synchronized != null) 'synchronized': synchronized,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VisitPhotosCompanion copyWith({
+    Value<String>? id,
+    Value<String>? visitId,
+    Value<String>? originalRef,
+    Value<String?>? markedRef,
+    Value<String?>? marking,
+    Value<DateTime>? takenAt,
+    Value<bool>? synchronized,
+    Value<int>? rowid,
+  }) {
+    return VisitPhotosCompanion(
+      id: id ?? this.id,
+      visitId: visitId ?? this.visitId,
+      originalRef: originalRef ?? this.originalRef,
+      markedRef: markedRef ?? this.markedRef,
+      marking: marking ?? this.marking,
+      takenAt: takenAt ?? this.takenAt,
+      synchronized: synchronized ?? this.synchronized,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (visitId.present) {
+      map['visit_id'] = Variable<String>(visitId.value);
+    }
+    if (originalRef.present) {
+      map['original_ref'] = Variable<String>(originalRef.value);
+    }
+    if (markedRef.present) {
+      map['marked_ref'] = Variable<String>(markedRef.value);
+    }
+    if (marking.present) {
+      map['marking'] = Variable<String>(marking.value);
+    }
+    if (takenAt.present) {
+      map['taken_at'] = Variable<DateTime>(takenAt.value);
+    }
+    if (synchronized.present) {
+      map['synchronized'] = Variable<bool>(synchronized.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VisitPhotosCompanion(')
+          ..write('id: $id, ')
+          ..write('visitId: $visitId, ')
+          ..write('originalRef: $originalRef, ')
+          ..write('markedRef: $markedRef, ')
+          ..write('marking: $marking, ')
+          ..write('takenAt: $takenAt, ')
+          ..write('synchronized: $synchronized, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1973,6 +2459,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $WoundsTable wounds = $WoundsTable(this);
   late final $VisitsTable visits = $VisitsTable(this);
   late final $VisitValuesTable visitValues = $VisitValuesTable(this);
+  late final $VisitPhotosTable visitPhotos = $VisitPhotosTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1982,6 +2469,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     wounds,
     visits,
     visitValues,
+    visitPhotos,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -2005,6 +2493,13 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         limitUpdateKind: UpdateKind.delete,
       ),
       result: [TableUpdate('visit_values', kind: UpdateKind.delete)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'visits',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('visit_photos', kind: UpdateKind.delete)],
     ),
   ]);
 }
@@ -2887,6 +3382,24 @@ final class $$VisitsTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<$VisitPhotosTable, List<VisitPhotoRow>>
+  _visitPhotosRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.visitPhotos,
+    aliasName: 'visits__id__visit_photos__visit_id',
+  );
+
+  $$VisitPhotosTableProcessedTableManager get visitPhotosRefs {
+    final manager = $$VisitPhotosTableTableManager(
+      $_db,
+      $_db.visitPhotos,
+    ).filter((f) => f.visitId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_visitPhotosRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$VisitsTableFilterComposer
@@ -2968,6 +3481,31 @@ class $$VisitsTableFilterComposer
           }) => $$VisitValuesTableFilterComposer(
             $db: $db,
             $table: $db.visitValues,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> visitPhotosRefs(
+    Expression<bool> Function($$VisitPhotosTableFilterComposer f) f,
+  ) {
+    final $$VisitPhotosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.visitPhotos,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitPhotosTableFilterComposer(
+            $db: $db,
+            $table: $db.visitPhotos,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -3121,6 +3659,31 @@ class $$VisitsTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> visitPhotosRefs<T extends Object>(
+    Expression<T> Function($$VisitPhotosTableAnnotationComposer a) f,
+  ) {
+    final $$VisitPhotosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.visitPhotos,
+      getReferencedColumn: (t) => t.visitId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitPhotosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.visitPhotos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$VisitsTableTableManager
@@ -3136,7 +3699,11 @@ class $$VisitsTableTableManager
           $$VisitsTableUpdateCompanionBuilder,
           (VisitRow, $$VisitsTableReferences),
           VisitRow,
-          PrefetchHooks Function({bool woundId, bool visitValuesRefs})
+          PrefetchHooks Function({
+            bool woundId,
+            bool visitValuesRefs,
+            bool visitPhotosRefs,
+          })
         > {
   $$VisitsTableTableManager(_$AppDatabase db, $VisitsTable table)
     : super(
@@ -3195,66 +3762,98 @@ class $$VisitsTableTableManager
                     (e.readTable(table), $$VisitsTableReferences(db, table, e)),
               )
               .toList(),
-          prefetchHooksCallback: ({woundId = false, visitValuesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [if (visitValuesRefs) db.visitValues],
-              addJoins:
-                  <
-                    T extends TableManagerState<
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic,
-                      dynamic
-                    >
-                  >(state) {
-                    if (woundId) {
-                      state =
-                          state.withJoin(
-                                currentTable: table,
-                                currentColumn: table.woundId,
-                                referencedTable: $$VisitsTableReferences
-                                    ._woundIdTable(db),
-                                referencedColumn: $$VisitsTableReferences
-                                    ._woundIdTable(db)
-                                    .id,
-                              )
-                              as T;
-                    }
+          prefetchHooksCallback:
+              ({
+                woundId = false,
+                visitValuesRefs = false,
+                visitPhotosRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (visitValuesRefs) db.visitValues,
+                    if (visitPhotosRefs) db.visitPhotos,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (woundId) {
+                          state =
+                              state.withJoin(
+                                    currentTable: table,
+                                    currentColumn: table.woundId,
+                                    referencedTable: $$VisitsTableReferences
+                                        ._woundIdTable(db),
+                                    referencedColumn: $$VisitsTableReferences
+                                        ._woundIdTable(db)
+                                        .id,
+                                  )
+                                  as T;
+                        }
 
-                    return state;
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (visitValuesRefs)
+                        await $_getPrefetchedData<
+                          VisitRow,
+                          $VisitsTable,
+                          VisitValueRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$VisitsTableReferences
+                              ._visitValuesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$VisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).visitValuesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (visitPhotosRefs)
+                        await $_getPrefetchedData<
+                          VisitRow,
+                          $VisitsTable,
+                          VisitPhotoRow
+                        >(
+                          currentTable: table,
+                          referencedTable: $$VisitsTableReferences
+                              ._visitPhotosRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$VisitsTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).visitPhotosRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.visitId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
                   },
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (visitValuesRefs)
-                    await $_getPrefetchedData<
-                      VisitRow,
-                      $VisitsTable,
-                      VisitValueRow
-                    >(
-                      currentTable: table,
-                      referencedTable: $$VisitsTableReferences
-                          ._visitValuesRefsTable(db),
-                      managerFromTypedResult: (p0) => $$VisitsTableReferences(
-                        db,
-                        table,
-                        p0,
-                      ).visitValuesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where((e) => e.visitId == item.id),
-                      typedResults: items,
-                    ),
-                ];
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -3271,7 +3870,11 @@ typedef $$VisitsTableProcessedTableManager =
       $$VisitsTableUpdateCompanionBuilder,
       (VisitRow, $$VisitsTableReferences),
       VisitRow,
-      PrefetchHooks Function({bool woundId, bool visitValuesRefs})
+      PrefetchHooks Function({
+        bool woundId,
+        bool visitValuesRefs,
+        bool visitPhotosRefs,
+      })
     >;
 typedef $$VisitValuesTableCreateCompanionBuilder =
     VisitValuesCompanion Function({
@@ -3610,6 +4213,365 @@ typedef $$VisitValuesTableProcessedTableManager =
       VisitValueRow,
       PrefetchHooks Function({bool visitId})
     >;
+typedef $$VisitPhotosTableCreateCompanionBuilder =
+    VisitPhotosCompanion Function({
+      required String id,
+      required String visitId,
+      required String originalRef,
+      Value<String?> markedRef,
+      Value<String?> marking,
+      required DateTime takenAt,
+      Value<bool> synchronized,
+      Value<int> rowid,
+    });
+typedef $$VisitPhotosTableUpdateCompanionBuilder =
+    VisitPhotosCompanion Function({
+      Value<String> id,
+      Value<String> visitId,
+      Value<String> originalRef,
+      Value<String?> markedRef,
+      Value<String?> marking,
+      Value<DateTime> takenAt,
+      Value<bool> synchronized,
+      Value<int> rowid,
+    });
+
+final class $$VisitPhotosTableReferences
+    extends BaseReferences<_$AppDatabase, $VisitPhotosTable, VisitPhotoRow> {
+  $$VisitPhotosTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $VisitsTable _visitIdTable(_$AppDatabase db) =>
+      db.visits.createAlias('visit_photos__visit_id__visits__id');
+
+  $$VisitsTableProcessedTableManager get visitId {
+    final $_column = $_itemColumn<String>('visit_id')!;
+
+    final manager = $$VisitsTableTableManager(
+      $_db,
+      $_db.visits,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_visitIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$VisitPhotosTableFilterComposer
+    extends Composer<_$AppDatabase, $VisitPhotosTable> {
+  $$VisitPhotosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get originalRef => $composableBuilder(
+    column: $table.originalRef,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get markedRef => $composableBuilder(
+    column: $table.markedRef,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get marking => $composableBuilder(
+    column: $table.marking,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get takenAt => $composableBuilder(
+    column: $table.takenAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get synchronized => $composableBuilder(
+    column: $table.synchronized,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$VisitsTableFilterComposer get visitId {
+    final $$VisitsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableFilterComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VisitPhotosTableOrderingComposer
+    extends Composer<_$AppDatabase, $VisitPhotosTable> {
+  $$VisitPhotosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get originalRef => $composableBuilder(
+    column: $table.originalRef,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get markedRef => $composableBuilder(
+    column: $table.markedRef,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get marking => $composableBuilder(
+    column: $table.marking,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get takenAt => $composableBuilder(
+    column: $table.takenAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get synchronized => $composableBuilder(
+    column: $table.synchronized,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$VisitsTableOrderingComposer get visitId {
+    final $$VisitsTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableOrderingComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VisitPhotosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VisitPhotosTable> {
+  $$VisitPhotosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get originalRef => $composableBuilder(
+    column: $table.originalRef,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get markedRef =>
+      $composableBuilder(column: $table.markedRef, builder: (column) => column);
+
+  GeneratedColumn<String> get marking =>
+      $composableBuilder(column: $table.marking, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get takenAt =>
+      $composableBuilder(column: $table.takenAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get synchronized => $composableBuilder(
+    column: $table.synchronized,
+    builder: (column) => column,
+  );
+
+  $$VisitsTableAnnotationComposer get visitId {
+    final $$VisitsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.visitId,
+      referencedTable: $db.visits,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$VisitsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.visits,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$VisitPhotosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VisitPhotosTable,
+          VisitPhotoRow,
+          $$VisitPhotosTableFilterComposer,
+          $$VisitPhotosTableOrderingComposer,
+          $$VisitPhotosTableAnnotationComposer,
+          $$VisitPhotosTableCreateCompanionBuilder,
+          $$VisitPhotosTableUpdateCompanionBuilder,
+          (VisitPhotoRow, $$VisitPhotosTableReferences),
+          VisitPhotoRow,
+          PrefetchHooks Function({bool visitId})
+        > {
+  $$VisitPhotosTableTableManager(_$AppDatabase db, $VisitPhotosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VisitPhotosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VisitPhotosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VisitPhotosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> visitId = const Value.absent(),
+                Value<String> originalRef = const Value.absent(),
+                Value<String?> markedRef = const Value.absent(),
+                Value<String?> marking = const Value.absent(),
+                Value<DateTime> takenAt = const Value.absent(),
+                Value<bool> synchronized = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VisitPhotosCompanion(
+                id: id,
+                visitId: visitId,
+                originalRef: originalRef,
+                markedRef: markedRef,
+                marking: marking,
+                takenAt: takenAt,
+                synchronized: synchronized,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String visitId,
+                required String originalRef,
+                Value<String?> markedRef = const Value.absent(),
+                Value<String?> marking = const Value.absent(),
+                required DateTime takenAt,
+                Value<bool> synchronized = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VisitPhotosCompanion.insert(
+                id: id,
+                visitId: visitId,
+                originalRef: originalRef,
+                markedRef: markedRef,
+                marking: marking,
+                takenAt: takenAt,
+                synchronized: synchronized,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$VisitPhotosTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({visitId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (visitId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.visitId,
+                                referencedTable: $$VisitPhotosTableReferences
+                                    ._visitIdTable(db),
+                                referencedColumn: $$VisitPhotosTableReferences
+                                    ._visitIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$VisitPhotosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VisitPhotosTable,
+      VisitPhotoRow,
+      $$VisitPhotosTableFilterComposer,
+      $$VisitPhotosTableOrderingComposer,
+      $$VisitPhotosTableAnnotationComposer,
+      $$VisitPhotosTableCreateCompanionBuilder,
+      $$VisitPhotosTableUpdateCompanionBuilder,
+      (VisitPhotoRow, $$VisitPhotosTableReferences),
+      VisitPhotoRow,
+      PrefetchHooks Function({bool visitId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3622,4 +4584,6 @@ class $AppDatabaseManager {
       $$VisitsTableTableManager(_db, _db.visits);
   $$VisitValuesTableTableManager get visitValues =>
       $$VisitValuesTableTableManager(_db, _db.visitValues);
+  $$VisitPhotosTableTableManager get visitPhotos =>
+      $$VisitPhotosTableTableManager(_db, _db.visitPhotos);
 }

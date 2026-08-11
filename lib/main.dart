@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -7,8 +8,11 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'app/bootstrap.dart';
 import 'data/capture/audio_recorder.dart';
 import 'data/capture/speech_recognizer.dart';
+import 'data/media/marking_burner.dart';
+import 'data/media/media_store.dart';
 import 'data/visit_repository.dart';
 import 'domain/model/ids.dart';
+import 'domain/model/image_marking.dart';
 import 'domain/model/visit_draft.dart';
 import 'features/besuch/ui/capture_screen.dart';
 import 'features/besuch/ui/capture_view_model.dart';
@@ -17,6 +21,8 @@ import 'features/besuch/ui/card_entry_view_model.dart';
 import 'features/besuch/ui/confirmation_screen.dart';
 import 'features/besuch/ui/confirmation_view_model.dart';
 import 'features/besuch/ui/field_presentation.dart';
+import 'features/besuch/ui/marking_screen.dart';
+import 'features/besuch/ui/photo_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -89,7 +95,11 @@ class _StartupFailed extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.lock_outline, size: 48, color: theme.colorScheme.error),
+              Icon(
+                Icons.lock_outline,
+                size: 48,
+                color: theme.colorScheme.error,
+              ),
               const SizedBox(height: 16),
               Text(
                 'Die Wunddokumentation lässt sich nicht öffnen.',
@@ -111,6 +121,16 @@ class _StartupFailed extends StatelessWidget {
   }
 }
 
+/// Draws [marking] into a copy of [photo] and returns the encoded bytes.
+Future<Uint8List> burnWithPainter(Uint8List photo, ImageMarking marking) async {
+  final decoded = await decodeImageFromList(photo);
+  try {
+    return await MarkingBurner.burn(decoded, marking);
+  } finally {
+    decoded.dispose();
+  }
+}
+
 /// The phases of a visit, in the order the nurse works through them.
 ///
 /// Phase A is the recording at the open dressing; phase B is the check once
@@ -118,9 +138,21 @@ class _StartupFailed extends StatelessWidget {
 /// fixed sequence rather than free navigation, and the entry point comes from
 /// the record: an unfinished visit is resumed, not started over.
 class VisitCorridor extends StatefulWidget {
-  const VisitCorridor({required this.dependencies, super.key});
+  const VisitCorridor({
+    required this.dependencies,
+    this.burn = burnWithPainter,
+    super.key,
+  });
 
   final AppDependencies dependencies;
+
+  /// Turns a photo and an outline into the marked copy.
+  ///
+  /// A seam rather than a direct call: decoding and re-encoding a picture is
+  /// real asynchronous work, which never completes inside a widget test's
+  /// fake async zone. The drawing itself is covered against real images in
+  /// `test/domain/image_marking_test.dart`.
+  final Future<Uint8List> Function(Uint8List photo, ImageMarking marking) burn;
 
   @override
   State<VisitCorridor> createState() => _VisitCorridorState();
@@ -160,7 +192,8 @@ class _VisitCorridorState extends State<VisitCorridor> {
   /// record, not the navigation stack.
   Future<void> _resumeOrStart() async {
     final wound = widget.dependencies.demoWound;
-    final visit = await _visits.openDraft(wound) ?? await _visits.startVisit(wound);
+    final visit =
+        await _visits.openDraft(wound) ?? await _visits.startVisit(wound);
     final draft = await _visits.loadDraft(visit);
     if (!mounted) return;
     setState(() {
@@ -221,6 +254,77 @@ class _VisitCorridorState extends State<VisitCorridor> {
     if (mounted) _capture.reset();
   }
 
+  /// Photograph, mark, keep — the picture half of phase A.
+  ///
+  /// One corridor rather than three screens the nurse navigates between: at
+  /// the open dressing there is no time to decide where to go next, and the
+  /// photo is worthless once the new bandage is on.
+  Future<void> _takePhoto() async {
+    final visit = _visit;
+    if (visit == null) return;
+
+    final previous = await _visits.lastPhotoOfWound(
+      widget.dependencies.demoWound,
+      before: visit,
+    );
+    final previousBytes = previous == null
+        ? null
+        : await _readQuietly(previous.originalRef);
+    if (!mounted) return;
+
+    final navigator = Navigator.of(context);
+    final taken = await navigator.push<Uint8List>(
+      MaterialPageRoute<Uint8List>(
+        builder: (_) => PhotoScreen(
+          camera: widget.dependencies.camera(),
+          previousPhoto: previousBytes == null
+              ? null
+              : MemoryImage(previousBytes),
+          onTaken: navigator.pop,
+          onSkipped: navigator.pop,
+        ),
+      ),
+    );
+    if (taken == null || !mounted) return;
+
+    final marking = await navigator.push<ImageMarking>(
+      MaterialPageRoute<ImageMarking>(
+        builder: (_) => MarkingScreen(
+          photo: MemoryImage(taken),
+          previous: previous?.marking,
+          onDone: navigator.pop,
+        ),
+      ),
+    );
+
+    await _keepPhoto(visit, taken, marking);
+  }
+
+  /// Writes the photo and, when one was drawn, the burnt-in copy.
+  Future<void> _keepPhoto(
+    VisitId visit,
+    Uint8List original,
+    ImageMarking? marking,
+  ) async {
+    final marked = marking == null
+        ? null
+        : await widget.burn(original, marking);
+
+    await _visits.savePhoto(visit, original, marking: marking, marked: marked);
+  }
+
+  /// The bytes behind [ref], or null when the file no longer reads.
+  ///
+  /// A framing aid that cannot be loaded is a missing convenience, not a
+  /// reason to refuse the photo the nurse is standing there to take.
+  Future<Uint8List?> _readQuietly(MediaRef ref) async {
+    try {
+      return await _visits.photoBytes(ref);
+    } on Exception {
+      return null;
+    }
+  }
+
   Future<void> _acceptProposals(VisitId visit, CaptureDone state) async {
     var draft = _draft;
     for (final proposal in state.result.proposals) {
@@ -236,5 +340,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     viewModel: _capture,
     onInterpreted: _openConfirmation,
     onUseCards: _visit == null ? null : _openCards,
+    onTakePhoto: _visit == null ? null : _takePhoto,
   );
 }

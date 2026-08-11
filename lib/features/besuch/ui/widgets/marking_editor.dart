@@ -196,8 +196,7 @@ class _MarkingEditorState extends State<MarkingEditor> {
                         ? (details) => _addPoint(details.localPosition, size)
                         : null,
                     onPanStart: _drawing
-                        ? (details) =>
-                              _startStroke(details.localPosition, size)
+                        ? (details) => _startStroke(details.localPosition, size)
                         : null,
                     onPanUpdate: _drawing
                         ? (details) =>

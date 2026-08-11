@@ -1,10 +1,38 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 
 import '../core/id_generator.dart';
 import '../domain/catalog/exudation.dart';
 import '../domain/model/ids.dart';
+import '../domain/model/image_marking.dart';
 import '../domain/model/visit_draft.dart';
 import 'db/app_database.dart';
+import 'media/media_store.dart';
+
+/// One stored photo with everything needed to show and compare it.
+class VisitPhoto {
+  const VisitPhoto({
+    required this.id,
+    required this.originalRef,
+    required this.markedRef,
+    required this.marking,
+    required this.takenAt,
+  });
+
+  final String id;
+
+  /// The photo as the camera took it.
+  final MediaRef originalRef;
+
+  /// The copy with the outline burnt in, if one was drawn.
+  final MediaRef? markedRef;
+
+  /// The outline as geometry, which is what makes visits comparable.
+  final ImageMarking? marking;
+
+  final DateTime takenAt;
+}
 
 /// Single source of truth for visits and the values recorded in them.
 ///
@@ -14,10 +42,11 @@ import 'db/app_database.dart';
 /// draft back is what makes the re-entry point come from the record rather
 /// than from the navigation stack.
 class VisitRepository {
-  VisitRepository(this._db, {DateTime Function()? clock})
+  VisitRepository(this._db, this._media, {DateTime Function()? clock})
     : _clock = clock ?? DateTime.now;
 
   final AppDatabase _db;
+  final MediaStore _media;
   final DateTime Function() _clock;
 
   /// Starts a visit for [woundId] and returns its id.
@@ -58,7 +87,11 @@ class VisitRepository {
   ///
   /// One row, one write. Called after every single change, which is why it
   /// must stay this small.
-  Future<void> saveValue(VisitId visit, String slotId, VisitValue? value) async {
+  Future<void> saveValue(
+    VisitId visit,
+    String slotId,
+    VisitValue? value,
+  ) async {
     if (value == null) {
       await (_db.delete(_db.visitValues)..where(
             (v) => v.visitId.equals(visit.value) & v.slotId.equals(slotId),
@@ -100,15 +133,127 @@ class VisitRepository {
   /// [withGaps] records that fields were left empty on purpose — allowed, and
   /// deliberately distinguishable from a complete finding later in the office.
   Future<void> completeVisit(VisitId visit, {required bool withGaps}) async {
-    await (_db.update(_db.visits)..where((v) => v.id.equals(visit.value)))
-        .write(
-          VisitsCompanion(
-            completedAt: Value(_clock()),
-            status: Value(
-              withGaps ? VisitStatus.completeWithGaps : VisitStatus.complete,
+    await (_db.update(
+      _db.visits,
+    )..where((v) => v.id.equals(visit.value))).write(
+      VisitsCompanion(
+        completedAt: Value(_clock()),
+        status: Value(
+          withGaps ? VisitStatus.completeWithGaps : VisitStatus.complete,
+        ),
+      ),
+    );
+  }
+
+  /// Stores a photo of [visit] and returns the record.
+  ///
+  /// [original] goes into the media store untouched. [marked] is the copy with
+  /// the outline burnt in and is a second file — the briefing asks for both,
+  /// and a report that shows the mark must never be the only remaining
+  /// version of the wound.
+  Future<VisitPhoto> savePhoto(
+    VisitId visit,
+    Uint8List original, {
+    ImageMarking? marking,
+    Uint8List? marked,
+  }) async {
+    final originalRef = await _media.save(original, kind: MediaKind.photo);
+    final markedRef = marked == null
+        ? null
+        : await _media.save(marked, kind: MediaKind.markedPhoto);
+
+    final photo = VisitPhoto(
+      id: newId(),
+      originalRef: originalRef,
+      markedRef: markedRef,
+      marking: marking,
+      takenAt: _clock(),
+    );
+
+    await _db
+        .into(_db.visitPhotos)
+        .insert(
+          VisitPhotosCompanion.insert(
+            id: photo.id,
+            visitId: visit.value,
+            originalRef: originalRef.name,
+            markedRef: Value(markedRef?.name),
+            marking: Value(
+              marking == null ? null : jsonEncode(marking.toJson()),
             ),
+            takenAt: photo.takenAt,
           ),
         );
+    return photo;
+  }
+
+  /// The photos of [visit], newest last.
+  Future<List<VisitPhoto>> photosOf(VisitId visit) async {
+    final rows =
+        await (_db.select(_db.visitPhotos)
+              ..where((p) => p.visitId.equals(visit.value))
+              ..orderBy([(p) => OrderingTerm.asc(p.takenAt)]))
+            .get();
+    return [for (final row in rows) _photo(row)];
+  }
+
+  /// The most recent photo taken for [wound] before [visit].
+  ///
+  /// This is what the viewfinder shows as a framing aid and what the marking
+  /// screen draws behind the current outline: without the previous picture,
+  /// two visits' photos are not comparable and the record loses the very
+  /// thing that carries the clinical value.
+  Future<VisitPhoto?> lastPhotoOfWound(WoundId wound, {VisitId? before}) async {
+    final query = _db.select(_db.visitPhotos).join([
+      innerJoin(_db.visits, _db.visits.id.equalsExp(_db.visitPhotos.visitId)),
+    ])..where(_db.visits.woundId.equals(wound.value));
+    if (before != null) {
+      query.where(_db.visits.id.equals(before.value).not());
+    }
+    query
+      ..orderBy([OrderingTerm.desc(_db.visitPhotos.takenAt)])
+      ..limit(1);
+
+    final row = await query.getSingleOrNull();
+    return row == null ? null : _photo(row.readTable(_db.visitPhotos));
+  }
+
+  /// Reads the image bytes behind [ref].
+  Future<Uint8List> photoBytes(MediaRef ref) => _media.read(ref);
+
+  /// Removes [photo] from the record and from the device.
+  ///
+  /// The row and both files go together. A row without files would show an
+  /// empty frame in the report; files without a row would be health data no
+  /// deletion path reaches.
+  Future<void> deletePhoto(VisitPhoto photo) async {
+    await (_db.delete(
+      _db.visitPhotos,
+    )..where((p) => p.id.equals(photo.id))).go();
+    await _media.delete(photo.originalRef);
+    final marked = photo.markedRef;
+    if (marked != null) await _media.delete(marked);
+  }
+
+  VisitPhoto _photo(VisitPhotoRow row) {
+    final stored = row.marking;
+    ImageMarking? marking;
+    if (stored != null) {
+      final decoded = jsonDecode(stored);
+      // A marking that cannot be read becomes no marking: an outline landing
+      // beside the wound is worse than a photo without one.
+      if (decoded is Map<String, Object?>) {
+        marking = ImageMarking.fromJson(decoded);
+      }
+    }
+
+    return VisitPhoto(
+      id: row.id,
+      originalRef: MediaRef(row.originalRef),
+      markedRef: row.markedRef == null ? null : MediaRef(row.markedRef!),
+      marking: marking,
+      takenAt: row.takenAt,
+    );
   }
 
   /// Stores the verbatim transcript with the visit.
@@ -152,25 +297,26 @@ class VisitRepository {
   /// turns the field into a visible gap, which is the safe outcome — the
   /// alternative would be a value nobody entered.
   VisitValue? _decode(VisitValueRow row) => switch (row.kind) {
-    StoredValueKind.centimetres => row.number == null
-        ? null
-        : CentimetreValue(row.number!),
-    StoredValueKind.percent => row.number == null
-        ? null
-        : PercentValue(row.number!.round()),
-    StoredValueKind.score => row.number == null
-        ? null
-        : ScoreValue(row.number!.round()),
-    StoredValueKind.exudateAmount =>
-      switch (_byName(ExudateAmount.values, row.code)) {
-        final amount? => ExudateAmountValue(amount),
-        _ => null,
-      },
-    StoredValueKind.exudateKind =>
-      switch (_byName(ExudateKind.values, row.code)) {
-        final kind? => ExudateKindValue(kind),
-        _ => null,
-      },
+    StoredValueKind.centimetres =>
+      row.number == null ? null : CentimetreValue(row.number!),
+    StoredValueKind.percent =>
+      row.number == null ? null : PercentValue(row.number!.round()),
+    StoredValueKind.score =>
+      row.number == null ? null : ScoreValue(row.number!.round()),
+    StoredValueKind.exudateAmount => switch (_byName(
+      ExudateAmount.values,
+      row.code,
+    )) {
+      final amount? => ExudateAmountValue(amount),
+      _ => null,
+    },
+    StoredValueKind.exudateKind => switch (_byName(
+      ExudateKind.values,
+      row.code,
+    )) {
+      final kind? => ExudateKindValue(kind),
+      _ => null,
+    },
   };
 
   /// The enum value called [name], or null when the catalogue no longer knows

@@ -5,6 +5,8 @@ import 'package:path_provider/path_provider.dart';
 import '../core/id_generator.dart';
 import '../data/db/app_database.dart';
 import '../data/db/database_key_store.dart';
+import '../data/media/media_store.dart';
+import '../data/media/wound_camera.dart';
 import '../data/patient_repository.dart';
 import '../data/visit_repository.dart';
 import '../domain/model/ids.dart';
@@ -19,12 +21,22 @@ class AppDependencies {
     required this.database,
     required this.patients,
     required this.visits,
+    required this.media,
     required this.demoWound,
+    this.camera = PackageWoundCamera.new,
   });
 
   final AppDatabase database;
   final PatientRepository patients;
   final VisitRepository visits;
+  final MediaStore media;
+
+  /// Builds a camera for one trip to the viewfinder.
+  ///
+  /// A factory, not an instance: the camera is released when the photo screen
+  /// is left, so the next photo needs a fresh one. Replaced in tests, where no
+  /// hardware exists.
+  final WoundCamera Function() camera;
 
   /// The wound the corridor documents while there is no patient list yet.
   final WoundId demoWound;
@@ -44,13 +56,21 @@ Future<AppDependencies> bootstrap({DatabaseKeyStore? keyStore}) async {
     key,
   );
 
+  // The media key is derived from the database key rather than stored
+  // separately: one secret in the keystore, one place to rotate.
+  final media = EncryptedMediaStore(
+    directory: await defaultMediaDirectory(),
+    key: await EncryptedMediaStore.deriveKey(key),
+  );
+
   final patients = PatientRepository(database);
-  final visits = VisitRepository(database);
+  final visits = VisitRepository(database, media);
 
   return AppDependencies(
     database: database,
     patients: patients,
     visits: visits,
+    media: media,
     demoWound: await _ensureDemoWound(database, patients),
   );
 }

@@ -40,6 +40,47 @@ class ImageMarking {
   final MarkingTool tool;
   final DateTime createdAt;
 
+  /// The marking as a storable map.
+  ///
+  /// Coordinates keep four decimals: at 0.0001 of a 4000-pixel photo that is
+  /// less than half a pixel, and the shorter text keeps the record small.
+  Map<String, Object?> toJson() => {
+    'tool': tool.name,
+    'createdAt': createdAt.toIso8601String(),
+    'outline': [
+      for (final point in outline)
+        [
+          double.parse(point.dx.toStringAsFixed(4)),
+          double.parse(point.dy.toStringAsFixed(4)),
+        ],
+    ],
+  };
+
+  /// Reads a marking back, or null when the stored shape cannot be trusted.
+  ///
+  /// A damaged outline becomes no outline rather than a wrong one: a marking
+  /// that lands beside the wound is worse than a photo without one.
+  static ImageMarking? fromJson(Map<String, Object?> json) {
+    final tool = MarkingTool.values
+        .where((value) => value.name == json['tool'])
+        .firstOrNull;
+    final createdAt = DateTime.tryParse(json['createdAt'] as String? ?? '');
+    final stored = json['outline'];
+    if (tool == null || createdAt == null || stored is! List) return null;
+
+    final outline = <Offset>[];
+    for (final point in stored) {
+      if (point is! List || point.length != 2) return null;
+      final x = point[0];
+      final y = point[1];
+      if (x is! num || y is! num) return null;
+      if (x < 0 || x > 1 || y < 0 || y > 1) return null;
+      outline.add(Offset(x.toDouble(), y.toDouble()));
+    }
+
+    return ImageMarking(outline: outline, tool: tool, createdAt: createdAt);
+  }
+
   /// Whether the outline has enough points to enclose an area.
   bool get isClosed => outline.length >= 3;
 
@@ -140,5 +181,4 @@ class ImageMarking {
     tool: MarkingTool.freehand,
     createdAt: createdAt,
   );
-
 }

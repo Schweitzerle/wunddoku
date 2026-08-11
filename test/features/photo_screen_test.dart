@@ -6,56 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/data/media/wound_camera.dart';
 import 'package:wunddoku/features/besuch/ui/photo_screen.dart';
 
+import '../support/fake_camera.dart';
 import '../support/test_app.dart';
-
-/// A camera that never touches hardware.
-///
-/// The screen around the viewfinder — framing aid, shutter, review, and every
-/// way the camera can stay dark — is the part that carries the design, and it
-/// is exactly the part a device test cannot check reproducibly.
-class FakeCamera implements WoundCamera {
-  FakeCamera({this.failure, this.photo});
-
-  /// What [start] reports; `null` starts successfully.
-  CameraFailure? failure;
-
-  /// What [takePhoto] returns.
-  Uint8List? photo;
-
-  int starts = 0;
-  int shots = 0;
-  bool disposed = false;
-
-  @override
-  bool get isReady => failure == null && starts > 0;
-
-  @override
-  Future<CameraFailure?> start() async {
-    starts++;
-    return failure;
-  }
-
-  @override
-  Widget preview() => const ColoredBox(
-    color: Color(0xFF102030),
-    child: SizedBox.expand(child: Text('viewfinder')),
-  );
-
-  @override
-  Future<Uint8List> takePhoto() async {
-    shots++;
-    final bytes = photo;
-    if (bytes == null) throw const _ShutterFailed();
-    return bytes;
-  }
-
-  @override
-  Future<void> dispose() async => disposed = true;
-}
-
-class _ShutterFailed implements Exception {
-  const _ShutterFailed();
-}
 
 /// A synthetic stand-in for a wound photo — never a real one.
 Future<Uint8List> _syntheticPhoto(Color colour) async {
@@ -127,7 +79,9 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        TestApp(child: PhotoScreen(camera: FakeCamera(photo: photoBytes))),
+        TestApp(
+          child: PhotoScreen(camera: FakeCamera(photo: photoBytes)),
+        ),
       );
       await tester.pump();
 
@@ -147,7 +101,9 @@ void main() {
       Uint8List? kept;
       final camera = FakeCamera(photo: photoBytes);
       await tester.pumpWidget(
-        TestApp(child: PhotoScreen(camera: camera, onTaken: (b) => kept = b)),
+        TestApp(
+          child: PhotoScreen(camera: camera, onTaken: (b) => kept = b),
+        ),
       );
       await tester.pump();
 

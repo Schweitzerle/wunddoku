@@ -19,6 +19,7 @@ class CaptureScreen extends StatefulWidget {
     required this.viewModel,
     this.onInterpreted,
     this.onUseCards,
+    this.onTakePhoto,
     super.key,
   });
 
@@ -29,6 +30,12 @@ class CaptureScreen extends StatefulWidget {
 
   /// Called for the equal path without speech.
   final VoidCallback? onUseCards;
+
+  /// Called to photograph the wound.
+  ///
+  /// Sits in phase A next to the recording: both happen at the open dressing,
+  /// and the photo is worthless once the new bandage is on.
+  final VoidCallback? onTakePhoto;
 
   @override
   State<CaptureScreen> createState() => _CaptureScreenState();
@@ -90,6 +97,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           _ => _Idle(
             onStart: _toggleRecording,
             onUseCards: widget.onUseCards,
+            onTakePhoto: widget.onTakePhoto,
           ),
         },
       ),
@@ -187,7 +195,11 @@ class _PrimaryCaptureAction extends StatelessWidget {
 }
 
 class _Idle extends StatelessWidget {
-  const _Idle({required this.onStart, required this.onUseCards});
+  const _Idle({
+    required this.onStart,
+    required this.onUseCards,
+    required this.onTakePhoto,
+  });
 
   final VoidCallback onStart;
 
@@ -197,6 +209,9 @@ class _Idle extends StatelessWidget {
   /// may not want to be recorded, the room may be too loud, or three taps may
   /// simply be faster than a sentence.
   final VoidCallback? onUseCards;
+
+  /// Photographing the wound, the other half of phase A.
+  final VoidCallback? onTakePhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -223,6 +238,14 @@ class _Idle extends StatelessWidget {
             onPressed: onUseCards,
             icon: const Icon(Icons.checklist),
             label: Text(l10n.captureUseCards),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton.icon(
+            onPressed: onTakePhoto,
+            icon: const Icon(Icons.photo_camera_outlined),
+            label: Text(l10n.captureTakePhoto),
           ),
         ),
       ],

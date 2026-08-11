@@ -145,8 +145,36 @@ class VisitValues extends Table {
   Set<Column<Object>> get primaryKey => {visitId, slotId};
 }
 
+/// One photo taken during a visit.
+///
+/// The image bytes are **not** in here. They live in the encrypted media
+/// store; this table holds only the handles plus the marking geometry, which
+/// is what makes the outline comparable across visits without decoding a
+/// single photo.
+@DataClassName('VisitPhotoRow')
+class VisitPhotos extends Table {
+  TextColumn get id => text()();
+  TextColumn get visitId =>
+      text().references(Visits, #id, onDelete: KeyAction.cascade)();
+
+  /// Handle of the photo as the camera took it. Never overwritten.
+  TextColumn get originalRef => text()();
+
+  /// Handle of the copy with the outline burnt in, once one was drawn.
+  TextColumn get markedRef => text().nullable()();
+
+  /// The outline as JSON, normalised to the image; see [ImageMarking.toJson].
+  TextColumn get marking => text().nullable()();
+
+  DateTimeColumn get takenAt => dateTime()();
+  BoolColumn get synchronized => boolean().withDefault(const Constant(false))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+}
+
 /// The local database, encrypted at rest.
-@DriftDatabase(tables: [Patients, Wounds, Visits, VisitValues])
+@DriftDatabase(tables: [Patients, Wounds, Visits, VisitValues, VisitPhotos])
 class AppDatabase extends _$AppDatabase {
   /// Opens the production database at [file], encrypted with [hexKey].
   ///
@@ -181,13 +209,14 @@ class AppDatabase extends _$AppDatabase {
   }
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
       if (from < 2) await m.createTable(visitValues);
+      if (from < 3) await m.createTable(visitPhotos);
     },
     beforeOpen: (details) async {
       // Referential integrity carries the deletion path: removing a patient
