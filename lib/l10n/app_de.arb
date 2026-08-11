@@ -343,5 +343,45 @@
   "cardsDone": "Fertig",
   "@cardsDone": {
     "description": "Primäre Aktion des Kartenmodus: die erfassten Werte übernehmen."
+  },
+  "markingTitle": "Wunde markieren",
+  "@markingTitle": {
+    "description": "Titel des Screens, auf dem die Wunde im Foto umrandet wird."
+  },
+  "markingHint": "Umrande die Wunde. Das Original bleibt unverändert.",
+  "@markingHint": {
+    "description": "Erklärung unter dem Titel. Sagt zu, dass das Foto selbst nicht angetastet wird — die Markierung entsteht als zweite Datei."
+  },
+  "markingToolEllipse": "Ellipse",
+  "@markingToolEllipse": {
+    "description": "Werkzeug: eine Ellipse aufziehen. Mit Handschuhen meist der schnellste Weg."
+  },
+  "markingToolPoints": "Punkte",
+  "@markingToolPoints": {
+    "description": "Werkzeug: Punkt für Punkt antippen. Die Alternative ohne Ziehgeste (WCAG 2.5.7)."
+  },
+  "markingToolFreehand": "Freihand",
+  "@markingToolFreehand": {
+    "description": "Werkzeug: Kontur mit dem Finger nachziehen."
+  },
+  "markingUndo": "Letzten Punkt zurück",
+  "@markingUndo": {
+    "description": "Nimmt den zuletzt gesetzten Punkt der Markierung zurück."
+  },
+  "markingClear": "Markierung löschen",
+  "@markingClear": {
+    "description": "Verwirft die ganze Markierung; das Foto bleibt."
+  },
+  "markingDone": "Markierung übernehmen",
+  "@markingDone": {
+    "description": "Primäre Aktion: die Markierung übernehmen und weiter zu den Maßen."
+  },
+  "markingEmptyHint": "Noch nichts markiert.",
+  "@markingEmptyHint": {
+    "description": "Hinweis unter der gesperrten Übernehmen-Aktion, solange keine Kontur gezeichnet wurde."
+  },
+  "markingPreviousVisit": "Voriger Besuch ist mit eingeblendet",
+  "@markingPreviousVisit": {
+    "description": "Hinweis, dass die Kontur des letzten Besuchs halbtransparent mitläuft — Grundlage für den Vergleich."
   }
 }

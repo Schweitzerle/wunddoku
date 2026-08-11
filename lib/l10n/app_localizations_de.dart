@@ -282,4 +282,35 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get cardsDone => 'Fertig';
+
+  @override
+  String get markingTitle => 'Wunde markieren';
+
+  @override
+  String get markingHint =>
+      'Umrande die Wunde. Das Original bleibt unverändert.';
+
+  @override
+  String get markingToolEllipse => 'Ellipse';
+
+  @override
+  String get markingToolPoints => 'Punkte';
+
+  @override
+  String get markingToolFreehand => 'Freihand';
+
+  @override
+  String get markingUndo => 'Letzten Punkt zurück';
+
+  @override
+  String get markingClear => 'Markierung löschen';
+
+  @override
+  String get markingDone => 'Markierung übernehmen';
+
+  @override
+  String get markingEmptyHint => 'Noch nichts markiert.';
+
+  @override
+  String get markingPreviousVisit => 'Voriger Besuch ist mit eingeblendet';
 }

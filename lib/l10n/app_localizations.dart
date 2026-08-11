@@ -513,6 +513,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fertig'**
   String get cardsDone;
+
+  /// Titel des Screens, auf dem die Wunde im Foto umrandet wird.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunde markieren'**
+  String get markingTitle;
+
+  /// Erklärung unter dem Titel. Sagt zu, dass das Foto selbst nicht angetastet wird — die Markierung entsteht als zweite Datei.
+  ///
+  /// In de, this message translates to:
+  /// **'Umrande die Wunde. Das Original bleibt unverändert.'**
+  String get markingHint;
+
+  /// Werkzeug: eine Ellipse aufziehen. Mit Handschuhen meist der schnellste Weg.
+  ///
+  /// In de, this message translates to:
+  /// **'Ellipse'**
+  String get markingToolEllipse;
+
+  /// Werkzeug: Punkt für Punkt antippen. Die Alternative ohne Ziehgeste (WCAG 2.5.7).
+  ///
+  /// In de, this message translates to:
+  /// **'Punkte'**
+  String get markingToolPoints;
+
+  /// Werkzeug: Kontur mit dem Finger nachziehen.
+  ///
+  /// In de, this message translates to:
+  /// **'Freihand'**
+  String get markingToolFreehand;
+
+  /// Nimmt den zuletzt gesetzten Punkt der Markierung zurück.
+  ///
+  /// In de, this message translates to:
+  /// **'Letzten Punkt zurück'**
+  String get markingUndo;
+
+  /// Verwirft die ganze Markierung; das Foto bleibt.
+  ///
+  /// In de, this message translates to:
+  /// **'Markierung löschen'**
+  String get markingClear;
+
+  /// Primäre Aktion: die Markierung übernehmen und weiter zu den Maßen.
+  ///
+  /// In de, this message translates to:
+  /// **'Markierung übernehmen'**
+  String get markingDone;
+
+  /// Hinweis unter der gesperrten Übernehmen-Aktion, solange keine Kontur gezeichnet wurde.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nichts markiert.'**
+  String get markingEmptyHint;
+
+  /// Hinweis, dass die Kontur des letzten Besuchs halbtransparent mitläuft — Grundlage für den Vergleich.
+  ///
+  /// In de, this message translates to:
+  /// **'Voriger Besuch ist mit eingeblendet'**
+  String get markingPreviousVisit;
 }
 
 class _AppLocalizationsDelegate

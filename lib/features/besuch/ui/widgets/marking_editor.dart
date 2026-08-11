@@ -67,8 +67,15 @@ class MarkingEditor extends StatefulWidget {
     required this.tool,
     required this.onChanged,
     this.previous,
+    this.transformationController,
     super.key,
   });
+
+  /// Zoom and pan, if the caller wants to drive or observe them.
+  ///
+  /// Left out, the editor keeps its own. A caller that passes one owns it and
+  /// disposes it.
+  final TransformationController? transformationController;
 
   /// The photo to mark; any [ImageProvider] so tests can pass a memory image.
   final ImageProvider photo;
@@ -86,25 +93,73 @@ class MarkingEditor extends StatefulWidget {
 }
 
 class _MarkingEditorState extends State<MarkingEditor> {
-  final _transformation = TransformationController();
+  TransformationController? _ownTransformation;
+
+  TransformationController get _transformation =>
+      widget.transformationController ??
+      (_ownTransformation ??= TransformationController());
 
   /// Where an ellipse drag started, in normalised coordinates.
   Offset? _ellipseAnchor;
 
+  ImageStream? _stream;
+  ImageStreamListener? _listener;
+
+  /// The photo's aspect ratio, once it is known.
+  ///
+  /// The drawing surface is laid out to exactly this ratio. Without it the
+  /// outline would be normalised against the widget box while [MarkingBurner]
+  /// normalises against the image, so a mark drawn next to a letterbox bar
+  /// would sit somewhere else in the burnt copy.
+  double? _aspectRatio;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _resolvePhoto();
+  }
+
+  @override
+  void didUpdateWidget(MarkingEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.photo != widget.photo) _resolvePhoto();
+  }
+
+  void _resolvePhoto() {
+    _detach();
+    final stream = widget.photo.resolve(createLocalImageConfiguration(context));
+    final listener = ImageStreamListener((info, _) {
+      final ratio = info.image.width / info.image.height;
+      info.image.dispose();
+      if (mounted) setState(() => _aspectRatio = ratio);
+    });
+    _stream = stream..addListener(listener);
+    _listener = listener;
+  }
+
+  void _detach() {
+    final listener = _listener;
+    if (listener != null) _stream?.removeListener(listener);
+    _stream = null;
+    _listener = null;
+  }
+
   @override
   void dispose() {
-    _transformation.dispose();
+    _detach();
+    _ownTransformation?.dispose();
     super.dispose();
   }
 
   /// Turns a pointer position into normalised image coordinates.
   ///
-  /// [TransformationController.toScene] undoes the current zoom and pan; the
-  /// division by the painted size makes the result independent of the device.
-  Offset _normalise(Offset local, Size size) {
-    final scene = _transformation.toScene(local);
-    return Offset(scene.dx / size.width, scene.dy / size.height);
-  }
+  /// The gesture detector sits *inside* the transformed subtree, so Flutter
+  /// has already mapped the pointer back through the zoom by the time it
+  /// arrives here — a second correction would move the mark twice. Dividing by
+  /// the painted size, which equals the photo's own rectangle, is all that is
+  /// left to do.
+  Offset _normalise(Offset local, Size size) =>
+      Offset(local.dx / size.width, local.dy / size.height);
 
   bool get _drawing => widget.tool != MarkingTool.points;
 
@@ -112,52 +167,66 @@ class _MarkingEditorState extends State<MarkingEditor> {
   Widget build(BuildContext context) {
     final spacing = context.spacing;
     final status = context.statusColors;
+    final ratio = _aspectRatio;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final size = Size(constraints.maxWidth, constraints.maxHeight);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(spacing.r12),
+      child: ColoredBox(
+        // The ground behind a wound photo stays neutral in both themes so the
+        // surround never tints the tissue colours.
+        color: status.mediaGround,
+        child: InteractiveViewer(
+          transformationController: _transformation,
+          maxScale: 6,
+          // Panning is off while a drawing tool is active, otherwise every
+          // attempt to move the picture leaves a line.
+          panEnabled: !_drawing,
+          scaleEnabled: !_drawing,
+          child: Center(
+            child: AspectRatio(
+              // Until the photo's size is known there is nothing to mark; a
+              // neutral square keeps the layout from jumping.
+              aspectRatio: ratio ?? 1,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final size = constraints.biggest;
 
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(spacing.r12),
-          child: ColoredBox(
-            // The ground behind a wound photo stays neutral in both themes so
-            // the surround never tints the tissue colours.
-            color: status.mediaGround,
-            child: InteractiveViewer(
-              transformationController: _transformation,
-              maxScale: 6,
-              // Panning is off while a drawing tool is active, otherwise every
-              // attempt to move the picture leaves a line.
-              panEnabled: !_drawing,
-              scaleEnabled: !_drawing,
-              child: GestureDetector(
-                onTapUp: widget.tool == MarkingTool.points
-                    ? (details) => _addPoint(details.localPosition, size)
-                    : null,
-                onPanStart: _drawing
-                    ? (details) => _startStroke(details.localPosition, size)
-                    : null,
-                onPanUpdate: _drawing
-                    ? (details) => _extendStroke(details.localPosition, size)
-                    : null,
-                onPanEnd: _drawing ? (_) => _ellipseAnchor = null : null,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image(image: widget.photo, fit: BoxFit.contain),
-                    CustomPaint(
-                      painter: MarkingPainter(
-                        marking: widget.marking,
-                        previous: widget.previous,
-                      ),
+                  return GestureDetector(
+                    onTapUp: widget.tool == MarkingTool.points
+                        ? (details) => _addPoint(details.localPosition, size)
+                        : null,
+                    onPanStart: _drawing
+                        ? (details) =>
+                              _startStroke(details.localPosition, size)
+                        : null,
+                    onPanUpdate: _drawing
+                        ? (details) =>
+                              _extendStroke(details.localPosition, size)
+                        : null,
+                    onPanEnd: _drawing ? (_) => _ellipseAnchor = null : null,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // BoxFit.fill is right here precisely because the box
+                        // already carries the photo's ratio: the picture is
+                        // undistorted and fills the drawing surface exactly.
+                        if (ratio != null)
+                          Image(image: widget.photo, fit: BoxFit.fill),
+                        CustomPaint(
+                          painter: MarkingPainter(
+                            marking: widget.marking,
+                            previous: widget.previous,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 
