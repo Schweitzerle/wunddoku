@@ -167,13 +167,18 @@ class _PrimaryCaptureAction extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
-    return SizedBox(
-      height: spacing.s96,
-      child: FilledButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 28),
-        label: Text(label, style: theme.textTheme.titleMedium),
+    // The size goes through the button style, not through the Text: a
+    // TextStyle taken from ThemeData carries onSurface as its colour, and
+    // handing it to a filled button would override the button's onPrimary
+    // and quietly drop the label below the contrast floor.
+    return FilledButton.icon(
+      onPressed: onPressed,
+      style: FilledButton.styleFrom(
+        minimumSize: Size.fromHeight(spacing.s96),
+        textStyle: theme.textTheme.titleMedium,
       ),
+      icon: Icon(icon, size: 28),
+      label: Text(label),
     );
   }
 }
