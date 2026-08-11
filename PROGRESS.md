@@ -27,11 +27,29 @@ Offen: Kartenmodus, Foto mit Markierung, Verlauf, PDF-Bericht.
 
 ## Nächste drei Schritte
 
-1. Wound-/Visit-Repository plus Autosave, damit der Besuchsentwurf die
-   Unterbrechung übersteht — der `VisitDraft` liegt bisher nur im Speicher
+1. Korridor an die Persistenz hängen — Besuch anlegen, Entwurf beim Start
+   laden, beim Abschluss schließen. Das Repository steht, der Korridor
+   benutzt es noch nicht.
 2. Foto mit Markierung und Maßen (Phase A, zweite Hälfte)
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Persistenz des Besuchsentwurfs, 2026-08-11)
+
+- `VisitRepository` mit `startVisit`, `openDraft`, `saveValue`, `loadDraft`,
+  `completeVisit`, `saveTranscript`.
+- **Autosave nach jedem einzelnen Feld**, nicht am Ende. Nicht abgewartet:
+  ein Schritt muss sich sofort anfühlen, und auf einen Plattenschreibvorgang
+  wartet die Pflegekraft nicht.
+- Schema v2 mit Migrationspfad; Werte als Schlüssel-Wert-Tabelle, Begründung
+  und Verworfenes in `DECISIONS.md`.
+- Defensives Lesen: eine Zeile, die sich nicht dekodieren lässt, fällt heraus
+  und hinterlässt eine sichtbare Lücke — statt eines Werts, den niemand
+  eingegeben hat.
+- Löschpfad reicht bis zu den Befunden: Patient löschen nimmt Wunden, Besuche
+  **und** Werte mit. Mit Test belegt.
+- 10 neue Tests, darunter der Fall, auf den es ankommt: App mitten im Besuch
+  weg, frische Session liest den Stand zurück. Gesamtlauf **144 grün**.
 
 ## Erledigt (Kartenmodus, 2026-08-11)
 

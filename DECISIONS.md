@@ -237,6 +237,33 @@ gebündelt erklärt werden sollen.
 
 ---
 
+## 2026-08-11 — Befundwerte als Schlüssel-Wert-Tabelle, nicht als Spalten
+
+**Gewählt:** Eine Tabelle `VisitValues` mit `(visitId, slotId)` als
+Primärschlüssel, dazu `kind`, `number` und `code`. Der Typ steckt in `kind`;
+das Repository bildet die Zeilen auf die versiegelten Wertetypen zurück.
+
+**Warum:** Der Slot-Katalog wächst mit jeder Befundkarte, die der Auftraggeber
+verlangt — acht Karten bedeuten je Karte eine Migration, wenn jedes Feld eine
+Spalte bekommt. Mit der Schlüssel-Wert-Form kostet eine neue Karte keine
+Schemaänderung. Der zweite Grund wiegt schwerer: **Autosave schreibt eine
+Zeile.** Ein Feld zu sichern muss den Rest des Besuchs nicht anfassen, sonst
+wird aus jedem Tastendruck ein Schreibvorgang über den ganzen Datensatz.
+
+**Was der Ansatz kostet und wie es aufgefangen wird:** Die Datenbank kennt den
+Typ nicht mehr. Deshalb trägt jede Zeile ihn in `kind`, und das Lesen ist
+defensiv — eine Zeile ohne passenden Wert wird **verworfen**, nicht geraten.
+Das Feld erscheint dann als sichtbare Lücke. Ein Wert, den niemand eingegeben
+hat, wäre der schlechtere Ausgang.
+
+**Verworfen:** Eine Spalte je Feld (Migrationslast, breite Schreibvorgänge).
+JSON in einer Spalte (kein Zugriff auf einzelne Felder, keine Typprüfung beim
+Lesen, und Autosave müsste das ganze Dokument neu schreiben).
+
+**Rückholbar:** ja. Der Zugriff liegt hinter `VisitRepository`; eine spätere
+Umstellung auf Spalten wäre eine Migration plus eine geänderte Abbildung.
+
+---
 ## 2026-08-11 — Gestaltungsrichtung „Instrument", Schrift Geist
 
 **Anlass:** Julians Einwand am fertigen Screen — funktional richtig, gestalterisch
