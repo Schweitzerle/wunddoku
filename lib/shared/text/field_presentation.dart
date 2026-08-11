@@ -1,7 +1,8 @@
-import '../../../domain/capture/field_proposal.dart';
-import '../../../domain/catalog/exudation.dart';
-import '../../../domain/catalog/tissue_distribution.dart';
-import '../../../l10n/app_localizations.dart';
+import '../../domain/capture/field_proposal.dart';
+import '../../domain/catalog/exudation.dart';
+import '../../domain/catalog/tissue_distribution.dart';
+import '../../domain/model/visit_draft.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Turns slot ids and proposals into the words that appear on screen.
 ///
@@ -39,6 +40,22 @@ abstract final class FieldPresentation {
         PainScoreProposal(:final score) => l10n.valuePainScore(score),
         ExudateAmountProposal(:final amount) => _amount(l10n, amount),
         ExudateKindProposal(:final kind) => _kind(l10n, kind),
+      };
+
+  /// A stored value, as the nurse and the report read it.
+  ///
+  /// The counterpart to [value], which formats a proposal that has not been
+  /// confirmed yet. Both go through the same wordings so the confirmation
+  /// screen, the finding cards and the report cannot drift apart.
+  static String storedValue(AppLocalizations l10n, VisitValue value) =>
+      switch (value) {
+        CentimetreValue(:final centimetres) => l10n.valueCentimetres(
+          _formatCentimetres(centimetres),
+        ),
+        PercentValue(:final percent) => l10n.valuePercent(percent),
+        ScoreValue(:final score) => l10n.valuePainScore(score),
+        ExudateAmountValue(:final amount) => _amount(l10n, amount),
+        ExudateKindValue(:final kind) => _kind(l10n, kind),
       };
 
   /// A length in centimetres, as the nurse reads it.

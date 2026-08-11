@@ -5,7 +5,7 @@ import '../../../../domain/catalog/tissue_distribution.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../card_entry_view_model.dart';
-import '../field_presentation.dart';
+import '../../../../shared/text/field_presentation.dart';
 import 'stepper_row.dart';
 
 /// A finding card: heading, optional status line, content.

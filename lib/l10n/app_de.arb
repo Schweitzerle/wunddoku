@@ -616,5 +616,134 @@
   "captureShowHistory": "Verlauf",
   "@captureShowHistory": {
     "description": "Aktion im Aufnahme-Screen: die bisherigen Besuche dieser Wunde ansehen."
+  },
+  "reportTitle": "Wundbericht",
+  "@reportTitle": {
+    "description": "Überschrift des PDF-Berichts für den behandelnden Arzt."
+  },
+  "reportPatient": "Patientin/Patient",
+  "@reportPatient": {
+    "description": "Feldbezeichnung im Berichtskopf."
+  },
+  "reportBirthDate": "geboren am {date}",
+  "@reportBirthDate": {
+    "description": "Geburtsdatum im Berichtskopf.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "reportWound": "Wunde",
+  "@reportWound": {
+    "description": "Feldbezeichnung für die Lokalisation der Wunde im Berichtskopf."
+  },
+  "reportDiagnosis": "Diagnose (ICD-10-GM)",
+  "@reportDiagnosis": {
+    "description": "Feldbezeichnung für den ICD-10-Code im Berichtskopf."
+  },
+  "reportPeriod": "Zeitraum {from} bis {to}",
+  "@reportPeriod": {
+    "description": "Der abgedeckte Zeitraum im Berichtskopf.",
+    "placeholders": {
+      "from": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "to": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "reportCreatedAt": "Erstellt am {date}",
+  "@reportCreatedAt": {
+    "description": "Erstellungsdatum in der Fußzeile jeder Seite."
+  },
+  "reportPage": "Seite {page} von {total}",
+  "@reportPage": {
+    "description": "Seitenzahl in der Fußzeile.",
+    "placeholders": {
+      "page": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "reportGapNotice": "Dieser Bericht enthält unvollständige Befunde. Fehlende Angaben sind als „fehlt“ ausgewiesen und nicht geschätzt.",
+  "@reportGapNotice": {
+    "description": "Hinweis auf der ersten Seite, wenn mindestens ein Besuch Lücken hat. Ein Bericht, der Lücken glattbügelt, ist gefährlicher als einer, der sie zeigt."
+  },
+  "reportCourseHeading": "Verlauf",
+  "@reportCourseHeading": {
+    "description": "Überschrift der Verlaufstabelle im Bericht."
+  },
+  "reportColumnDate": "Datum",
+  "@reportColumnDate": {
+    "description": "Spaltenkopf der Verlaufstabelle."
+  },
+  "reportColumnArea": "Fläche",
+  "@reportColumnArea": {
+    "description": "Spaltenkopf der Verlaufstabelle."
+  },
+  "reportColumnDepth": "Tiefe",
+  "@reportColumnDepth": {
+    "description": "Spaltenkopf der Verlaufstabelle."
+  },
+  "reportColumnStatus": "Vollständigkeit",
+  "@reportColumnStatus": {
+    "description": "Spaltenkopf der Verlaufstabelle: ob der Befund vollständig ist."
+  },
+  "reportStatusComplete": "vollständig",
+  "@reportStatusComplete": {
+    "description": "Zellwert der Verlaufstabelle für einen vollständigen Befund."
+  },
+  "reportStatusGaps": "{count, plural, =1{eine Angabe fehlt} other{{count} Angaben fehlen}}",
+  "@reportStatusGaps": {
+    "description": "Zellwert der Verlaufstabelle für einen unvollständigen Befund.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportVisitHeading": "Besuch vom {date}",
+  "@reportVisitHeading": {
+    "description": "Überschrift eines Besuchsabschnitts im Bericht.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMd"
+      }
+    }
+  },
+  "reportPhotoMissing": "Kein Foto zu diesem Besuch.",
+  "@reportPhotoMissing": {
+    "description": "Vermerk anstelle eines Fotos im Bericht."
+  },
+  "reportPhotoFirst": "Erstes Foto dieser Wunde — ohne Vorbild aufgenommen, Abstand daher nicht abgeglichen.",
+  "@reportPhotoFirst": {
+    "description": "Vergleichbarkeitsvermerk am ersten Foto. Zwei Bilder nebeneinander behaupten sonst eine Aussage, die die Aufnahmesituation nicht trägt."
+  },
+  "reportPhotoCaption": "Aufnahme vom {date}, Markierung eingebrannt.",
+  "@reportPhotoCaption": {
+    "description": "Bildunterschrift im Bericht.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "reportNoVisits": "Für den gewählten Zeitraum liegt kein Besuch vor.",
+  "@reportNoVisits": {
+    "description": "Text, wenn der Bericht keinen Besuch enthält."
+  },
+  "reportShare": "Bericht erzeugen",
+  "@reportShare": {
+    "description": "Aktion im Verlauf: den Wundbericht als PDF erzeugen und weitergeben."
   }
 }

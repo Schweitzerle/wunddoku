@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/domain/capture/field_proposal.dart';
 import 'package:wunddoku/domain/capture/transcript_interpreter.dart';
 import 'package:wunddoku/features/besuch/ui/confirmation_view_model.dart';
-import 'package:wunddoku/features/besuch/ui/field_presentation.dart';
+import 'package:wunddoku/shared/text/field_presentation.dart';
 
 void main() {
   const interpreter = TranscriptInterpreter();

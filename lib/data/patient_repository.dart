@@ -94,6 +94,26 @@ class PatientRepository {
     await (_db.delete(_db.patients)..where((p) => p.id.equals(id.value))).go();
   }
 
+  /// Patient and wound behind [wound], as the report header needs them.
+  ///
+  /// Returns null when the wound is gone — a report about a deleted record is
+  /// not something to fall back to.
+  Future<WoundContext?> contextOfWound(WoundId wound) async {
+    final row = await (_db.select(
+      _db.wounds,
+    )..where((w) => w.id.equals(wound.value))).getSingleOrNull();
+    if (row == null) return null;
+
+    final patient = await byId(PatientId(row.patientId));
+    if (patient == null) return null;
+
+    return WoundContext(
+      patient: patient,
+      location: row.location,
+      icd10Code: row.icd10Code,
+    );
+  }
+
   Patient _toDomain(PatientRow row) => Patient(
     id: PatientId(row.id),
     givenName: row.givenName,
@@ -104,4 +124,21 @@ class PatientRepository {
     city: row.city,
     createdAt: row.createdAt,
   );
+}
+
+/// One wound with the patient it belongs to.
+class WoundContext {
+  const WoundContext({
+    required this.patient,
+    required this.location,
+    required this.icd10Code,
+  });
+
+  final Patient patient;
+
+  /// Where on the body the wound sits, in the nurse's words.
+  final String location;
+
+  /// ICD-10-GM code of the underlying diagnosis, if one was assigned.
+  final String? icd10Code;
 }

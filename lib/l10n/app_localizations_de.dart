@@ -510,4 +510,107 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get captureShowHistory => 'Verlauf';
+
+  @override
+  String get reportTitle => 'Wundbericht';
+
+  @override
+  String get reportPatient => 'Patientin/Patient';
+
+  @override
+  String reportBirthDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'geboren am $dateString';
+  }
+
+  @override
+  String get reportWound => 'Wunde';
+
+  @override
+  String get reportDiagnosis => 'Diagnose (ICD-10-GM)';
+
+  @override
+  String reportPeriod(DateTime from, DateTime to) {
+    final intl.DateFormat fromDateFormat = intl.DateFormat.yMd(localeName);
+    final String fromString = fromDateFormat.format(from);
+    final intl.DateFormat toDateFormat = intl.DateFormat.yMd(localeName);
+    final String toString = toDateFormat.format(to);
+
+    return 'Zeitraum $fromString bis $toString';
+  }
+
+  @override
+  String reportCreatedAt(Object date) {
+    return 'Erstellt am $date';
+  }
+
+  @override
+  String reportPage(int page, int total) {
+    return 'Seite $page von $total';
+  }
+
+  @override
+  String get reportGapNotice =>
+      'Dieser Bericht enthält unvollständige Befunde. Fehlende Angaben sind als „fehlt“ ausgewiesen und nicht geschätzt.';
+
+  @override
+  String get reportCourseHeading => 'Verlauf';
+
+  @override
+  String get reportColumnDate => 'Datum';
+
+  @override
+  String get reportColumnArea => 'Fläche';
+
+  @override
+  String get reportColumnDepth => 'Tiefe';
+
+  @override
+  String get reportColumnStatus => 'Vollständigkeit';
+
+  @override
+  String get reportStatusComplete => 'vollständig';
+
+  @override
+  String reportStatusGaps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Angaben fehlen',
+      one: 'eine Angabe fehlt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String reportVisitHeading(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Besuch vom $dateString';
+  }
+
+  @override
+  String get reportPhotoMissing => 'Kein Foto zu diesem Besuch.';
+
+  @override
+  String get reportPhotoFirst =>
+      'Erstes Foto dieser Wunde — ohne Vorbild aufgenommen, Abstand daher nicht abgeglichen.';
+
+  @override
+  String reportPhotoCaption(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Aufnahme vom $dateString, Markierung eingebrannt.';
+  }
+
+  @override
+  String get reportNoVisits =>
+      'Für den gewählten Zeitraum liegt kein Besuch vor.';
+
+  @override
+  String get reportShare => 'Bericht erzeugen';
 }

@@ -416,3 +416,51 @@ jeder Fehlerzustand einen Screen hat, ist der Grund für den Rückgabewert:
 
 **Rückholbar:** ja, das ist der Zweck des Ports.
 
+---
+
+## 2026-08-11 — Bericht: `printing` 5.14.3 statt 5.15.0, Schrift eingebettet
+
+**Gewählt:** `pdf` 3.12.0 mit `printing` 5.14.3. Der Bericht bettet die
+gebündelte Schrift Geist ein; die Berichtsstruktur entsteht als reine
+Dart-Struktur (`ReportContent`) und wird erst beim Rendern in Sprache
+gebracht.
+
+**Warum die ältere Fassung:** `printing` 5.15.0 verlangt Dart ≥ 3.12.0, dieses
+Projekt läuft auf 3.11.3 (Flutter 3.41.5). Die Entscheidung vom 10.08. nannte
+5.15.0 — das war gegen pub.dev richtig und gegen die SDK-Grenze falsch.
+
+**Warum die Schrift eingebettet wird:** Die eingebaute Helvetica des
+PDF-Formats kennt weder deutsche Anführungszeichen noch Geviertstrich. Ohne
+eingebettete Schrift druckt der Bericht die Formulierungen des Kunden mit
+Löchern. Ein Test prüft, dass `FontFile2` in der Datei steht.
+
+**Verworfen:** Nur ASCII-Zeichen in den Berichtstexten (verbiegt die Sprache
+des Kunden). Systemschrift des Geräts (auf iOS und Android verschieden, damit
+kein reproduzierbares Dokument).
+
+**Rückholbar:** ja.
+
+---
+
+## 2026-08-11 — Fläche als Länge × Breite, ausgewiesen als Näherung
+
+**Gewählt:** Die Verlaufsgröße ist Länge × Breite der beiden größten
+Durchmesser. Sie steht in der Oberfläche und im Bericht mit dem Zusatz
+„Näherung: Länge × Breite".
+
+**Warum:** Es ist die Größe, die Wunddokumentationsschemata führen, und sie
+bleibt zwischen Besuchen vergleichbar, gerade weil sie immer gleich grob
+gerechnet wird. Die Fläche innerhalb der gezeichneten Kontur wäre genauer
+*aussehend*, hinge aber am Zeichnen und am Aufnahmeabstand — zwei Quellen für
+scheinbare Veränderung ohne klinische Veränderung.
+
+**Verworfen:** Ellipsenformel (π/4 · L · B) — suggeriert Genauigkeit, die ein
+Zollstock an einer Wunde nicht hat. Fläche aus der Kontur (nicht vergleichbar,
+siehe oben). Interpolation fehlender Messungen (zeichnet eine Messung, die
+niemand gemacht hat).
+
+**Offen an den Auftraggeber:** ob das Sanitätshaus eine andere Flächenformel
+führt. Notiert in `PROGRESS.md`.
+
+**Rückholbar:** ja, die Rohmaße stehen im Datensatz.
+

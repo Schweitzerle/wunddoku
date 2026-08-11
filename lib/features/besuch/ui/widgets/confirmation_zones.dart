@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../confirmation_view_model.dart';
-import '../field_presentation.dart';
+import '../../../../shared/text/field_presentation.dart';
 
 /// The gaps, collapsed into a single expandable row.
 ///

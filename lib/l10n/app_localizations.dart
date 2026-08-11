@@ -849,6 +849,138 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Verlauf'**
   String get captureShowHistory;
+
+  /// Überschrift des PDF-Berichts für den behandelnden Arzt.
+  ///
+  /// In de, this message translates to:
+  /// **'Wundbericht'**
+  String get reportTitle;
+
+  /// Feldbezeichnung im Berichtskopf.
+  ///
+  /// In de, this message translates to:
+  /// **'Patientin/Patient'**
+  String get reportPatient;
+
+  /// Geburtsdatum im Berichtskopf.
+  ///
+  /// In de, this message translates to:
+  /// **'geboren am {date}'**
+  String reportBirthDate(DateTime date);
+
+  /// Feldbezeichnung für die Lokalisation der Wunde im Berichtskopf.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunde'**
+  String get reportWound;
+
+  /// Feldbezeichnung für den ICD-10-Code im Berichtskopf.
+  ///
+  /// In de, this message translates to:
+  /// **'Diagnose (ICD-10-GM)'**
+  String get reportDiagnosis;
+
+  /// Der abgedeckte Zeitraum im Berichtskopf.
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum {from} bis {to}'**
+  String reportPeriod(DateTime from, DateTime to);
+
+  /// Erstellungsdatum in der Fußzeile jeder Seite.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstellt am {date}'**
+  String reportCreatedAt(Object date);
+
+  /// Seitenzahl in der Fußzeile.
+  ///
+  /// In de, this message translates to:
+  /// **'Seite {page} von {total}'**
+  String reportPage(int page, int total);
+
+  /// Hinweis auf der ersten Seite, wenn mindestens ein Besuch Lücken hat. Ein Bericht, der Lücken glattbügelt, ist gefährlicher als einer, der sie zeigt.
+  ///
+  /// In de, this message translates to:
+  /// **'Dieser Bericht enthält unvollständige Befunde. Fehlende Angaben sind als „fehlt“ ausgewiesen und nicht geschätzt.'**
+  String get reportGapNotice;
+
+  /// Überschrift der Verlaufstabelle im Bericht.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get reportCourseHeading;
+
+  /// Spaltenkopf der Verlaufstabelle.
+  ///
+  /// In de, this message translates to:
+  /// **'Datum'**
+  String get reportColumnDate;
+
+  /// Spaltenkopf der Verlaufstabelle.
+  ///
+  /// In de, this message translates to:
+  /// **'Fläche'**
+  String get reportColumnArea;
+
+  /// Spaltenkopf der Verlaufstabelle.
+  ///
+  /// In de, this message translates to:
+  /// **'Tiefe'**
+  String get reportColumnDepth;
+
+  /// Spaltenkopf der Verlaufstabelle: ob der Befund vollständig ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Vollständigkeit'**
+  String get reportColumnStatus;
+
+  /// Zellwert der Verlaufstabelle für einen vollständigen Befund.
+  ///
+  /// In de, this message translates to:
+  /// **'vollständig'**
+  String get reportStatusComplete;
+
+  /// Zellwert der Verlaufstabelle für einen unvollständigen Befund.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{eine Angabe fehlt} other{{count} Angaben fehlen}}'**
+  String reportStatusGaps(int count);
+
+  /// Überschrift eines Besuchsabschnitts im Bericht.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch vom {date}'**
+  String reportVisitHeading(DateTime date);
+
+  /// Vermerk anstelle eines Fotos im Bericht.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Foto zu diesem Besuch.'**
+  String get reportPhotoMissing;
+
+  /// Vergleichbarkeitsvermerk am ersten Foto. Zwei Bilder nebeneinander behaupten sonst eine Aussage, die die Aufnahmesituation nicht trägt.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstes Foto dieser Wunde — ohne Vorbild aufgenommen, Abstand daher nicht abgeglichen.'**
+  String get reportPhotoFirst;
+
+  /// Bildunterschrift im Bericht.
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme vom {date}, Markierung eingebrannt.'**
+  String reportPhotoCaption(DateTime date);
+
+  /// Text, wenn der Bericht keinen Besuch enthält.
+  ///
+  /// In de, this message translates to:
+  /// **'Für den gewählten Zeitraum liegt kein Besuch vor.'**
+  String get reportNoVisits;
+
+  /// Aktion im Verlauf: den Wundbericht als PDF erzeugen und weitergeben.
+  ///
+  /// In de, this message translates to:
+  /// **'Bericht erzeugen'**
+  String get reportShare;
 }
 
 class _AppLocalizationsDelegate

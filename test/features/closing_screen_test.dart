@@ -4,7 +4,7 @@ import 'package:wunddoku/domain/catalog/exudation.dart';
 import 'package:wunddoku/domain/model/visit_draft.dart';
 import 'package:wunddoku/features/besuch/ui/closing_screen.dart';
 import 'package:wunddoku/features/besuch/ui/closing_view_model.dart';
-import 'package:wunddoku/features/besuch/ui/field_presentation.dart';
+import 'package:wunddoku/shared/text/field_presentation.dart';
 
 import '../support/test_app.dart';
 

@@ -4,7 +4,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/theme/color_tokens.dart';
 import '../confirmation_view_model.dart';
-import '../field_presentation.dart';
+import '../../../../shared/text/field_presentation.dart';
 
 /// A field that still wants a decision, drawn at full size.
 ///

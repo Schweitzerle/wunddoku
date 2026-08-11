@@ -22,6 +22,7 @@ class HistoryScreen extends StatelessWidget {
     required this.history,
     required this.loadPhoto,
     this.onStartVisit,
+    this.onCreateReport,
     super.key,
   });
 
@@ -31,12 +32,27 @@ class HistoryScreen extends StatelessWidget {
   /// Called from the empty state.
   final VoidCallback? onStartVisit;
 
+  /// Called to produce the wound report for the office.
+  ///
+  /// Only offered where there is something to report about: an empty report
+  /// is a document that says nothing and still looks official.
+  final VoidCallback? onCreateReport;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.historyTitle)),
+      appBar: AppBar(
+        title: Text(l10n.historyTitle),
+        actions: [
+          if (onCreateReport != null && !history.isEmpty)
+            TextButton(
+              onPressed: onCreateReport,
+              child: Text(l10n.reportShare),
+            ),
+        ],
+      ),
       body: SafeArea(
         child: history.isEmpty
             ? _EmptyState(onStartVisit: onStartVisit)

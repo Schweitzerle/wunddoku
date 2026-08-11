@@ -4,7 +4,7 @@ import 'package:flutter/semantics.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
 import 'closing_view_model.dart';
-import 'field_presentation.dart';
+import '../../../shared/text/field_presentation.dart';
 
 /// Where the visit is closed.
 ///
