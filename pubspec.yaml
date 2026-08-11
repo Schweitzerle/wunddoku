@@ -43,6 +43,7 @@ dependencies:
   sqlite3: ^3.5.1
   path_provider: ^2.1.6
   flutter_secure_storage: ^11.0.0
+  cryptography: ^2.9.0
 
 dev_dependencies:
   flutter_test:
