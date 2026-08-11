@@ -573,6 +573,90 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Voriger Besuch ist mit eingeblendet'**
   String get markingPreviousVisit;
+
+  /// Titel des Screens mit dem Sucher.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunde fotografieren'**
+  String get photoTitle;
+
+  /// Hinweis über dem Sucher, wenn ein Foto des vorigen Besuchs vorliegt.
+  ///
+  /// In de, this message translates to:
+  /// **'Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.'**
+  String get photoHint;
+
+  /// Hinweis über dem Sucher, wenn es noch kein Vorfoto gibt.
+  ///
+  /// In de, this message translates to:
+  /// **'Erstes Foto dieser Wunde. Formatiere frontal und mit gleichbleibendem Abstand.'**
+  String get photoHintFirst;
+
+  /// Schalter, der das halbtransparente Foto des letzten Besuchs über den Sucher legt.
+  ///
+  /// In de, this message translates to:
+  /// **'Voriges Foto einblenden'**
+  String get photoGhostOn;
+
+  /// Schalter, der das eingeblendete Foto des letzten Besuchs wieder ausblendet.
+  ///
+  /// In de, this message translates to:
+  /// **'Voriges Foto ausblenden'**
+  String get photoGhostOff;
+
+  /// Auslöser. Größte Fläche des Screens, weil mit Handschuhen bedient.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto aufnehmen'**
+  String get photoShutter;
+
+  /// Primäre Aktion in der Kontrolle nach der Aufnahme.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto übernehmen'**
+  String get photoAccept;
+
+  /// Verwirft die Aufnahme und kehrt zum Sucher zurück.
+  ///
+  /// In de, this message translates to:
+  /// **'Neu aufnehmen'**
+  String get photoRetake;
+
+  /// Überschrift, wenn die Kameraberechtigung fehlt.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Zugriff auf die Kamera'**
+  String get photoDeniedTitle;
+
+  /// Erklärung und Ausweg, wenn die Kameraberechtigung fehlt. Der Befund darf nie an der Kamera scheitern.
+  ///
+  /// In de, this message translates to:
+  /// **'Die Berechtigung fehlt. In den Einstellungen erteilen oder den Befund ohne Foto erfassen.'**
+  String get photoDeniedBody;
+
+  /// Überschrift, wenn das Gerät keine nutzbare Kamera meldet.
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Kamera gefunden'**
+  String get photoUnavailableTitle;
+
+  /// Überschrift, wenn die Kamera vorhanden ist, aber nicht startet.
+  ///
+  /// In de, this message translates to:
+  /// **'Kamera lässt sich nicht starten'**
+  String get photoFailedTitle;
+
+  /// Ausweg aus jedem Kamerafehler: der Befund läuft ohne Foto weiter.
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Foto weiter'**
+  String get photoSkip;
+
+  /// Startet die Kamera nach einem Fehler noch einmal.
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut versuchen'**
+  String get photoRetry;
 }
 
 class _AppLocalizationsDelegate

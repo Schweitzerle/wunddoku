@@ -313,4 +313,49 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get markingPreviousVisit => 'Voriger Besuch ist mit eingeblendet';
+
+  @override
+  String get photoTitle => 'Wunde fotografieren';
+
+  @override
+  String get photoHint =>
+      'Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.';
+
+  @override
+  String get photoHintFirst =>
+      'Erstes Foto dieser Wunde. Formatiere frontal und mit gleichbleibendem Abstand.';
+
+  @override
+  String get photoGhostOn => 'Voriges Foto einblenden';
+
+  @override
+  String get photoGhostOff => 'Voriges Foto ausblenden';
+
+  @override
+  String get photoShutter => 'Foto aufnehmen';
+
+  @override
+  String get photoAccept => 'Foto übernehmen';
+
+  @override
+  String get photoRetake => 'Neu aufnehmen';
+
+  @override
+  String get photoDeniedTitle => 'Kein Zugriff auf die Kamera';
+
+  @override
+  String get photoDeniedBody =>
+      'Die Berechtigung fehlt. In den Einstellungen erteilen oder den Befund ohne Foto erfassen.';
+
+  @override
+  String get photoUnavailableTitle => 'Keine Kamera gefunden';
+
+  @override
+  String get photoFailedTitle => 'Kamera lässt sich nicht starten';
+
+  @override
+  String get photoSkip => 'Ohne Foto weiter';
+
+  @override
+  String get photoRetry => 'Erneut versuchen';
 }

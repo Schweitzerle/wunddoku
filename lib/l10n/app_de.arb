@@ -383,5 +383,61 @@
   "markingPreviousVisit": "Voriger Besuch ist mit eingeblendet",
   "@markingPreviousVisit": {
     "description": "Hinweis, dass die Kontur des letzten Besuchs halbtransparent mitläuft — Grundlage für den Vergleich."
+  },
+  "photoTitle": "Wunde fotografieren",
+  "@photoTitle": {
+    "description": "Titel des Screens mit dem Sucher."
+  },
+  "photoHint": "Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.",
+  "@photoHint": {
+    "description": "Hinweis über dem Sucher, wenn ein Foto des vorigen Besuchs vorliegt."
+  },
+  "photoHintFirst": "Erstes Foto dieser Wunde. Formatiere frontal und mit gleichbleibendem Abstand.",
+  "@photoHintFirst": {
+    "description": "Hinweis über dem Sucher, wenn es noch kein Vorfoto gibt."
+  },
+  "photoGhostOn": "Voriges Foto einblenden",
+  "@photoGhostOn": {
+    "description": "Schalter, der das halbtransparente Foto des letzten Besuchs über den Sucher legt."
+  },
+  "photoGhostOff": "Voriges Foto ausblenden",
+  "@photoGhostOff": {
+    "description": "Schalter, der das eingeblendete Foto des letzten Besuchs wieder ausblendet."
+  },
+  "photoShutter": "Foto aufnehmen",
+  "@photoShutter": {
+    "description": "Auslöser. Größte Fläche des Screens, weil mit Handschuhen bedient."
+  },
+  "photoAccept": "Foto übernehmen",
+  "@photoAccept": {
+    "description": "Primäre Aktion in der Kontrolle nach der Aufnahme."
+  },
+  "photoRetake": "Neu aufnehmen",
+  "@photoRetake": {
+    "description": "Verwirft die Aufnahme und kehrt zum Sucher zurück."
+  },
+  "photoDeniedTitle": "Kein Zugriff auf die Kamera",
+  "@photoDeniedTitle": {
+    "description": "Überschrift, wenn die Kameraberechtigung fehlt."
+  },
+  "photoDeniedBody": "Die Berechtigung fehlt. In den Einstellungen erteilen oder den Befund ohne Foto erfassen.",
+  "@photoDeniedBody": {
+    "description": "Erklärung und Ausweg, wenn die Kameraberechtigung fehlt. Der Befund darf nie an der Kamera scheitern."
+  },
+  "photoUnavailableTitle": "Keine Kamera gefunden",
+  "@photoUnavailableTitle": {
+    "description": "Überschrift, wenn das Gerät keine nutzbare Kamera meldet."
+  },
+  "photoFailedTitle": "Kamera lässt sich nicht starten",
+  "@photoFailedTitle": {
+    "description": "Überschrift, wenn die Kamera vorhanden ist, aber nicht startet."
+  },
+  "photoSkip": "Ohne Foto weiter",
+  "@photoSkip": {
+    "description": "Ausweg aus jedem Kamerafehler: der Befund läuft ohne Foto weiter."
+  },
+  "photoRetry": "Erneut versuchen",
+  "@photoRetry": {
+    "description": "Startet die Kamera nach einem Fehler noch einmal."
   }
 }
