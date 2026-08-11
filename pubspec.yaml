@@ -72,13 +72,8 @@ hooks:
 flutter:
   generate: true
 
-  # Both families are bundled while the design direction is being decided;
-  # the loser is removed before the handover. Variable fonts, so one file
-  # carries every weight - see DECISIONS.md.
+  # One variable font carries every weight; see DECISIONS.md for the choice.
   fonts:
-    - family: Inter
-      fonts:
-        - asset: assets/fonts/Inter.ttf
     - family: Geist
       fonts:
         - asset: assets/fonts/Geist.ttf

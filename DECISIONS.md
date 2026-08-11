@@ -237,6 +237,60 @@ gebündelt erklärt werden sollen.
 
 ---
 
+## 2026-08-11 — Gestaltungsrichtung „Instrument", Schrift Geist
+
+**Anlass:** Julians Einwand am fertigen Screen — funktional richtig, gestalterisch
+Standardoptik. Berechtigt: die Konzeption stand, die Gestaltung war auf
+Material-Default stehengeblieben, und drei Punkte aus der eigenen Regel
+`22-design-tokens.md` waren verletzt (Hierarchie durch Größenkontrast, Rhythmus
+statt gleichmäßigem Polster, Typografie mit Haltung).
+
+**Gewählt — Richtung:** Der Screen liest sich wie ein Messgerät, nicht wie ein
+Formular. Drei Zonen statt einer flachen Liste: was eine Entscheidung braucht wird
+groß gezeichnet, Lücken fallen zu **einer** aufklappbaren Zeile zusammen,
+Erledigtes sitzt kompakt am unteren Rand. Der Wert dominiert seine Bezeichnung im
+Verhältnis 3:1; Feldbezeichnungen stehen in Versalien mit offener Laufweite.
+
+**Warum jetzt und nicht am Ende:** Jeder weitere Screen erbt die Schwäche. Eine
+Gestaltungsrunde über 16 Screens am Schluss ist teurer und riskanter als eine über
+einen Referenzscreen, von dem die anderen abschauen. Die Tokens standen ohnehin
+schon.
+
+**Gewählt — Schrift:** `Geist` als variable Schrift, mitgeliefert unter
+`assets/fonts/`.
+
+| Achse | Geist | Inter (verworfen) |
+|---|---|---|
+| Lizenz | OFL-1.1 | OFL-1.1 |
+| `tnum` (tabellarische Ziffern) | vorhanden | vorhanden |
+| Dateigröße | **169 KB** | 877 KB |
+| Achsen | `wght` | `opsz` + `wght` |
+| Anmutung auf dem Gerät | enger, technischer | offener, weicher |
+
+**Warum Geist:** Beide erfüllen die harte Anforderung (tabellarische Ziffern, damit
+Maße und Verlaufsspalten untereinander stehen). Geist läuft schmaler — der
+Kopfanker endet 75 px früher — und wirkt instrumentenhafter, was zur gewählten
+Richtung passt. Es ist fünfmal kleiner. Inters Vorteil wäre die `opsz`-Achse; die
+wird hier nirgends gesetzt und zahlt deshalb nichts ein. Belegt durch zwei
+Screenshots vom selben Gerät bei identischem Layout:
+`doc/screenshots/schrift-geist.png` und `schrift-inter.png`.
+
+**Verworfen:** `IBM Plex Sans` — in der variablen Fassung von Google Fonts ließ
+sich kein `tnum` nachweisen, damit scheidet es an der harten Anforderung aus.
+`Roboto Flex` — technisch tauglich, aber zu nah am Systemdefault; das ist genau
+die Standardoptik, die die Regel ausschließt. Systemschrift — dito.
+Laufzeit-Nachladen (`google_fonts`) — funktioniert weder offline noch ohne
+Übermittlung, beides hier ausgeschlossen.
+
+**Nicht offensichtlich:** Gewichte müssen über `FontVariation` gesetzt werden.
+Mit `FontWeight` allein synthetisiert Flutter bei einer variablen Schrift unter
+einer Familie den Fettschnitt, statt die echte Achse zu benutzen.
+
+**Rückholbar:** ja — die Familie steht an einer Stelle (`AppFontFamily`), die
+Skala in `type_tokens.dart`. Feature-Code nennt keine Schrift.
+
+---
+
 ## 2026-08-10 — Spracherkennung: Anbindung ohne Schlüssel entwickelbar
 
 **Gewählt:** Die Erkennung sitzt hinter einem projekteigenen Port. Dahinter

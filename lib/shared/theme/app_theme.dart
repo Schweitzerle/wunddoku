@@ -14,10 +14,7 @@ abstract final class AppTheme {
   static const seed = Color(0xFF0B5F6B);
 
   /// The family both themes are built with.
-  ///
-  /// Swapped in one place while the two candidates are being compared on the
-  /// device; see `DECISIONS.md`.
-  static AppFontFamily font = AppFontFamily.inter;
+  static const font = AppFontFamily.geist;
 
   static ThemeData light() => _build(
     brightness: Brightness.light,

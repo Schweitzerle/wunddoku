@@ -15,15 +15,13 @@ library;
 
 import 'package:flutter/material.dart';
 
-/// The bundled families currently on trial.
+/// The bundled font family.
 ///
-/// Both ship while the direction is being decided; the loser is removed before
-/// the handover. See `DECISIONS.md`.
+/// An enum rather than a bare string so a future second family cannot be
+/// introduced by typing a name somewhere in feature code. See `DECISIONS.md`
+/// for why this one.
 enum AppFontFamily {
-  /// Neutral UI grotesque with an optical-size axis.
-  inter('Inter'),
-
-  /// Tighter, more technical; closer to instrument lettering.
+  /// Tight, technical grotesque; close to instrument lettering.
   geist('Geist');
 
   const AppFontFamily(this.family);
