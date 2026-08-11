@@ -84,23 +84,29 @@ müssen untereinander stehen), großer Gewichtsumfang für Größenkontrast ohne
 Familie, saubere Umlaute, und die Datei muss **mitgeliefert** werden — eine Schrift,
 die zur Laufzeit nachgeladen wird, funktioniert weder offline noch datenschutzfrei.
 
-Eine Familie, differenziert über Gewicht und Größe. Die konkrete Familie läuft über
-`/eps:technikwahl` (Kriterien: Lizenz für Kundensoftware, variabler Schnitt,
-`tnum`-Feature, Dateigröße).
+Eine Familie, differenziert über Gewicht und Größe. Beide Kandidaten sind variable
+Schriften unter OFL-1.1 und tragen `tnum`; die Wahl steht in `DECISIONS.md`.
 
 | Rolle | Größe | Zeilenhöhe | Schnitt | Wofür |
 |---|---|---|---|---|
-| display | 40 | 1.10 | 700 | Messwert, groß, mit `tnum` |
-| headline | 28 | 1.20 | 600 | Screentitel |
+| display | 40 | 1.05 | 700, `tnum` | Messwert in der Bestätigungszeile |
+| headline | 28 | 1.15 | 600 | Anker am Kopf, Screentitel |
 | title | 20 | 1.30 | 600 | Kartenüberschrift |
 | body | 17 | 1.45 | 400 | Fließtext, Transkript |
-| bodyStrong | 17 | 1.45 | 600 | erkannter Wert in der Bestätigungszeile |
-| label | 13 | 1.30 | 500 | Feldbezeichnung, Einheiten |
+| bodyStrong | 17 | 1.45 | 600, `tnum` | Wert in der kompakten Zeile |
+| label | 13 | 1.20 | 600, Versalien, +1,0 Laufweite | Feldbezeichnung |
+| labelPlain | 13 | 1.30 | 500 | Nebenangaben |
 
 - **Skalenverhältnis:** ~1,25 (Major Third), von 13 aufwärts gerundet auf ganze Punkte
 - **Familien:** eine
 - **Größenkontrast display zu label: Faktor 3.** Das ist die Hierarchie — der Wert
   wird gelesen, die Bezeichnung nur bei Bedarf.
+- **Feldbezeichnungen in Versalien mit offener Laufweite.** Bei 13 px liest sich das
+  als Instrumentenbeschriftung statt als kleiner Fließtext, und die Bezeichnung
+  konkurriert nicht mit dem Wert darüber.
+- **Gewichte über `FontVariation`**, nicht über `FontWeight` allein: bei einer
+  variablen Schrift unter einer Familie würde Flutter sonst den Fettschnitt
+  synthetisieren statt die echte Achse zu benutzen.
 - **Prüfung bei 200 %:** Zeilen brechen um statt abzuschneiden; keine feste Höhe an
   textführenden Behältern; geprüft auf 320 dp Breite
 

@@ -17,7 +17,7 @@ abstract final class AppTheme {
   ///
   /// Swapped in one place while the two candidates are being compared on the
   /// device; see `DECISIONS.md`.
-  static AppFontFamily font = AppFontFamily.geist;
+  static AppFontFamily font = AppFontFamily.inter;
 
   static ThemeData light() => _build(
     brightness: Brightness.light,
