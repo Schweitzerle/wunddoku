@@ -27,12 +27,37 @@ Offen: Kartenmodus, Foto mit Markierung, Verlauf, PDF-Bericht.
 
 ## Nächste drei Schritte
 
-1. Kartenmodus — der gleichwertige Weg ohne Sprache, den Aufnahme-Screen und
-   Bestätigungsansicht schon anbieten
-2. Wound-/Visit-Repository plus Autosave, damit der Besuchsentwurf die
-   Unterbrechung übersteht
+1. Wound-/Visit-Repository plus Autosave, damit der Besuchsentwurf die
+   Unterbrechung übersteht — der `VisitDraft` liegt bisher nur im Speicher
+2. Foto mit Markierung und Maßen (Phase A, zweite Hälfte)
 3. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
+
+## Erledigt (Kartenmodus, 2026-08-11)
+
+Der gleichwertige Weg ohne Sprache — bis dahin boten ihn zwei Screens an, aber
+er führte ins Leere.
+
+- **Kein Tippen.** Jeder Wert wird gewählt oder gestuft; zwei 64-dp-Ziele
+  links und rechts eines großen Werts lassen sich mit Handschuhen bedienen,
+  eine Tastatur nicht. Jeder Schritt ist zusätzlich spürbar, damit eine Reihe
+  von Tipps zählbar bleibt, ohne hinzusehen.
+- **Die 100-%-Invariante als Rest, nicht als Fehler.** „100 % nicht vergeben"
+  → „Vollständig verteilt" → „5 % zu viel vergeben". Die Pflegekraft verteilt
+  ein Ganzes; der Rest sagt ihr, was als Nächstes zu tun ist, während eine
+  Fehlermeldung ihr nur sagt, dass sie falsch lag.
+- **Übervergabe ist erlaubt**, solange umverteilt wird. Erst einen Wert senken
+  zu müssen, bevor ein anderer steigen darf, ist langsamer und lehrt nichts.
+- **Null ist keine Angabe.** Ein Anteil zurück auf 0 und ein Maß zurück auf
+  0 cm werden wieder zur Lücke, nicht zum Wert 0.
+- **Widerspruch ausgeschlossen**: „kein Exsudat" löscht die Arten und nimmt
+  sie aus der Bedienung — der Katalog verbietet das Paar.
+- Erreichbar aus dem Normalzustand, nicht nur nach einem verweigerten Mikrofon.
+- Neu: `VisitDraft` als gemeinsames Ziel. Beide Wege schreiben dorthin, und
+  nichts danach kann sie auseinanderhalten.
+- 20 neue Tests, zwei Goldens. Gesamtlauf **134 grün**, Analyzer sauber.
+- Beleg auf dem Gerät: `doc/screenshots/karten-geraet.png` (leer) und
+  `karten-verteilt.png` (60 % Granulation, 40 % Fibrin, vollständig).
 
 ## Erledigt (Gestaltungsrunde, 2026-08-11)
 
