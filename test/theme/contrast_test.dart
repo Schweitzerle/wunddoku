@@ -53,6 +53,11 @@ void main() {
       // Non-text elements (borders, gap outlines): 3:1 per WCAG 1.4.11.
       ('outline on surface', scheme.outline, scheme.surface, 3.0),
       ('gap outline on card', status.luecke, scheme.surfaceContainer, 3.0),
+      // The gap colour is not only an outline: it labels the gaps on the
+      // capture, closing and course screens, and a nurse spends most of a
+      // visit looking at those lines.
+      ('gap text on surface', status.luecke, scheme.surface, 4.5),
+      ('gap text on card', status.luecke, scheme.surfaceContainer, 4.5),
       // The ground behind photos does not follow the theme, so the text on it
       // must not either — in the light theme a theme-derived label turns dark
       // grey on dark grey.

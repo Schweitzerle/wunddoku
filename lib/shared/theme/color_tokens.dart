@@ -27,6 +27,10 @@ class StatusColors extends ThemeExtension<StatusColors> {
   final Color sicher;
 
   /// A gap: dashed outline, no value. Colourless on purpose.
+  ///
+  /// Carries running text as well as outlines — the gap counts on the
+  /// capture, closing and course screens — so it is held to the 4.5:1 text
+  /// threshold, not the 3:1 one an outline would need.
   final Color luecke;
 
   /// Offline is the normal state, not an error — neutral.
@@ -49,7 +53,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     entscheiden: Color(0xFFB3261E),
     pruefen: Color(0xFF8A5A00),
     sicher: Color(0xFF16181A),
-    luecke: Color(0xFF7A7E82),
+    luecke: Color(0xFF6A6E72),
     offline: Color(0xFF4A4E52),
     mediaGround: Color(0xFF3A3D40),
     onMediaGround: Color(0xFFE6E8EA),
