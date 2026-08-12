@@ -45,10 +45,8 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
 2. Durchgang mit `flutter-reviewer` und `ux-reviewer` über die vier neuen
    Screens, danach `/eps:abgabe`
-3. Erfassungs-Screen: er zeigte nach Sprache, Karten und Foto weiterhin den
-   Leerzustand. Der Wiedereinstieg soll aus dem Datensatz kommen — der Screen
-   sagt der Pflegekraft aber nicht, was schon im Besuch steht (offen, siehe
-   Stolpersteine)
+3. Golden für die Änderungszeile im Verlauf (die einzige farbcodierte Zeile
+   dort ist noch nicht bildlich abgedeckt)
 
 ## Erledigt (Gerätedurchlauf und drei Fehler, 2026-08-12)
 
@@ -65,8 +63,19 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 - **Fotoplatzhalter unlesbar im hellen Theme.** Der Untergrund hinter Fotos
   folgt bewusst nicht dem Theme, die Beschriftung darauf tat es doch. Neues
   Token `onMediaGround`, in beiden Themes gleich, mit Kontrastpaar im Test.
-- Gesamtlauf **246 grün**, Analyzer sauber, Goldens erneuert und der Bilddiff
-  angesehen.
+- **Erfassungs-Screen ohne Gedächtnis.** Nach fünf Werten, Foto und Markierung
+  sah er aus wie frisch gestartet. `VisitStanding` zählt jetzt Werte, Lücken und
+  Fotos; die Beispielsätze weichen dem Stand, sobald es einen gibt.
+- **Schalter für das Geisterbild beschriftete die Aktion statt den Zustand.**
+  „Voriges Foto ausblenden" bei eingeblendetem Geist und eingeschaltetem
+  Schalter — TalkBack las „ausblenden, eingeschaltet". Jetzt nennt die
+  Beschriftung den Zustand.
+- **Flackernder Golden gefunden und behoben.** `pumpAndSettle` kehrt zurück,
+  sobald die Frames ruhig sind; das Dekodieren eines Fotos ist kein Frame. Etwa
+  jeder fünfte Gesamtlauf nahm leere Miniaturen auf. Die Goldens warten jetzt
+  auf jedes Bild.
+- Gesamtlauf **247 grün** (fünf Läufe hintereinander), Analyzer sauber, Goldens
+  erneuert und der Bilddiff angesehen.
 
 ## Erledigt (Verlauf und Bericht, 2026-08-11)
 
@@ -476,10 +485,6 @@ brauchen.
 
 ## Stolpersteine
 
-- **Der Erfassungs-Screen zeigt nichts von dem, was schon im Besuch steht.**
-  Nach fünf übernommenen Werten, Foto und Markierung sieht er aus wie beim
-  ersten Start. Der Wiedereinstiegspunkt kommt aus dem Datensatz — sichtbar ist
-  das nicht. Offen; gehört in den nächsten UX-Durchgang.
 - Stoppen der Aufnahme braucht im Widget-Test `tester.runAsync` — im gefälschten
   Async-Zone kehrt der Recorder nie zurück, und der Test hängt ohne Fehlermeldung
   im Aufnahmezustand.
