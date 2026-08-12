@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/data/capture/audio_recorder.dart';
 import 'package:wunddoku/domain/model/visit_draft.dart';
@@ -108,7 +109,10 @@ void main() {
       expect(find.text('6'), findsOneWidget);
       expect(find.text('Werte'), findsOneWidget);
       expect(find.text('fehlen'), findsOneWidget);
-      expect(find.text('Fotos, markiert'), findsOneWidget);
+      // The tick says at least one of them carries an outline.
+      expect(find.text('1'), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
+      expect(find.text('Fotos'), findsOneWidget);
     });
 
     testWidgets('a retaken photo does not claim both are marked', (
@@ -129,7 +133,7 @@ void main() {
       );
 
       expect(find.text('2'), findsOneWidget);
-      expect(find.text('Fotos, markiert'), findsOneWidget);
+      expect(find.byIcon(Icons.check), findsOneWidget);
     });
 
     testWidgets('an unmarked photo is stated without a marking clause', (
@@ -149,8 +153,8 @@ void main() {
         ),
       );
 
+      expect(find.text('1'), findsOneWidget);
       expect(find.text('Fotos'), findsOneWidget);
-      expect(find.text('Fotos, markiert'), findsNothing);
 
       // The examples are worth their space on an empty visit and in the way
       // on one that is half done.

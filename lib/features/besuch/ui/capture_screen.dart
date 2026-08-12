@@ -113,39 +113,43 @@ class _CaptureScreenState extends State<CaptureScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.captureTitle),
-            // Whose wound this is. Without it the corridor is a screen with
-            // no address, and "back" leads somewhere unknown.
-            if (context_ != null)
-              Text(
-                context_,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
-          ],
-        ),
+        // The title is the address, not the screen name: whose wound is open
+        // in front of me. The step itself is named by the big button below.
+        title: Text(l10n.captureTitle, style: theme.textTheme.titleMedium),
         actions: [
           if (widget.onFinishVisit != null)
-            Padding(
-              padding: EdgeInsets.only(right: spacing.s12),
-              child: FilledButton.tonal(
-                onPressed: widget.onFinishVisit,
-                style: FilledButton.styleFrom(
-                  minimumSize: Size(0, spacing.s48),
-                  padding: EdgeInsets.symmetric(horizontal: spacing.s16),
-                  textStyle: theme.textTheme.labelLarge,
-                ),
-                child: Text(l10n.captureFinishShort),
-              ),
+            TextButton.icon(
+              onPressed: widget.onFinishVisit,
+              icon: const Icon(Icons.check, size: 20),
+              label: Text(l10n.captureFinishShort),
             ),
+          SizedBox(width: spacing.s4),
         ],
+        bottom: context_ == null
+            ? null
+            : PreferredSize(
+                preferredSize: Size.fromHeight(spacing.s24),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.s16,
+                    0,
+                    spacing.s16,
+                    spacing.s8,
+                  ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    // Its own line, so the location is never cut off — a
+                    // truncated body site is the one thing here that must not
+                    // be guessed at.
+                    child: Text(
+                      context_,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
       ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
@@ -190,17 +194,16 @@ class _CaptureLayout extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Content gathers at the bottom rather than filling from the top:
-          // this screen is worked one-handed, and everything the nurse might
-          // touch belongs inside the thumb's reach.
+          // Reading fills from the top; only what is touched belongs in the
+          // thumb's reach. Gathering the text at the bottom too left a hole
+          // above it and made the one large target look like the whole screen.
           Expanded(
             child: SingleChildScrollView(
-              reverse: true,
               padding: EdgeInsets.fromLTRB(
-                spacing.s24,
-                spacing.s24,
-                spacing.s24,
-                spacing.s24,
+                spacing.s16,
+                spacing.s16,
+                spacing.s16,
+                spacing.s16,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -305,39 +308,106 @@ class _Idle extends StatelessWidget {
         // coming back from an interruption needs is where she left off.
         if (!standing.isEmpty) ...[
           _StandingCard(standing: standing),
-          SizedBox(height: spacing.s24),
+          SizedBox(height: spacing.s16),
         ],
-        Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
+        _Hint(text: l10n.captureIdleHint),
         if (standing.isEmpty) ...[
           SizedBox(height: spacing.s16),
+          Text(
+            l10n.captureExamplesHeading,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleOne),
           SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleTwo),
         ],
-        SizedBox(height: spacing.s24),
-        Text(
-          l10n.captureWaysHeading,
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        SizedBox(height: spacing.s8),
-        _Way(
-          icon: Icons.checklist,
-          label: l10n.captureUseCards,
-          onTap: onUseCards,
-        ),
-        _Way(
-          icon: Icons.photo_camera_outlined,
-          label: l10n.captureTakePhoto,
-          onTap: onTakePhoto,
-        ),
-        _Way(
-          icon: Icons.show_chart,
-          label: l10n.captureShowHistory,
-          onTap: onShowHistory,
+        SizedBox(height: spacing.s16),
+        _WayGroup(
+          ways: [
+            (Icons.checklist, l10n.captureUseCards, onUseCards),
+            (Icons.photo_camera_outlined, l10n.captureTakePhoto, onTakePhoto),
+            (Icons.show_chart, l10n.captureShowHistory, onShowHistory),
+          ],
         ),
       ],
+    );
+  }
+}
+
+/// The instruction, kept to the weight of an aside.
+///
+/// It explains the button underneath and nothing else, so it may not carry
+/// the same weight as the record above it.
+class _Hint extends StatelessWidget {
+  const _Hint({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.info_outline,
+          size: 18,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        SizedBox(width: spacing.s8),
+        Expanded(
+          child: Text(
+            text,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The equal paths as one block, not three floating cards.
+class _WayGroup extends StatelessWidget {
+  const _WayGroup({required this.ways});
+
+  final List<(IconData, String, VoidCallback?)> ways;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(spacing.r12),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          for (var i = 0; i < ways.length; i++) ...[
+            if (i > 0)
+              Divider(
+                height: 1,
+                thickness: 1,
+                indent: spacing.s48 + spacing.s8,
+                color: theme.colorScheme.surfaceContainerHighest,
+              ),
+            _Way(
+              icon: ways[i].$1,
+              label: ways[i].$2,
+              onTap: ways[i].$3,
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -364,37 +434,32 @@ class _Way extends StatelessWidget {
         ? theme.colorScheme.onSurface
         : theme.colorScheme.onSurfaceVariant;
 
-    return Padding(
-      padding: EdgeInsets.only(bottom: spacing.s8),
-      child: Material(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(spacing.r12),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(spacing.r12),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s16,
-              vertical: spacing.s16,
-            ),
-            child: Row(
-              children: [
-                Icon(icon, color: foreground),
-                SizedBox(width: spacing.s16),
-                Expanded(
-                  child: Text(
-                    label,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: foreground,
-                    ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: spacing.s16,
+            vertical: spacing.s16,
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: foreground),
+              SizedBox(width: spacing.s16),
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: foreground,
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ],
-            ),
+              ),
+              Icon(
+                Icons.chevron_right,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ],
           ),
         ),
       ),
@@ -439,18 +504,21 @@ class _StandingCard extends StatelessWidget {
             ),
             _Metric(
               value: '${standing.photoCount}',
-              label: standing.markedPhotoCount > 0
-                  ? '${l10n.captureMetricPhotos}, ${l10n.captureMarkedShort}'
-                  : l10n.captureMetricPhotos,
+              label: l10n.captureMetricPhotos,
+              // A drawn tick, not the character: the bundled font has no
+              // check mark and would print an empty box.
+              badge: standing.markedPhotoCount > 0 ? Icons.check : null,
             ),
             _Metric(
-              value: complete ? '✓' : '${standing.gapCount}',
+              value: complete ? '' : '${standing.gapCount}',
+              badge: complete ? Icons.check_circle : null,
               label: complete
                   ? l10n.captureMetricComplete
                   : l10n.captureMetricGaps,
               // The only figure that decides whether the visit can be left
               // as it is — so it is the only one that carries colour.
               colour: complete ? status.sicher : status.pruefen,
+              emphasised: true,
             ),
           ],
         ),
@@ -460,11 +528,23 @@ class _StandingCard extends StatelessWidget {
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({required this.value, required this.label, this.colour});
+  const _Metric({
+    required this.value,
+    required this.label,
+    this.colour,
+    this.badge,
+    this.emphasised = false,
+  });
 
   final String value;
   final String label;
   final Color? colour;
+
+  /// Drawn beside the figure when there is something to add to it.
+  final IconData? badge;
+
+  /// Whether this figure is the one that decides.
+  final bool emphasised;
 
   @override
   Widget build(BuildContext context) {
@@ -475,11 +555,29 @@ class _Metric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            value,
-            style: theme.textTheme.headlineMedium?.copyWith(
-              color: colour ?? theme.colorScheme.onSurface,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (value.isNotEmpty)
+                Text(
+                  value,
+                  style:
+                      (emphasised
+                              ? theme.textTheme.headlineLarge
+                              : theme.textTheme.headlineMedium)
+                          ?.copyWith(
+                            color: colour ?? theme.colorScheme.onSurface,
+                          ),
+                ),
+              if (badge != null) ...[
+                if (value.isNotEmpty) SizedBox(width: spacing.s4),
+                Icon(
+                  badge,
+                  size: emphasised ? 28 : 20,
+                  color: colour ?? theme.colorScheme.onSurface,
+                ),
+              ],
+            ],
           ),
           SizedBox(height: spacing.s4),
           Text(
@@ -504,16 +602,26 @@ class _Example extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
+    // A spoken sentence, set as one: the border on the speaking side rather
+    // than a box all around, so it reads as a quotation and not as another
+    // card to press.
     return Container(
-      padding: EdgeInsets.all(spacing.s12),
+      padding: EdgeInsets.fromLTRB(
+        spacing.s12,
+        spacing.s8,
+        spacing.s12,
+        spacing.s8,
+      ),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(spacing.r12),
+        border: Border(
+          left: BorderSide(color: theme.colorScheme.primary, width: 3),
+        ),
       ),
       child: Text(
         text,
-        style: theme.textTheme.labelSmall?.copyWith(
+        style: theme.textTheme.bodyMedium?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
+          fontStyle: FontStyle.italic,
         ),
       ),
     );

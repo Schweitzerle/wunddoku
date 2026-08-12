@@ -82,7 +82,28 @@ TextTheme buildTextTheme(AppFontFamily font) {
       weight: 600,
       letterSpacing: -0.4,
     ),
+    // Roles Material widgets and screens reach for that the scale did not
+    // fill. An unfilled role falls back to the framework default in another
+    // family — invisible on a device with a system font, obvious in a golden.
+    headlineLarge: _style(
+      family: family,
+      size: 34,
+      height: 1.10,
+      weight: 700,
+      letterSpacing: -0.6,
+      tabular: true,
+    ),
+    headlineSmall: _style(
+      family: family,
+      size: 23,
+      height: 1.20,
+      weight: 600,
+      letterSpacing: -0.2,
+    ),
+    titleLarge: _style(family: family, size: 22, height: 1.25, weight: 600),
+    labelLarge: _style(family: family, size: 15, height: 1.25, weight: 600),
     titleMedium: _style(family: family, size: 20, height: 1.30, weight: 600),
+    bodySmall: _style(family: family, size: 14, height: 1.40, weight: 400),
     bodyMedium: _style(family: family, size: 17, height: 1.45, weight: 400),
     bodyLarge: _style(
       family: family,

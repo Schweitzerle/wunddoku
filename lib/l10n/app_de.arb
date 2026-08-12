@@ -998,5 +998,9 @@
   "captureWaysHeading": "Andere Wege",
   "@captureWaysHeading": {
     "description": "Überschrift über den gleichwertigen Alternativen zur Sprachaufnahme."
+  },
+  "captureExamplesHeading": "So kann das klingen",
+  "@captureExamplesHeading": {
+    "description": "Überschrift über den Beispielsätzen, die zeigen, wie ein gesprochener Befund klingt."
   }
 }

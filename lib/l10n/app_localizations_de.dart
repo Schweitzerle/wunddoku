@@ -831,4 +831,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get captureWaysHeading => 'Andere Wege';
+
+  @override
+  String get captureExamplesHeading => 'So kann das klingen';
 }

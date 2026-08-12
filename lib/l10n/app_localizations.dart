@@ -1245,6 +1245,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Andere Wege'**
   String get captureWaysHeading;
+
+  /// Überschrift über den Beispielsätzen, die zeigen, wie ein gesprochener Befund klingt.
+  ///
+  /// In de, this message translates to:
+  /// **'So kann das klingen'**
+  String get captureExamplesHeading;
 }
 
 class _AppLocalizationsDelegate
