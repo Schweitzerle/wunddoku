@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -8,11 +9,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/app/bootstrap.dart';
 import 'package:wunddoku/core/id_generator.dart';
 import 'package:wunddoku/data/db/app_database.dart';
+import 'package:wunddoku/data/capture/audio_recorder.dart';
+import 'package:wunddoku/data/capture/example_dictations.dart';
+import 'package:wunddoku/data/capture/speech_recognizer.dart';
 import 'package:wunddoku/data/media/wound_camera.dart';
 import 'package:wunddoku/data/patient_repository.dart';
 import 'package:wunddoku/data/visit_repository.dart';
 import 'package:wunddoku/domain/model/ids.dart';
 import 'package:wunddoku/domain/model/visit_draft.dart';
+import 'package:wunddoku/features/besuch/ui/capture_view_model.dart';
 import 'package:wunddoku/features/besuch/ui/widgets/marking_editor.dart';
 import 'package:wunddoku/main.dart';
 
@@ -212,7 +217,14 @@ void main() {
     addTearDown(dependencies.dispose);
 
     await tester.pumpWidget(
-      TestApp(child: VisitCorridor(dependencies: dependencies)),
+      TestApp(
+        child: VisitCorridor(
+          dependencies: dependencies,
+          // The same example the app serves, without the asset bundle and
+          // the temporary directory a widget test does not have.
+          capture: _cannedCapture,
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -276,6 +288,14 @@ void main() {
     expect(next, isNot(closed));
   });
 }
+
+/// The capture pair for tests: the implausible-depth example, no plugins.
+CaptureViewModel _cannedCapture() => CaptureViewModel(
+  recorder: FakeAudioRecorder(exampleFile: File('/tmp/befund_03.m4a')),
+  recognizer: CannedSpeechRecognizer({
+    'befund_03.m4a': exampleTranscripts['befund_03.m4a']!,
+  }),
+);
 
 /// A synthetic wound photo — never a real one (`datenschutz-art9.md`).
 Future<Uint8List> _syntheticPhoto() async {

@@ -23,7 +23,23 @@ class TranscriptInterpreter {
 
   /// Words that may sit between a field name and its value
   /// ("Länge *ist circa* drei Komma fünf").
-  static const _fillers = {'ist', 'beträgt', 'circa', 'etwa', 'ca', 'von'};
+  static const _fillers = {
+    'ist',
+    'beträgt',
+    'circa',
+    'etwa',
+    'ca',
+    'von',
+    // Hesitations survive transcription and sit exactly where a correction
+    // begins ("Länge 3, äh nein, 4,1").
+    'äh',
+    'ähm',
+    'öh',
+    'also',
+  };
+
+  /// Words with which a nurse takes a number back.
+  static const _corrections = {'nein', 'nicht', 'falsch', 'quatsch', 'sorry'};
 
   static const _measurementKeywords = {
     'länge': MeasurementAxis.lengthCm,
@@ -106,7 +122,15 @@ class TranscriptInterpreter {
       if (parsed == null) continue;
 
       final afterNumber = numberStart + parsed.tokensConsumed;
-      final (centimetres, end) = _applyUnit(tokens, parsed.value, afterNumber);
+      var (centimetres, end) = _applyUnit(tokens, parsed.value, afterNumber);
+
+      // "Länge 3, äh nein, 4,1" — the nurse took the first number back. It
+      // stays in the transcript, so the interpreter has to hear the retraction
+      // too; keeping the first value would put a measurement in the record
+      // that was spoken and withdrawn.
+      final corrected = _correctionAfter(tokens, end);
+      final wasCorrected = corrected != null;
+      if (corrected != null) (centimetres, end) = corrected;
 
       // Plausibility bounds from the domain: a leg wound is not half a metre
       // long, and depth beyond 20 cm is a misheard number, not a finding.
@@ -116,7 +140,13 @@ class TranscriptInterpreter {
       yield MeasurementProposal(
         axis: axis,
         centimetres: centimetres,
-        confidence: plausible ? ConfidenceTier.high : ConfidenceTier.low,
+        confidence: switch ((plausible, wasCorrected)) {
+          (false, _) => ConfidenceTier.low,
+          // A corrected value is the right one and still worth a look: two
+          // numbers were spoken for one field.
+          (true, true) => ConfidenceTier.medium,
+          (true, false) => ConfidenceTier.high,
+        },
         span: TranscriptSpan(tokens[i].start, tokens[end - 1].end),
       );
     }
@@ -182,13 +212,21 @@ class TranscriptInterpreter {
     for (var i = 0; i < tokens.length; i++) {
       final word = tokens[i].text;
 
-      if (word.startsWith('exsudat')) {
+      // A general recogniser does not know the customer's vocabulary: it
+      // returns "Excusat" for Exsudat and "seriös" for serös. Dropping the
+      // finding over a misheard letter would cost the field entirely, so a
+      // near match is proposed — at medium confidence, which puts it in
+      // front of the nurse rather than into the record.
+      final exudateHeard = word.startsWith('exsudat');
+      if (exudateHeard || _soundsLike(word, 'exsudat')) {
         for (var j = i + 1; j < tokens.length && j <= i + 3; j++) {
           final amount = _amountWords[tokens[j].text];
           if (amount != null) {
             yield ExudateAmountProposal(
               amount: amount,
-              confidence: ConfidenceTier.high,
+              confidence: exudateHeard
+                  ? ConfidenceTier.high
+                  : ConfidenceTier.medium,
               span: TranscriptSpan(tokens[i].start, tokens[j].end),
             );
             break;
@@ -196,15 +234,82 @@ class TranscriptInterpreter {
         }
       }
 
-      final kind = _kindWords[word];
+      final (kind, kindConfidence) = _kindFor(word);
       if (kind != null) {
         yield ExudateKindProposal(
           kind: kind,
-          confidence: ConfidenceTier.high,
+          confidence: kindConfidence,
           span: TranscriptSpan(tokens[i].start, tokens[i].end),
         );
       }
     }
+  }
+
+  /// The value that replaces the one at [index], if it was taken back.
+  ///
+  /// Returns the corrected reading and the index after it, or null when no
+  /// retraction follows.
+  (double, int)? _correctionAfter(List<Token> tokens, int index) {
+    final marker = _skipFillers(tokens, index);
+    if (marker >= tokens.length || !_corrections.contains(tokens[marker].text)) {
+      return null;
+    }
+
+    final numberStart = _skipFillers(tokens, marker + 1);
+    final parsed = parseNumber(tokens, numberStart);
+    if (parsed == null) return null;
+
+    return _applyUnit(tokens, parsed.value, numberStart + parsed.tokensConsumed);
+  }
+
+  /// The exudate kind [word] names, and how sure the match is.
+  (ExudateKind?, ConfidenceTier) _kindFor(String word) {
+    final exact = _kindWords[word];
+    if (exact != null) return (exact, ConfidenceTier.high);
+
+    for (final entry in _kindWords.entries) {
+      if (_soundsLike(word, entry.key)) {
+        return (entry.value, ConfidenceTier.medium);
+      }
+    }
+    return (null, ConfidenceTier.high);
+  }
+
+  /// Whether [word] is close enough to [term] to be the same word misheard.
+  ///
+  /// One edit for short terms, two for longer ones. Deliberately tight: this
+  /// decides which field a value lands in, and a loose match would put a
+  /// finding under the wrong heading — worse than no proposal, because the
+  /// wrong one looks answered.
+  bool _soundsLike(String word, String term) {
+    if (word == term) return true;
+    if ((word.length - term.length).abs() > 2) return false;
+
+    final allowed = term.length >= 6 ? 2 : 1;
+    return _editDistance(word, term, allowed) <= allowed;
+  }
+
+  /// Levenshtein distance, giving up once it exceeds [limit].
+  int _editDistance(String a, String b, int limit) {
+    var previous = List<int>.generate(b.length + 1, (i) => i);
+
+    for (var i = 1; i <= a.length; i++) {
+      final current = List<int>.filled(b.length + 1, 0);
+      current[0] = i;
+      var best = i;
+
+      for (var j = 1; j <= b.length; j++) {
+        final substitution =
+            previous[j - 1] + (a.codeUnitAt(i - 1) == b.codeUnitAt(j - 1) ? 0 : 1);
+        current[j] = [substitution, previous[j] + 1, current[j - 1] + 1]
+            .reduce((x, y) => x < y ? x : y);
+        if (current[j] < best) best = current[j];
+      }
+
+      if (best > limit) return limit + 1;
+      previous = current;
+    }
+    return previous[b.length];
   }
 
   Iterable<PainScoreProposal> _painScore(List<Token> tokens) sync* {

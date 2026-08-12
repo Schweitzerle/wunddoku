@@ -464,3 +464,36 @@ führt. Notiert in `PROGRESS.md`.
 
 **Rückholbar:** ja, die Rohmaße stehen im Datensatz.
 
+
+---
+
+## 2026-08-12 — Beispielaufnahmen mit echten Transkripten, lokal erzeugt
+
+**Gewählt:** Die vier Beispielaufnahmen liegen als Assets im Repo. Die
+zugehörigen Transkripte sind **nicht** aufgeschrieben, sondern das, was ein
+echter Erkenner (Whisper large-v3, deutsch, lokal auf CPU) für diese Dateien
+zurückgab — samt seiner Fehler.
+
+**Warum:** Ein selbst getipptes Transkript testet die Wunschform. Der echte
+Erkenner liefert etwas anderes, und genau daran hing die Fachlogik: er gibt
+Zahlen als Ziffern aus („4,2" statt „vier Komma zwei"), er kennt das Vokabular
+des Kunden nicht (*Exsudat* → „Excusat", *serös* → „seriös"), und eine
+gesprochene Korrektur bleibt im Text stehen („Länge 3, äh nein, 4,1"). Zwei
+davon hat der Interpreter vorher falsch behandelt — die Fachwörter fielen aus
+dem Befund, und die Korrektur wurde ignoriert.
+
+**Verworfen:** Cloud-Transkription der Beispiele (Übermittlung ohne
+AV-Vertrag, und für vier Testdateien unverhältnismäßig). Die vorgegebenen
+Sätze als Transkripte einsetzen (hätte die drei Befunde verdeckt).
+
+**Nebenergebnis zur On-Device-Frage** (Art. 9 verlangt, die lokale Alternative
+mit Zahlen zu prüfen, nicht mit „geht schon"): `large-v3` mit int8 auf 16
+Desktop-Kernen braucht für 14 s Audio **12,4 s**, Modell 3 GB. Das ist knapp
+Echtzeit auf einem Rechner, der um ein Vielfaches stärker ist als ein
+Feldgerät — large-v3 scheidet für das Handy aus. Zu messen bleiben die
+kleineren Modelle (`small`, `medium`, quantisiert über whisper.cpp); erst
+danach ist die Frage Mistral gegen On-Device entscheidungsreif.
+
+**Rückholbar:** ja. Aufnahmen und Transkripte hängen nur am
+`CannedSpeechRecognizer`; ein Anbieteradapter ersetzt ihn, ohne dass etwas
+anderes sich ändert.

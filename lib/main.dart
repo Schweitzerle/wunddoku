@@ -1,13 +1,14 @@
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:printing/printing.dart';
 
 import 'app/bootstrap.dart';
 import 'data/capture/audio_recorder.dart';
+import 'data/capture/example_dictations.dart';
 import 'data/capture/speech_recognizer.dart';
 import 'data/media/marking_burner.dart';
 import 'data/media/media_store.dart';
@@ -38,17 +39,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(WunddokuApp(dependencies: bootstrap()));
 }
-
-/// The example file the development recorder hands back.
-const _exampleAudio = 'befund_01.m4a';
-
-/// A dictation from the example set.
-///
-/// Synthetic on purpose: no real patient data reaches development, tests or
-/// screenshots (`datenschutz-art9.md`).
-const _exampleTranscript =
-    'Länge drei Komma fünf, Breite zwei, Tiefe fünfzig. '
-    'Granulationsgewebe sechzig Prozent. Exsudat gering, serös.';
 
 /// The application shell.
 class WunddokuApp extends StatelessWidget {
@@ -129,6 +119,19 @@ class _StartupFailed extends StatelessWidget {
   }
 }
 
+/// The development capture pair: real recordings, real transcripts.
+///
+/// The recordings are on disk before anything reads them, and the transcripts
+/// are what a recogniser returned for those files. Swapping in a provider
+/// replaces the recogniser alone (`/eps:ki-architektur`).
+CaptureViewModel buildCapture() => CaptureViewModel(
+  recorder: ExampleAudioRecorder(
+    assetNames: exampleDictations,
+    directory: getTemporaryDirectory,
+  ),
+  recognizer: const CannedSpeechRecognizer(exampleTranscripts),
+);
+
 /// Draws [marking] into a copy of [photo] and returns the encoded bytes.
 Future<Uint8List> burnWithPainter(Uint8List photo, ImageMarking marking) async {
   final decoded = await decodeImageFromList(photo);
@@ -161,10 +164,17 @@ class VisitCorridor extends StatefulWidget {
   const VisitCorridor({
     required this.dependencies,
     this.burn = burnWithPainter,
+    this.capture = buildCapture,
     super.key,
   });
 
   final AppDependencies dependencies;
+
+  /// Builds the capture view model.
+  ///
+  /// A seam because the development pair reaches for the asset bundle and the
+  /// temporary directory, neither of which exists in a widget test.
+  final CaptureViewModel Function() capture;
 
   /// Turns a photo and an outline into the marked copy.
   ///
@@ -196,14 +206,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
   @override
   void initState() {
     super.initState();
-    _capture = CaptureViewModel(
-      recorder: FakeAudioRecorder(
-        exampleFile: File('${Directory.systemTemp.path}/$_exampleAudio'),
-      ),
-      recognizer: const CannedSpeechRecognizer({
-        _exampleAudio: _exampleTranscript,
-      }),
-    );
+    _capture = widget.capture();
     unawaited(_resumeOrStart());
   }
 
