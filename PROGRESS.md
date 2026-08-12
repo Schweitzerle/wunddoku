@@ -491,6 +491,13 @@ brauchen.
   *(Annahme: behandelnder Arzt; damit ist die Zielsprache Fachsprache.)*
 - Gibt es beim Sanitätshaus einen bestehenden AV-Vertrag und eine DSFA, in die
   sich die App einfügt?
+- **Wie sprechen die drei Pflegekräfte den Befund tatsächlich?** Der Testlauf
+  mit echten Aufnahmen (2026-08-12) hat gezeigt, dass ein allgemeiner Erkenner
+  am Fachvokabular scheitert: *Exsudat* kam als „Excusat" zurück, *serös* als
+  „seriös". Die App fängt das inzwischen ab, aber sie fängt nur, was sie kennt.
+  Gebraucht wird die Liste der Wörter, die im Alltag wirklich fallen —
+  Abkürzungen („Granu", „Epi"), Kurzformen, regionale Varianten. Diese Liste ist
+  billiger als jedes Modelltraining und wirkt sofort.
 
 **Aus der Katalogrecherche (2026-08-10), Einzelheiten in `docs/fachkataloge.md`:**
 
