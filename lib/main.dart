@@ -16,6 +16,7 @@ import 'data/visit_repository.dart';
 import 'domain/model/ids.dart';
 import 'domain/model/image_marking.dart';
 import 'domain/model/visit_draft.dart';
+import 'domain/model/visit_standing.dart';
 import 'domain/model/wound_history.dart';
 import 'domain/report/report_content.dart';
 import 'features/besuch/ui/capture_screen.dart';
@@ -184,6 +185,8 @@ class _VisitCorridorState extends State<VisitCorridor> {
 
   VisitId? _visit;
   VisitDraft _draft = const VisitDraft();
+  int _photoCount = 0;
+  bool _isMarked = false;
 
   @override
   void initState() {
@@ -214,10 +217,13 @@ class _VisitCorridorState extends State<VisitCorridor> {
     final visit =
         await _visits.openDraft(wound) ?? await _visits.startVisit(wound);
     final draft = await _visits.loadDraft(visit);
+    final photos = await _visits.photosOf(visit);
     if (!mounted) return;
     setState(() {
       _visit = visit;
       _draft = draft;
+      _photoCount = photos.length;
+      _isMarked = photos.isNotEmpty && photos.last.markedRef != null;
     });
   }
 
@@ -381,7 +387,11 @@ class _VisitCorridorState extends State<VisitCorridor> {
 
     // The next patient is the next visit: the corridor starts a fresh one
     // rather than leaving a closed record open on screen.
-    setState(() => _draft = const VisitDraft());
+    setState(() {
+      _draft = const VisitDraft();
+      _photoCount = 0;
+      _isMarked = false;
+    });
     _capture.reset();
     await _resumeOrStart();
   }
@@ -443,6 +453,11 @@ class _VisitCorridorState extends State<VisitCorridor> {
         : await widget.burn(original, marking);
 
     await _visits.savePhoto(visit, original, marking: marking, marked: marked);
+    if (!mounted) return;
+    setState(() {
+      _photoCount += 1;
+      _isMarked = marked != null;
+    });
   }
 
   /// The bytes behind [ref], or null when the file no longer reads.
@@ -478,6 +493,12 @@ class _VisitCorridorState extends State<VisitCorridor> {
   @override
   Widget build(BuildContext context) => CaptureScreen(
     viewModel: _capture,
+    standing: VisitStanding(
+      draft: _draft,
+      expectedSlots: FieldPresentation.woundBedSlots,
+      photoCount: _photoCount,
+      isMarked: _isMarked,
+    ),
     onInterpreted: _openConfirmation,
     onUseCards: _visit == null ? null : _openCards,
     onTakePhoto: _visit == null ? null : _takePhoto,

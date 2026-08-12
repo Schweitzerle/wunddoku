@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/data/capture/audio_recorder.dart';
+import 'package:wunddoku/domain/model/visit_draft.dart';
+import 'package:wunddoku/domain/model/visit_standing.dart';
+import 'package:wunddoku/shared/text/field_presentation.dart';
 import 'package:wunddoku/data/capture/speech_recognizer.dart';
 import 'package:wunddoku/features/besuch/ui/capture_screen.dart';
 import 'package:wunddoku/features/besuch/ui/capture_view_model.dart';
@@ -74,6 +77,38 @@ void main() {
       expect(find.textContaining('Sprich Maße'), findsOneWidget);
       expect(find.textContaining('Länge drei Komma fünf'), findsOneWidget);
       expect(find.text('Aufnahme starten'), findsOneWidget);
+    });
+
+    testWidgets('a visit under way says what it already holds', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {
+                  'measurement.lengthCm': CentimetreValue(3.5),
+                  'measurement.widthCm': CentimetreValue(2),
+                  'tissue.granulation': PercentValue(60),
+                },
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 1,
+              isMarked: true,
+            ),
+          ),
+        ),
+      );
+
+      // An interruption is normal here, and the record is what the nurse
+      // returns to — so the screen has to show it.
+      expect(find.text('3 Werte erfasst'), findsOneWidget);
+      expect(find.text('6 Angaben fehlen'), findsOneWidget);
+      expect(find.text('1 Foto mit Markierung'), findsOneWidget);
+
+      // The examples are worth their space on an empty visit and in the way
+      // on one that is half done.
+      expect(find.textContaining('Länge drei Komma fünf'), findsNothing);
     });
 
     testWidgets('starting shows an unmissable recording state', (tester) async {

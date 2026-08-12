@@ -45,7 +45,7 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
 2. Durchgang mit `flutter-reviewer` und `ux-reviewer` über die vier neuen
    Screens, danach `/eps:abgabe`
-3. Erfassungs-Screen: er zeigt nach Sprache, Karten und Foto weiterhin den
+3. Erfassungs-Screen: er zeigte nach Sprache, Karten und Foto weiterhin den
    Leerzustand. Der Wiedereinstieg soll aus dem Datensatz kommen — der Screen
    sagt der Pflegekraft aber nicht, was schon im Besuch steht (offen, siehe
    Stolpersteine)
@@ -480,10 +480,6 @@ brauchen.
   Nach fünf übernommenen Werten, Foto und Markierung sieht er aus wie beim
   ersten Start. Der Wiedereinstiegspunkt kommt aus dem Datensatz — sichtbar ist
   das nicht. Offen; gehört in den nächsten UX-Durchgang.
-- **Verwerfen im Prüfen-Screen und die Lückenliste im Abschluss zählen
-  unterschiedlich.** Der Prüfen-Screen meldete „5 fehlen", der Abschluss danach
-  „4 Angaben fehlen". Nach dem Fix von 2026-08-12 muss das nachgeprüft werden;
-  die Ursache ist noch nicht belegt.
 - Stoppen der Aufnahme braucht im Widget-Test `tester.runAsync` — im gefälschten
   Async-Zone kehrt der Recorder nie zurück, und der Test hängt ohne Fehlermeldung
   im Aufnahmezustand.

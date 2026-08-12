@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../domain/model/visit_standing.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
 import 'capture_view_model.dart';
@@ -17,6 +18,7 @@ import 'widgets/level_meter.dart';
 class CaptureScreen extends StatefulWidget {
   const CaptureScreen({
     required this.viewModel,
+    this.standing = const VisitStanding.empty(),
     this.onInterpreted,
     this.onUseCards,
     this.onTakePhoto,
@@ -26,6 +28,13 @@ class CaptureScreen extends StatefulWidget {
   });
 
   final CaptureViewModel viewModel;
+
+  /// What the visit already holds.
+  ///
+  /// Shown instead of the examples once there is anything to show: the record
+  /// is the re-entry point after an interruption, and a screen that looks
+  /// freshly started tells the nurse nothing about where she left off.
+  final VisitStanding standing;
 
   /// Called when a recording has been turned into field proposals.
   final VoidCallback? onInterpreted;
@@ -116,6 +125,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             onStop: _toggleRecording,
           ),
           _ => _Idle(
+            standing: widget.standing,
             onStart: _toggleRecording,
             onUseCards: widget.onUseCards,
             onTakePhoto: widget.onTakePhoto,
@@ -218,11 +228,14 @@ class _PrimaryCaptureAction extends StatelessWidget {
 
 class _Idle extends StatelessWidget {
   const _Idle({
+    required this.standing,
     required this.onStart,
     required this.onUseCards,
     required this.onTakePhoto,
     required this.onShowHistory,
   });
+
+  final VisitStanding standing;
 
   final VoidCallback onStart;
 
@@ -257,9 +270,12 @@ class _Idle extends StatelessWidget {
       children: [
         Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
         SizedBox(height: spacing.s24),
-        _Example(text: l10n.captureExampleOne),
-        SizedBox(height: spacing.s8),
-        _Example(text: l10n.captureExampleTwo),
+        if (standing.isEmpty) ...[
+          _Example(text: l10n.captureExampleOne),
+          SizedBox(height: spacing.s8),
+          _Example(text: l10n.captureExampleTwo),
+        ] else
+          _Standing(standing: standing),
         SizedBox(height: spacing.s16),
         Align(
           alignment: Alignment.centerLeft,
@@ -465,6 +481,55 @@ class _NoMicrophone extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// What the visit already holds, in one line per fact.
+///
+/// Deliberately plain text rather than a card: it is the state of the record,
+/// not another thing to operate, and the screen's one large target must stay
+/// the only thing that draws the thumb.
+class _Standing extends StatelessWidget {
+  const _Standing({required this.standing});
+
+  final VisitStanding standing;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final status = context.statusColors;
+
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (standing.valueCount > 0)
+            Text(
+              l10n.captureStandingValues(standing.valueCount),
+              style: theme.textTheme.titleMedium,
+            ),
+          if (standing.photoCount > 0)
+            Text(
+              standing.isMarked
+                  ? '${l10n.captureStandingPhoto(standing.photoCount)} '
+                        '${l10n.captureStandingPhotoMarked}'
+                  : l10n.captureStandingPhoto(standing.photoCount),
+              style: theme.textTheme.bodyMedium,
+            ),
+          SizedBox(height: spacing.s4),
+          Text(
+            l10n.captureStandingGaps(standing.gapCount),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              // A gap is allowed and stays colourless; only the absence of
+              // gaps is worth a word of its own.
+              color: standing.gapCount == 0 ? status.sicher : status.luecke,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
