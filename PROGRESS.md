@@ -41,11 +41,33 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. `/eps:abgabe` vorbereiten
-2. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
+1. UI-Überarbeitung mit Julians Gestaltungsideen — der Stand ist funktional
+   vollständig, aber optisch generisch. Dabei mit erledigen: der Titel „Befund
+   sprechen" wird abgeschnitten, seit der Korridor einen Zurück-Pfeil hat.
+2. `/eps:abgabe` vorbereiten
+3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
-3. Zweiter Erkennerlauf auf dem Zielgerät statt auf dem Entwicklungsrechner,
-   sobald die Wortliste da ist
+
+## Erledigt (der Weg in den Besuch, 2026-08-12)
+
+Slice 1 hatte ein Loch: die App startete direkt im Besuch auf einer fest
+verdrahteten Demo-Wunde, und der Bericht trug einen Patienten, den niemand
+ausgewählt hatte. Die ersten beiden Schritte der Story Map fehlten.
+
+- `WoundRepository` neu: anlegen mit Pflicht-Lokalisation (ohne sie lassen sich
+  zwei Wunden eines Patienten nicht auseinanderhalten), offene Wunden zuerst,
+  abgeheilte darunter statt versteckt, Wiederöffnen für die Wunde, die erneut
+  aufbricht. Je Liste **eine** gruppierte Zählabfrage statt einer je Zeile.
+- Drei Screens: Patientenliste mit Suche, Patientenschirm mit den Wunden,
+  je ein Formular für Patient und Wunde. Leerzustand und „kein Treffer" sind
+  zwei verschiedene Situationen und stehen als zwei verschiedene Sätze da.
+- Eine neu angelegte Wunde führt **direkt** in den Besuch: sie wird erfasst,
+  weil jemand am Verband steht, nicht um eine Liste zu füllen.
+- Der Korridor bekommt die Wunde von außen; ein Befund kann nicht mehr auf
+  einer Wunde landen, die niemand gewählt hat.
+
+Auf dem Gerät durchgespielt: bestehender Patient → Wunde → Besuch mit Stand,
+und neu anlegen → Wunde → leerer Besuch. **291 Tests grün.**
 
 ## Erledigt (Erkennergrößen gemessen, 2026-08-12)
 
