@@ -3,7 +3,7 @@
 > Wird nach jedem Arbeitspaket nachgezogen. Repo plus diese Datei müssen reichen,
 > damit eine frische Session weitermacht.
 
-**Zuletzt aktualisiert:** 2026-08-11
+**Zuletzt aktualisiert:** 2026-08-12
 
 ## Wo wir stehen
 
@@ -34,16 +34,39 @@ sind durch. Es liegen vor:
 - **PDF-Wundbericht**: Kopf, Verlaufstabelle, je Besuch Foto und Befund;
   Lücken als „fehlt", Vergleichbarkeitsvermerk am ersten Foto
 
-Damit ist Slice 1 inhaltlich zu.
+Damit ist Slice 1 inhaltlich zu. Der vollständige Durchlauf auf dem Gerät
+(Motorola edge 30 ultra) ist am 2026-08-12 gelaufen — Sprache, Karten, Foto,
+Markierung, Abschluss, Verlauf, Bericht — und hat drei Fehler zutage gefördert,
+die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Gerätebeleg für Verlauf und Bericht nachholen (Handy war beim letzten
-   Durchlauf abgesteckt)
-2. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
+1. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
-3. Durchgang mit `flutter-reviewer` und `ux-reviewer` über die vier neuen
+2. Durchgang mit `flutter-reviewer` und `ux-reviewer` über die vier neuen
    Screens, danach `/eps:abgabe`
+3. Erfassungs-Screen: er zeigt nach Sprache, Karten und Foto weiterhin den
+   Leerzustand. Der Wiedereinstieg soll aus dem Datensatz kommen — der Screen
+   sagt der Pflegekraft aber nicht, was schon im Besuch steht (offen, siehe
+   Stolpersteine)
+
+## Erledigt (Gerätedurchlauf und drei Fehler, 2026-08-12)
+
+- **Ein verworfener Wert landete trotzdem im Befund.** Der Prüfen-Screen und
+  sein ViewModel waren beide richtig; der Korridor speicherte aber alle
+  Vorschläge des Interpreters statt der entschiedenen. „Tiefe fünfzig"
+  verwerfen änderte nur das Bild — Akte, Verlauf und Bericht trugen einen halben
+  Meter Wundtiefe als Befund, den niemand erhoben hat. Auf dem Gerät gefunden,
+  Test in `test/widget_test.dart` nachgezogen.
+- **Wachstum war stumm.** Der Verlauf schrieb „-6 cm² zum vorigen Besuch" beim
+  Rückgang und „6 cm² zum vorigen Besuch" beim Wachstum. Beide Richtungen stehen
+  jetzt in Worten da; ein Minuszeichen ist im fremden Flur mit Handschuhen keine
+  Aussage.
+- **Fotoplatzhalter unlesbar im hellen Theme.** Der Untergrund hinter Fotos
+  folgt bewusst nicht dem Theme, die Beschriftung darauf tat es doch. Neues
+  Token `onMediaGround`, in beiden Themes gleich, mit Kontrastpaar im Test.
+- Gesamtlauf **246 grün**, Analyzer sauber, Goldens erneuert und der Bilddiff
+  angesehen.
 
 ## Erledigt (Verlauf und Bericht, 2026-08-11)
 
@@ -453,6 +476,17 @@ brauchen.
 
 ## Stolpersteine
 
+- **Der Erfassungs-Screen zeigt nichts von dem, was schon im Besuch steht.**
+  Nach fünf übernommenen Werten, Foto und Markierung sieht er aus wie beim
+  ersten Start. Der Wiedereinstiegspunkt kommt aus dem Datensatz — sichtbar ist
+  das nicht. Offen; gehört in den nächsten UX-Durchgang.
+- **Verwerfen im Prüfen-Screen und die Lückenliste im Abschluss zählen
+  unterschiedlich.** Der Prüfen-Screen meldete „5 fehlen", der Abschluss danach
+  „4 Angaben fehlen". Nach dem Fix von 2026-08-12 muss das nachgeprüft werden;
+  die Ursache ist noch nicht belegt.
+- Stoppen der Aufnahme braucht im Widget-Test `tester.runAsync` — im gefälschten
+  Async-Zone kehrt der Recorder nie zurück, und der Test hängt ohne Fehlermeldung
+  im Aufnahmezustand.
 - Der Trust-Dialog muss einmal interaktiv bestätigt werden (`eps` im
   Projektverzeichnis), sonst greifen die `permissions.allow`-Einträge aus
   `.claude/settings.json` nicht.
