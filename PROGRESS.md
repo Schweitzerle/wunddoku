@@ -41,11 +41,35 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
-   dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
-   (**braucht Julian**)
+1. Kleinere Whisper-Modelle messen (`small`, `medium`, quantisiert über
+   whisper.cpp), damit die Frage Mistral gegen On-Device entscheidungsreif wird
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten)
+
+## Erledigt (echte Beispielaufnahmen, 2026-08-12)
+
+Vier Aufnahmen von Julian eingesprochen, lokal mit Whisper large-v3
+transkribiert (nichts hat den Rechner verlassen). Die Transkripte sind jetzt
+das, was der Erkenner **zurückgibt**, nicht das, was gesprochen wurde — und
+daran hingen zwei Fehler:
+
+- **Fachvokabular fiel aus dem Befund.** Das Modell kennt den Katalog des
+  Kunden nicht: *Exsudat* kam als „Excusat" zurück, *serös* als „seriös".
+  Beide Felder blieben leer. Jetzt fängt eine begrenzte Editierdistanz gegen
+  den Katalog das ab — mit mittlerer Sicherheit, damit die Pflegekraft
+  bestätigt, statt dass hinter ihrem Rücken geschrieben wird.
+- **Eine gesprochene Korrektur wurde ignoriert.** „Länge 3, äh nein, 4,1"
+  schrieb 3 cm in die Akte. Die Rücknahme wird jetzt gehört; der korrigierte
+  Wert geht mit Prüfvermerk hinein, weil zwei Zahlen für ein Feld fielen.
+- Ziffern statt Zahlwörter („4,2") konnte der Interpreter schon.
+
+`ExampleAudioRecorder` schreibt die Aufnahmen als echte Dateien heraus und
+reicht bei jeder Aufnahme die nächste durch — ein Durchlauf spielt alle vier
+Fälle. Auf dem Gerät belegt: befund_01 ergibt sechs übernommene Werte und zwei
+Prüffälle (genau die zwei verstümmelten Wörter), befund_02 zeigt Länge 4,1 cm
+statt 3.
+
+Gesamtlauf **262 grün**, Analyzer sauber.
 
 ## Erledigt (Review-Durchgang, 2026-08-12)
 
