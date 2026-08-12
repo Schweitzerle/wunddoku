@@ -207,6 +207,40 @@ void main() {
     expect(media.files, hasLength(2));
   });
 
+  testWidgets('a discarded value stays out of the record', (tester) async {
+    final dependencies = await _dependencies();
+    addTearDown(dependencies.dispose);
+
+    await tester.pumpWidget(
+      TestApp(child: VisitCorridor(dependencies: dependencies)),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Aufnahme starten'));
+    await tester.pump();
+    await tester.pump();
+    // Stopping awaits the recorder, which never returns inside the fake async
+    // zone (see test/features/capture_screen_test.dart).
+    await tester.runAsync(() => tester.tap(find.text('Fertig')));
+    await tester.pumpAndSettle();
+
+    // The example recording says "Tiefe fünfzig" — half a metre of wound
+    // depth. The interpreter flags it, and the nurse throws it away.
+    // The blocking row sorts to the top, so its discard button is the first.
+    await tester.tap(find.byIcon(Icons.close).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Übernehmen'));
+    await tester.pumpAndSettle();
+
+    final visit = await dependencies.visits.openDraft(dependencies.demoWound);
+    final draft = await dependencies.visits.loadDraft(visit!);
+
+    // A rejected value that reaches the record is worse than no app at all:
+    // the office reads 50 cm as a finding the nurse never made.
+    expect(draft.values['measurement.depthCm'], isNull);
+    expect(draft.values['measurement.lengthCm'], isNotNull);
+  });
+
   testWidgets('closing records whether gaps travelled with the visit', (
     tester,
   ) async {

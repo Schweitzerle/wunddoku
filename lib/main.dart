@@ -255,20 +255,23 @@ class _VisitCorridorState extends State<VisitCorridor> {
     // value is accepted: it is the evidence the words were the nurse's own.
     unawaited(_visits.saveTranscript(visit, state.result.transcript));
 
+    final review = ConfirmationViewModel(
+      expectedSlots: FieldPresentation.woundBedSlots,
+      result: state.result,
+    );
+
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => ConfirmationScreen(
-          viewModel: ConfirmationViewModel(
-            expectedSlots: FieldPresentation.woundBedSlots,
-            result: state.result,
-          ),
+          viewModel: review,
           onAccept: () {
-            unawaited(_acceptProposals(visit, state));
+            unawaited(_acceptSettled(visit, review.settledEntries));
             Navigator.of(context).pop();
           },
         ),
       ),
     );
+    review.dispose();
 
     if (mounted) _capture.reset();
   }
@@ -454,12 +457,20 @@ class _VisitCorridorState extends State<VisitCorridor> {
     }
   }
 
-  Future<void> _acceptProposals(VisitId visit, CaptureDone state) async {
+  /// Writes the values the nurse settled on, and only those.
+  ///
+  /// A discarded proposal is a gap, not a value: the example recording says
+  /// "Tiefe fünfzig", and half a metre of wound depth reaching the office as a
+  /// finding nobody made is the one failure this app must not have.
+  Future<void> _acceptSettled(
+    VisitId visit,
+    List<ConfirmationEntry> settled,
+  ) async {
     var draft = _draft;
-    for (final proposal in state.result.proposals) {
-      final value = VisitValue.fromProposal(proposal);
-      draft = draft.withValue(proposal.slotId, value);
-      await _visits.saveValue(visit, proposal.slotId, value);
+    for (final entry in settled) {
+      final value = VisitValue.fromProposal(entry.proposal!);
+      draft = draft.withValue(entry.slotId, value);
+      await _visits.saveValue(visit, entry.slotId, value);
     }
     if (mounted) setState(() => _draft = draft);
   }
