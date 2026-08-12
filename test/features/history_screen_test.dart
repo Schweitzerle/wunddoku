@@ -207,6 +207,25 @@ void main() {
       );
     });
 
+    testWidgets('an unchanged wound is called unchanged', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: HistoryScreen(
+            history: WoundHistory([
+              _entry(id: 'v1', at: DateTime(2026, 7, 14), length: 3, width: 2),
+              _entry(id: 'v2', at: DateTime(2026, 7, 21), length: 3, width: 2),
+            ]),
+            loadPhoto: loadPhoto,
+          ),
+        ),
+      );
+
+      // "0 cm² kleiner" is a strange way to say nothing moved, and a wound
+      // that stands still for a week is a statement of its own.
+      expect(find.text('unverändert zum vorigen Besuch'), findsOneWidget);
+      expect(find.textContaining('0 cm²'), findsNothing);
+    });
+
     testWidgets('names the area as an approximation', (tester) async {
       await tester.pumpWidget(
         TestApp(

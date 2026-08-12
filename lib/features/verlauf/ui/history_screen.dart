@@ -236,14 +236,21 @@ class _VisitRow extends StatelessWidget {
                       Text(
                         // Direction is in the words, never in colour alone
                         // (`23-a11y.md`) and not in a minus sign a gloved hand
-                        // can miss in sunlight. Growth is the alarm signal.
-                        change <= 0
-                            ? l10n.historyAreaDecrease(_rounded(-change))
-                            : l10n.historyAreaIncrease(_rounded(change)),
+                        // can miss in sunlight.
+                        switch (change) {
+                          0 => l10n.historyAreaUnchanged,
+                          < 0 => l10n.historyAreaDecrease(_rounded(-change)),
+                          _ => l10n.historyAreaIncrease(_rounded(change)),
+                        },
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: change <= 0
-                              ? status.sicher
-                              : theme.colorScheme.onSurfaceVariant,
+                          // Growth is the alarm signal, so it may not be the
+                          // quieter of the two: the amber that means "look at
+                          // this" elsewhere in the app means it here too.
+                          color: switch (change) {
+                            0 => theme.colorScheme.onSurfaceVariant,
+                            < 0 => status.sicher,
+                            _ => status.pruefen,
+                          },
                         ),
                       ),
                   ],
