@@ -206,6 +206,9 @@ class _VisitCorridorState extends State<VisitCorridor> {
 
   VisitId? _visit;
   VisitDraft _draft = const VisitDraft();
+
+  /// Whose wound this corridor documents, for the header.
+  String? _context;
   /// Photo counts as the repository last reported them.
   ///
   /// Recomputed after every write rather than incremented here: the
@@ -236,10 +239,14 @@ class _VisitCorridorState extends State<VisitCorridor> {
     final visit =
         await _visits.openDraft(wound) ?? await _visits.startVisit(wound);
     final draft = await _visits.loadDraft(visit);
+    final owner = await widget.dependencies.patients.contextOfWound(wound);
     if (!mounted) return;
     setState(() {
       _visit = visit;
       _draft = draft;
+      _context = owner == null
+          ? null
+          : '${owner.patient.familyName} · ${owner.location}';
     });
     await _countPhotos(visit);
   }
@@ -518,6 +525,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
   @override
   Widget build(BuildContext context) => CaptureScreen(
     viewModel: _capture,
+    context: _context,
     standing: VisitStanding(
       draft: _draft,
       expectedSlots: FieldPresentation.woundBedSlots,

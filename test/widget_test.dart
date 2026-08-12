@@ -265,7 +265,7 @@ void main() {
 
     final closed = await dependencies.visits.openDraft(_wound);
 
-    await tester.tap(find.text('Besuch abschließen'));
+    await tester.tap(find.text('Abschließen'));
     await tester.pumpAndSettle();
 
     // Nothing was recorded, so every expected field is a gap — and closing is

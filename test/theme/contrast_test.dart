@@ -58,6 +58,19 @@ void main() {
       // visit looking at those lines.
       ('gap text on surface', status.luecke, scheme.surface, 4.5),
       ('gap text on card', status.luecke, scheme.surfaceContainer, 4.5),
+      // The course rows sit on the highest surface, one step above a card.
+      (
+        'labels on the highest surface',
+        scheme.onSurfaceVariant,
+        scheme.surfaceContainerHighest,
+        4.5,
+      ),
+      (
+        'status pruefen on the highest surface',
+        status.pruefen,
+        scheme.surfaceContainerHighest,
+        4.5,
+      ),
       // The ground behind photos does not follow the theme, so the text on it
       // must not either — in the light theme a theme-derived label turns dark
       // grey on dark grey.

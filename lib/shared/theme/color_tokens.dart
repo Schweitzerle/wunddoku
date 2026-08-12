@@ -50,21 +50,21 @@ class StatusColors extends ThemeExtension<StatusColors> {
   final Color onMediaGround;
 
   static const light = StatusColors(
-    entscheiden: Color(0xFFB3261E),
-    pruefen: Color(0xFF8A5A00),
-    sicher: Color(0xFF16181A),
-    luecke: Color(0xFF6A6E72),
-    offline: Color(0xFF4A4E52),
+    entscheiden: Color(0xFFA32017),
+    pruefen: Color(0xFF7A4E00),
+    sicher: Color(0xFF1C1A17),
+    luecke: Color(0xFF635D56),
+    offline: Color(0xFF57514A),
     mediaGround: Color(0xFF3A3D40),
     onMediaGround: Color(0xFFE6E8EA),
   );
 
   static const dark = StatusColors(
-    entscheiden: Color(0xFFF2B8B5),
-    pruefen: Color(0xFFF5C46B),
-    sicher: Color(0xFFE6E8EA),
-    luecke: Color(0xFF8A8E92),
-    offline: Color(0xFFB4B8BC),
+    entscheiden: Color(0xFFF0B4AC),
+    pruefen: Color(0xFFEFC069),
+    sicher: Color(0xFFEDE7DF),
+    luecke: Color(0xFF938C82),
+    offline: Color(0xFFB7AFA4),
     mediaGround: Color(0xFF3A3D40),
     onMediaGround: Color(0xFFE6E8EA),
   );

@@ -102,9 +102,13 @@ void main() {
 
       // An interruption is normal here, and the record is what the nurse
       // returns to — so the screen has to show it.
-      expect(find.text('3 Werte erfasst'), findsOneWidget);
-      expect(find.text('6 Angaben fehlen'), findsOneWidget);
-      expect(find.text('1 Foto · 1 mit Markierung'), findsOneWidget);
+      // Three figures, largest first: how far am I, and what still stops me
+      // from leaving the flat.
+      expect(find.text('3'), findsOneWidget);
+      expect(find.text('6'), findsOneWidget);
+      expect(find.text('Werte'), findsOneWidget);
+      expect(find.text('fehlen'), findsOneWidget);
+      expect(find.text('Fotos, markiert'), findsOneWidget);
     });
 
     testWidgets('a retaken photo does not claim both are marked', (
@@ -124,7 +128,8 @@ void main() {
         ),
       );
 
-      expect(find.text('2 Fotos · 1 mit Markierung'), findsOneWidget);
+      expect(find.text('2'), findsOneWidget);
+      expect(find.text('Fotos, markiert'), findsOneWidget);
     });
 
     testWidgets('an unmarked photo is stated without a marking clause', (
@@ -144,7 +149,8 @@ void main() {
         ),
       );
 
-      expect(find.text('1 Foto'), findsOneWidget);
+      expect(find.text('Fotos'), findsOneWidget);
+      expect(find.text('Fotos, markiert'), findsNothing);
 
       // The examples are worth their space on an empty visit and in the way
       // on one that is half done.
@@ -320,6 +326,11 @@ void main() {
         TestApp(
           child: CaptureScreen(
             viewModel: model(),
+            context: 'Mustermann · linker Unterschenkel, distal',
+            onUseCards: () {},
+            onTakePhoto: () {},
+            onShowHistory: () {},
+            onFinishVisit: () {},
             standing: VisitStanding(
               draft: const VisitDraft(
                 values: {

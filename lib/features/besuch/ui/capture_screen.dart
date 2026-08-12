@@ -18,6 +18,7 @@ import 'widgets/level_meter.dart';
 class CaptureScreen extends StatefulWidget {
   const CaptureScreen({
     required this.viewModel,
+    this.context,
     this.standing = const VisitStanding.empty(),
     this.onInterpreted,
     this.onUseCards,
@@ -28,6 +29,9 @@ class CaptureScreen extends StatefulWidget {
   });
 
   final CaptureViewModel viewModel;
+
+  /// Whose wound is being documented, for the second line of the header.
+  final String? context;
 
   /// What the visit already holds.
   ///
@@ -103,14 +107,43 @@ class _CaptureScreenState extends State<CaptureScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final context_ = widget.context;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.captureTitle),
+        titleSpacing: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.captureTitle),
+            // Whose wound this is. Without it the corridor is a screen with
+            // no address, and "back" leads somewhere unknown.
+            if (context_ != null)
+              Text(
+                context_,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+          ],
+        ),
         actions: [
           if (widget.onFinishVisit != null)
-            TextButton(
-              onPressed: widget.onFinishVisit,
-              child: Text(l10n.captureFinishVisit),
+            Padding(
+              padding: EdgeInsets.only(right: spacing.s12),
+              child: FilledButton.tonal(
+                onPressed: widget.onFinishVisit,
+                style: FilledButton.styleFrom(
+                  minimumSize: Size(0, spacing.s48),
+                  padding: EdgeInsets.symmetric(horizontal: spacing.s16),
+                  textStyle: theme.textTheme.labelLarge,
+                ),
+                child: Text(l10n.captureFinishShort),
+              ),
             ),
         ],
       ),
@@ -269,45 +302,194 @@ class _Idle extends StatelessWidget {
       ),
       children: [
         // On a visit under way the standing leads: the first thing a nurse
-        // coming back from an interruption needs is where she left off, not
-        // a reminder of what can be said.
-        if (standing.isEmpty) ...[
-          Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
+        // coming back from an interruption needs is where she left off.
+        if (!standing.isEmpty) ...[
+          _StandingCard(standing: standing),
           SizedBox(height: spacing.s24),
+        ],
+        Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
+        if (standing.isEmpty) ...[
+          SizedBox(height: spacing.s16),
           _Example(text: l10n.captureExampleOne),
           SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleTwo),
-        ] else ...[
-          _Standing(standing: standing),
-          SizedBox(height: spacing.s12),
-          Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
         ],
-        SizedBox(height: spacing.s16),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: onUseCards,
-            icon: const Icon(Icons.checklist),
-            label: Text(l10n.captureUseCards),
+        SizedBox(height: spacing.s24),
+        Text(
+          l10n.captureWaysHeading,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: onTakePhoto,
-            icon: const Icon(Icons.photo_camera_outlined),
-            label: Text(l10n.captureTakePhoto),
-          ),
+        SizedBox(height: spacing.s8),
+        _Way(
+          icon: Icons.checklist,
+          label: l10n.captureUseCards,
+          onTap: onUseCards,
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton.icon(
-            onPressed: onShowHistory,
-            icon: const Icon(Icons.timeline),
-            label: Text(l10n.captureShowHistory),
-          ),
+        _Way(
+          icon: Icons.photo_camera_outlined,
+          label: l10n.captureTakePhoto,
+          onTap: onTakePhoto,
+        ),
+        _Way(
+          icon: Icons.show_chart,
+          label: l10n.captureShowHistory,
+          onTap: onShowHistory,
         ),
       ],
+    );
+  }
+}
+
+/// An equal path, drawn as something you press.
+///
+/// Speech is the shortcut, never the only way (`23-a11y.md`) — so these may
+/// not look like footnotes under the microphone button. A row with a surface
+/// behind it, an icon and a chevron reads as a target; a bare text button
+/// next to a 96-point button does not.
+class _Way extends StatelessWidget {
+  const _Way({required this.icon, required this.label, required this.onTap});
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final enabled = onTap != null;
+    final foreground = enabled
+        ? theme.colorScheme.onSurface
+        : theme.colorScheme.onSurfaceVariant;
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: spacing.s8),
+      child: Material(
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(spacing.r12),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(spacing.r12),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: spacing.s16,
+              vertical: spacing.s16,
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: foreground),
+                SizedBox(width: spacing.s16),
+                Expanded(
+                  child: Text(
+                    label,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: foreground,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The visit at a glance: three numbers, largest first.
+///
+/// Replaces three sentences of running text. What the nurse wants on return
+/// is not prose but the answer to "how far am I" — and the one figure that
+/// decides whether she can leave the flat is what is still missing.
+class _StandingCard extends StatelessWidget {
+  const _StandingCard({required this.standing});
+
+  final VisitStanding standing;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final status = context.statusColors;
+    final complete = standing.gapCount == 0;
+
+    return MergeSemantics(
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(spacing.r12),
+        ),
+        padding: EdgeInsets.symmetric(
+          horizontal: spacing.s16,
+          vertical: spacing.s16,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _Metric(
+              value: '${standing.valueCount}',
+              label: l10n.captureMetricValues,
+            ),
+            _Metric(
+              value: '${standing.photoCount}',
+              label: standing.markedPhotoCount > 0
+                  ? '${l10n.captureMetricPhotos}, ${l10n.captureMarkedShort}'
+                  : l10n.captureMetricPhotos,
+            ),
+            _Metric(
+              value: complete ? '✓' : '${standing.gapCount}',
+              label: complete
+                  ? l10n.captureMetricComplete
+                  : l10n.captureMetricGaps,
+              // The only figure that decides whether the visit can be left
+              // as it is — so it is the only one that carries colour.
+              colour: complete ? status.sicher : status.pruefen,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Metric extends StatelessWidget {
+  const _Metric({required this.value, required this.label, this.colour});
+
+  final String value;
+  final String label;
+  final Color? colour;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: theme.textTheme.headlineMedium?.copyWith(
+              color: colour ?? theme.colorScheme.onSurface,
+            ),
+          ),
+          SizedBox(height: spacing.s4),
+          Text(
+            label,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -487,55 +669,6 @@ class _NoMicrophone extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// What the visit already holds, in one line per fact.
-///
-/// Deliberately plain text rather than a card: it is the state of the record,
-/// not another thing to operate, and the screen's one large target must stay
-/// the only thing that draws the thumb.
-class _Standing extends StatelessWidget {
-  const _Standing({required this.standing});
-
-  final VisitStanding standing;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-    final status = context.statusColors;
-
-    return MergeSemantics(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (standing.valueCount > 0)
-            Text(
-              l10n.captureStandingValues(standing.valueCount),
-              style: theme.textTheme.titleMedium,
-            ),
-          if (standing.photoCount > 0)
-            Text(
-              l10n.captureStandingPhoto(
-                standing.photoCount,
-                standing.markedPhotoCount,
-              ),
-              style: theme.textTheme.bodyMedium,
-            ),
-          SizedBox(height: spacing.s4),
-          Text(
-            l10n.captureStandingGaps(standing.gapCount),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              // A gap is allowed and stays colourless; only the absence of
-              // gaps is worth a word of its own.
-              color: standing.gapCount == 0 ? status.sicher : status.luecke,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

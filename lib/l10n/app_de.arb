@@ -958,5 +958,45 @@
   "woundStartVisit": "Besuch beginnen",
   "@woundStartVisit": {
     "description": "Aktion auf einer Wunde, die den Besuchskorridor öffnet."
+  },
+  "captureFinishShort": "Abschließen",
+  "@captureFinishShort": {
+    "description": "Kurzform der Abschluss-Aktion in der Kopfzeile des Befund-Screens, wo der volle Satz den Titel abschneiden würde."
+  },
+  "captureMetricValues": "Werte",
+  "@captureMetricValues": {
+    "description": "Kurzlabel unter der Zahl der erfassten Werte im Stand des Besuchs."
+  },
+  "captureMetricPhotos": "Fotos",
+  "@captureMetricPhotos": {
+    "description": "Kurzlabel unter der Zahl der Fotos im Stand des Besuchs."
+  },
+  "captureMetricGaps": "fehlen",
+  "@captureMetricGaps": {
+    "description": "Kurzlabel unter der Zahl der fehlenden Angaben im Stand des Besuchs."
+  },
+  "captureMetricComplete": "vollständig",
+  "@captureMetricComplete": {
+    "description": "Steht anstelle der Lückenzahl, wenn nichts mehr fehlt."
+  },
+  "captureMarkedShort": "markiert",
+  "@captureMarkedShort": {
+    "description": "Zusatz unter der Fotozahl, wenn mindestens ein Foto eine Umrandung trägt."
+  },
+  "captureContext": "{patient} · {wound}",
+  "@captureContext": {
+    "description": "Zweite Zeile der Kopfleiste: wessen Wunde gerade dokumentiert wird. Beantwortet die Frage, wo man ist.",
+    "placeholders": {
+      "patient": {
+        "type": "String"
+      },
+      "wound": {
+        "type": "String"
+      }
+    }
+  },
+  "captureWaysHeading": "Andere Wege",
+  "@captureWaysHeading": {
+    "description": "Überschrift über den gleichwertigen Alternativen zur Sprachaufnahme."
   }
 }

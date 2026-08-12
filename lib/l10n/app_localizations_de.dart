@@ -805,4 +805,30 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get woundStartVisit => 'Besuch beginnen';
+
+  @override
+  String get captureFinishShort => 'Abschließen';
+
+  @override
+  String get captureMetricValues => 'Werte';
+
+  @override
+  String get captureMetricPhotos => 'Fotos';
+
+  @override
+  String get captureMetricGaps => 'fehlen';
+
+  @override
+  String get captureMetricComplete => 'vollständig';
+
+  @override
+  String get captureMarkedShort => 'markiert';
+
+  @override
+  String captureContext(String patient, String wound) {
+    return '$patient · $wound';
+  }
+
+  @override
+  String get captureWaysHeading => 'Andere Wege';
 }

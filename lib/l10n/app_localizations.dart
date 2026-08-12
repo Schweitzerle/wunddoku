@@ -1197,6 +1197,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Besuch beginnen'**
   String get woundStartVisit;
+
+  /// Kurzform der Abschluss-Aktion in der Kopfzeile des Befund-Screens, wo der volle Satz den Titel abschneiden würde.
+  ///
+  /// In de, this message translates to:
+  /// **'Abschließen'**
+  String get captureFinishShort;
+
+  /// Kurzlabel unter der Zahl der erfassten Werte im Stand des Besuchs.
+  ///
+  /// In de, this message translates to:
+  /// **'Werte'**
+  String get captureMetricValues;
+
+  /// Kurzlabel unter der Zahl der Fotos im Stand des Besuchs.
+  ///
+  /// In de, this message translates to:
+  /// **'Fotos'**
+  String get captureMetricPhotos;
+
+  /// Kurzlabel unter der Zahl der fehlenden Angaben im Stand des Besuchs.
+  ///
+  /// In de, this message translates to:
+  /// **'fehlen'**
+  String get captureMetricGaps;
+
+  /// Steht anstelle der Lückenzahl, wenn nichts mehr fehlt.
+  ///
+  /// In de, this message translates to:
+  /// **'vollständig'**
+  String get captureMetricComplete;
+
+  /// Zusatz unter der Fotozahl, wenn mindestens ein Foto eine Umrandung trägt.
+  ///
+  /// In de, this message translates to:
+  /// **'markiert'**
+  String get captureMarkedShort;
+
+  /// Zweite Zeile der Kopfleiste: wessen Wunde gerade dokumentiert wird. Beantwortet die Frage, wo man ist.
+  ///
+  /// In de, this message translates to:
+  /// **'{patient} · {wound}'**
+  String captureContext(String patient, String wound);
+
+  /// Überschrift über den gleichwertigen Alternativen zur Sprachaufnahme.
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Wege'**
+  String get captureWaysHeading;
 }
 
 class _AppLocalizationsDelegate
