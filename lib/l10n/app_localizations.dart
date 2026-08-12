@@ -364,17 +364,11 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{vollständig} =1{1 Angabe fehlt} other{{count} Angaben fehlen}}'**
   String captureStandingGaps(int count);
 
-  /// Stand des laufenden Besuchs: wie viele Fotos aufgenommen wurden.
+  /// Stand des laufenden Besuchs: wie viele Fotos aufgenommen und wie viele davon umrandet wurden. Zwei Mengen in einem Satz, weil nach einer Wiederholungsaufnahme nicht jedes Foto eine Markierung trägt.
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, =1{1 Foto} other{{count} Fotos}}'**
-  String captureStandingPhoto(int count);
-
-  /// Zusatz hinter der Fotozahl auf dem Erfassungs-Screen, wenn das letzte Foto eine Umrandung trägt.
-  ///
-  /// In de, this message translates to:
-  /// **'mit Markierung'**
-  String get captureStandingPhotoMarked;
+  /// **'{count, plural, =1{1 Foto} other{{count} Fotos}}{marked, plural, =0{} other{ · {marked} mit Markierung}}'**
+  String captureStandingPhoto(int count, int marked);
 
   /// Primäre Aktion des Aufnahme-Screens. Großer Knopf im unteren Bereich, einhändig erreichbar.
   ///
@@ -831,6 +825,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{value} cm² kleiner als beim vorigen Besuch'**
   String historyAreaDecrease(num value);
+
+  /// Die Fläche ist gegenüber dem vorherigen Besuch gleich geblieben. Eigene Formulierung, weil „0 cm² kleiner“ eine Bewegung behauptet, die es nicht gab.
+  ///
+  /// In de, this message translates to:
+  /// **'unverändert zum vorigen Besuch'**
+  String get historyAreaUnchanged;
 
   /// Die Wundtiefe in Zentimetern.
   ///

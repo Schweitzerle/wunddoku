@@ -221,18 +221,17 @@
       }
     }
   },
-  "captureStandingPhoto": "{count, plural, =1{1 Foto} other{{count} Fotos}}",
+  "captureStandingPhoto": "{count, plural, =1{1 Foto} other{{count} Fotos}}{marked, plural, =0{} other{ · {marked} mit Markierung}}",
   "@captureStandingPhoto": {
-    "description": "Stand des laufenden Besuchs: wie viele Fotos aufgenommen wurden.",
+    "description": "Stand des laufenden Besuchs: wie viele Fotos aufgenommen und wie viele davon umrandet wurden. Zwei Mengen in einem Satz, weil nach einer Wiederholungsaufnahme nicht jedes Foto eine Markierung trägt.",
     "placeholders": {
       "count": {
         "type": "int"
+      },
+      "marked": {
+        "type": "int"
       }
     }
-  },
-  "captureStandingPhotoMarked": "mit Markierung",
-  "@captureStandingPhotoMarked": {
-    "description": "Zusatz hinter der Fotozahl auf dem Erfassungs-Screen, wenn das letzte Foto eine Umrandung trägt."
   },
   "captureStart": "Aufnahme starten",
   "@captureStart": {
@@ -619,6 +618,10 @@
         "format": "decimalPattern"
       }
     }
+  },
+  "historyAreaUnchanged": "unverändert zum vorigen Besuch",
+  "@historyAreaUnchanged": {
+    "description": "Die Fläche ist gegenüber dem vorherigen Besuch gleich geblieben. Eigene Formulierung, weil „0 cm² kleiner“ eine Bewegung behauptet, die es nicht gab."
   },
   "historyDepth": "Tiefe {value} cm",
   "@historyDepth": {

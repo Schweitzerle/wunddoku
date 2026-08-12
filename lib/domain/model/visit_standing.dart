@@ -11,7 +11,7 @@ class VisitStanding {
     required VisitDraft draft,
     required List<String> expectedSlots,
     required this.photoCount,
-    required this.isMarked,
+    required this.markedPhotoCount,
   }) : valueCount = draft.values.length,
        gapCount = draft.gapsAmong(expectedSlots).length;
 
@@ -19,7 +19,7 @@ class VisitStanding {
     : valueCount = 0,
       gapCount = 0,
       photoCount = 0,
-      isMarked = false;
+      markedPhotoCount = 0;
 
   /// Fields the visit carries a value for, expected or not.
   final int valueCount;
@@ -29,8 +29,12 @@ class VisitStanding {
 
   final int photoCount;
 
-  /// Whether the most recent photo carries an outline.
-  final bool isMarked;
+  /// How many of those photos carry an outline.
+  ///
+  /// A count rather than a flag about the latest photo: after a retake a
+  /// visit can hold two pictures of which only one is marked, and "2 Fotos
+  /// mit Markierung" would claim both are.
+  final int markedPhotoCount;
 
   /// Whether nothing has been recorded yet.
   ///

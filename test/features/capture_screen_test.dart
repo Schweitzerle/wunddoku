@@ -94,7 +94,7 @@ void main() {
               ),
               expectedSlots: FieldPresentation.woundBedSlots,
               photoCount: 1,
-              isMarked: true,
+              markedPhotoCount: 1,
             ),
           ),
         ),
@@ -104,7 +104,47 @@ void main() {
       // returns to — so the screen has to show it.
       expect(find.text('3 Werte erfasst'), findsOneWidget);
       expect(find.text('6 Angaben fehlen'), findsOneWidget);
-      expect(find.text('1 Foto mit Markierung'), findsOneWidget);
+      expect(find.text('1 Foto · 1 mit Markierung'), findsOneWidget);
+    });
+
+    testWidgets('a retaken photo does not claim both are marked', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            standing: VisitStanding(
+              draft: const VisitDraft(),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 2,
+              markedPhotoCount: 1,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('2 Fotos · 1 mit Markierung'), findsOneWidget);
+    });
+
+    testWidgets('an unmarked photo is stated without a marking clause', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            standing: VisitStanding(
+              draft: const VisitDraft(),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 1,
+              markedPhotoCount: 0,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('1 Foto'), findsOneWidget);
 
       // The examples are worth their space on an empty visit and in the way
       // on one that is half done.
@@ -219,6 +259,37 @@ void main() {
       handle.dispose();
     });
 
+    testWidgets('meets the four guidelines with a visit under way', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {'measurement.lengthCm': CentimetreValue(3.5)},
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 1,
+              markedPhotoCount: 1,
+            ),
+          ),
+        ),
+      );
+
+      // The standing carries two colour-coded lines. Contrast is checked in
+      // the state the nurse spends most of a visit in, not only in the empty
+      // one she sees for a minute.
+      await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(iOSTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
+      await expectLater(tester, meetsGuideline(textContrastGuideline));
+
+      handle.dispose();
+    });
+
     testWidgets('the open microphone is announced, not only coloured', (
       tester,
     ) async {
@@ -244,6 +315,33 @@ void main() {
   });
 
   group('goldens', () {
+    testWidgets('a visit under way', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {
+                  'measurement.lengthCm': CentimetreValue(3.5),
+                  'measurement.widthCm': CentimetreValue(2),
+                  'tissue.granulation': PercentValue(60),
+                },
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 1,
+              markedPhotoCount: 1,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await expectLater(
+        find.byType(CaptureScreen),
+        matchesGoldenFile('goldens/capture_standing.png'),
+      );
+    });
+
     testWidgets('idle', (tester) async {
       await tester.pumpWidget(
         TestApp(child: CaptureScreen(viewModel: model())),

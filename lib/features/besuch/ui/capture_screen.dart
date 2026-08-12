@@ -268,14 +268,20 @@ class _Idle extends StatelessWidget {
         onPressed: onStart,
       ),
       children: [
-        Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
-        SizedBox(height: spacing.s24),
+        // On a visit under way the standing leads: the first thing a nurse
+        // coming back from an interruption needs is where she left off, not
+        // a reminder of what can be said.
         if (standing.isEmpty) ...[
+          Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
+          SizedBox(height: spacing.s24),
           _Example(text: l10n.captureExampleOne),
           SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleTwo),
-        ] else
+        ] else ...[
           _Standing(standing: standing),
+          SizedBox(height: spacing.s12),
+          Text(l10n.captureIdleHint, style: theme.textTheme.bodyMedium),
+        ],
         SizedBox(height: spacing.s16),
         Align(
           alignment: Alignment.centerLeft,
@@ -513,10 +519,10 @@ class _Standing extends StatelessWidget {
             ),
           if (standing.photoCount > 0)
             Text(
-              standing.isMarked
-                  ? '${l10n.captureStandingPhoto(standing.photoCount)} '
-                        '${l10n.captureStandingPhotoMarked}'
-                  : l10n.captureStandingPhoto(standing.photoCount),
+              l10n.captureStandingPhoto(
+                standing.photoCount,
+                standing.markedPhotoCount,
+              ),
               style: theme.textTheme.bodyMedium,
             ),
           SizedBox(height: spacing.s4),

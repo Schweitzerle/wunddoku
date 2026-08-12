@@ -181,18 +181,21 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String captureStandingPhoto(int count) {
+  String captureStandingPhoto(int count, int marked) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other: '$count Fotos',
       one: '1 Foto',
     );
-    return '$_temp0';
+    String _temp1 = intl.Intl.pluralLogic(
+      marked,
+      locale: localeName,
+      other: ' · $marked mit Markierung',
+      zero: '',
+    );
+    return '$_temp0$_temp1';
   }
-
-  @override
-  String get captureStandingPhotoMarked => 'mit Markierung';
 
   @override
   String get captureStart => 'Aufnahme starten';
@@ -526,6 +529,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
     return '$valueString cm² kleiner als beim vorigen Besuch';
   }
+
+  @override
+  String get historyAreaUnchanged => 'unverändert zum vorigen Besuch';
 
   @override
   String historyDepth(num value) {
