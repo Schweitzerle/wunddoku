@@ -203,6 +203,37 @@
   "@captureExampleTwo": {
     "description": "Zweiter Beispielsatz im Leerzustand des Aufnahme-Screens."
   },
+  "captureStandingValues": "{count, plural, =1{1 Wert erfasst} other{{count} Werte erfasst}}",
+  "@captureStandingValues": {
+    "description": "Stand des laufenden Besuchs auf dem Erfassungs-Screen: wie viele Felder schon einen Wert tragen.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "captureStandingGaps": "{count, plural, =0{vollständig} =1{1 Angabe fehlt} other{{count} Angaben fehlen}}",
+  "@captureStandingGaps": {
+    "description": "Stand des laufenden Besuchs: wie viele erwartete Angaben noch leer sind.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "captureStandingPhoto": "{count, plural, =1{1 Foto} other{{count} Fotos}}",
+  "@captureStandingPhoto": {
+    "description": "Stand des laufenden Besuchs: wie viele Fotos aufgenommen wurden.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "captureStandingPhotoMarked": "mit Markierung",
+  "@captureStandingPhotoMarked": {
+    "description": "Zusatz hinter der Fotozahl auf dem Erfassungs-Screen, wenn das letzte Foto eine Umrandung trägt."
+  },
   "captureStart": "Aufnahme starten",
   "@captureStart": {
     "description": "Primäre Aktion des Aufnahme-Screens. Großer Knopf im unteren Bereich, einhändig erreichbar."
@@ -396,13 +427,9 @@
   "@photoHintFirst": {
     "description": "Hinweis über dem Sucher, wenn es noch kein Vorfoto gibt."
   },
-  "photoGhostOn": "Voriges Foto einblenden",
-  "@photoGhostOn": {
-    "description": "Schalter, der das halbtransparente Foto des letzten Besuchs über den Sucher legt."
-  },
-  "photoGhostOff": "Voriges Foto ausblenden",
-  "@photoGhostOff": {
-    "description": "Schalter, der das eingeblendete Foto des letzten Besuchs wieder ausblendet."
+  "photoGhost": "Voriges Foto einblenden",
+  "@photoGhost": {
+    "description": "Schalter über dem Sucher. Beschriftet den Zustand, nicht die Aktion: der Schalter selbst sagt an oder aus, und ein Screenreader liest beides zusammen."
   },
   "photoShutter": "Foto aufnehmen",
   "@photoShutter": {

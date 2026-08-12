@@ -352,6 +352,30 @@ abstract class AppLocalizations {
   /// **'„Granulation sechzig Prozent, Fibrin vierzig Prozent. Exsudat gering, serös.“'**
   String get captureExampleTwo;
 
+  /// Stand des laufenden Besuchs auf dem Erfassungs-Screen: wie viele Felder schon einen Wert tragen.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Wert erfasst} other{{count} Werte erfasst}}'**
+  String captureStandingValues(int count);
+
+  /// Stand des laufenden Besuchs: wie viele erwartete Angaben noch leer sind.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0{vollständig} =1{1 Angabe fehlt} other{{count} Angaben fehlen}}'**
+  String captureStandingGaps(int count);
+
+  /// Stand des laufenden Besuchs: wie viele Fotos aufgenommen wurden.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Foto} other{{count} Fotos}}'**
+  String captureStandingPhoto(int count);
+
+  /// Zusatz hinter der Fotozahl auf dem Erfassungs-Screen, wenn das letzte Foto eine Umrandung trägt.
+  ///
+  /// In de, this message translates to:
+  /// **'mit Markierung'**
+  String get captureStandingPhotoMarked;
+
   /// Primäre Aktion des Aufnahme-Screens. Großer Knopf im unteren Bereich, einhändig erreichbar.
   ///
   /// In de, this message translates to:
@@ -592,17 +616,11 @@ abstract class AppLocalizations {
   /// **'Erstes Foto dieser Wunde. Formatiere frontal und mit gleichbleibendem Abstand.'**
   String get photoHintFirst;
 
-  /// Schalter, der das halbtransparente Foto des letzten Besuchs über den Sucher legt.
+  /// Schalter über dem Sucher. Beschriftet den Zustand, nicht die Aktion: der Schalter selbst sagt an oder aus, und ein Screenreader liest beides zusammen.
   ///
   /// In de, this message translates to:
   /// **'Voriges Foto einblenden'**
-  String get photoGhostOn;
-
-  /// Schalter, der das eingeblendete Foto des letzten Besuchs wieder ausblendet.
-  ///
-  /// In de, this message translates to:
-  /// **'Voriges Foto ausblenden'**
-  String get photoGhostOff;
+  String get photoGhost;
 
   /// Auslöser. Größte Fläche des Screens, weil mit Handschuhen bedient.
   ///

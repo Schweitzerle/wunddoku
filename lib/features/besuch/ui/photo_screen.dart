@@ -218,10 +218,10 @@ class _Viewfinder extends StatelessWidget {
               value: ghostVisible,
               onChanged: onGhostChanged,
               contentPadding: EdgeInsets.zero,
-              title: Text(
-                ghostVisible ? l10n.photoGhostOff : l10n.photoGhostOn,
-                style: theme.textTheme.bodyLarge,
-              ),
+              // The label names the state, never the action: a switch that
+              // reads "ausblenden" while it is on says the opposite of what
+              // it does, and a screen reader announces exactly that pair.
+              title: Text(l10n.photoGhost, style: theme.textTheme.bodyLarge),
             ),
           ),
         Padding(

@@ -54,7 +54,9 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.text('Voriges Foto ausblenden'), findsOneWidget);
+      final toggle = tester.widget<SwitchListTile>(find.byType(SwitchListTile));
+      expect(find.text('Voriges Foto einblenden'), findsOneWidget);
+      expect(toggle.value, isTrue);
     });
 
     testWidgets('the framing aid can be switched off', (tester) async {
@@ -72,7 +74,12 @@ void main() {
       await tester.pump();
 
       expect(find.byType(Image), findsNothing);
+
+      // The label stays put and the switch carries the state — otherwise
+      // "einblenden, eingeschaltet" would mean the ghost is off.
+      final toggle = tester.widget<SwitchListTile>(find.byType(SwitchListTile));
       expect(find.text('Voriges Foto einblenden'), findsOneWidget);
+      expect(toggle.value, isFalse);
     });
 
     testWidgets('says so when there is nothing to line up against', (

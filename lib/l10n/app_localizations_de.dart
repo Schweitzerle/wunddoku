@@ -158,6 +158,43 @@ class AppLocalizationsDe extends AppLocalizations {
       '„Granulation sechzig Prozent, Fibrin vierzig Prozent. Exsudat gering, serös.“';
 
   @override
+  String captureStandingValues(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werte erfasst',
+      one: '1 Wert erfasst',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String captureStandingGaps(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Angaben fehlen',
+      one: '1 Angabe fehlt',
+      zero: 'vollständig',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String captureStandingPhoto(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Fotos',
+      one: '1 Foto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get captureStandingPhotoMarked => 'mit Markierung';
+
+  @override
   String get captureStart => 'Aufnahme starten';
 
   @override
@@ -326,10 +363,7 @@ class AppLocalizationsDe extends AppLocalizations {
       'Erstes Foto dieser Wunde. Formatiere frontal und mit gleichbleibendem Abstand.';
 
   @override
-  String get photoGhostOn => 'Voriges Foto einblenden';
-
-  @override
-  String get photoGhostOff => 'Voriges Foto ausblenden';
+  String get photoGhost => 'Voriges Foto einblenden';
 
   @override
   String get photoShutter => 'Foto aufnehmen';
