@@ -43,10 +43,49 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 1. Beispielaufnahmen (Audio) einsprechen lassen und als Fixtures ablegen —
    dann trägt der `CannedSpeechRecognizer` echte Dateien statt nur Namen
-2. Durchgang mit `flutter-reviewer` und `ux-reviewer` über die vier neuen
-   Screens, danach `/eps:abgabe`
-3. Golden für die Änderungszeile im Verlauf (die einzige farbcodierte Zeile
-   dort ist noch nicht bildlich abgedeckt)
+   (**braucht Julian**)
+2. `/eps:abgabe` vorbereiten
+3. Offene Fragen an den Auftraggeber bündeln (siehe unten)
+
+## Erledigt (Review-Durchgang, 2026-08-12)
+
+Code-Review und UX-Review liefen in frischem Kontext über den Tagesdiff. Beide
+fanden denselben schwersten Punkt, was ihn glaubwürdig macht:
+
+- **Lückenfarbe fiel als Fließtext unter die Kontrastgrenze.** `status.luecke`
+  ist als Umrissfarbe dokumentiert und mit 3:1 geprüft, trägt aber die
+  Lückenzeilen auf vier Screens. Im hellen Theme 3,99:1 auf dem Untergrund und
+  3,65:1 auf der Karte — unter den 4,5:1 der eigenen Regel, und zwar in dem
+  Zustand, den eine Pflegekraft die meiste Zeit eines Besuchs sieht. Farbe
+  nachgezogen, beide Textpaare im Kontrasttest ergänzt.
+- **„0 cm² kleiner als beim vorigen Besuch"** bei gleich gebliebener Fläche —
+  eine Bewegung, die es nicht gab. Eigene Formulierung plus Test.
+- **Wachstum war die leisere der beiden Zeilen.** Es bekam die gedämpfte
+  Beschriftungsfarbe, der Rückgang die volle — die Liste zog das Auge zu den
+  guten Besuchen. Wachstum trägt jetzt dasselbe Bernstein wie „prüfen".
+- **„2 Fotos mit Markierung"** behauptete zu viel: die Zahl war der Fotostand,
+  „mit Markierung" ein angeklebter fester Text. Nach einer Wiederholungsaufnahme
+  ist genau ein Foto markiert. Jetzt wird gezählt, in einer Plural-Zeichenkette
+  statt zwei zusammengesetzten — so wie der Abschluss-Screen es schon machte.
+- **Fotozahlen waren ein Handstand.** Sie werden jetzt nach jedem Schreiben aus
+  dem Repository gelesen, damit ein späterer Lösch- oder Wiederholungspfad sie
+  nicht auseinanderlaufen lässt.
+- Fehlender Golden und fehlender Kontrast-Durchgang für den Stand nachgeholt;
+  der Stand steht jetzt **vor** dem Hinweis, weil er die Frage beantwortet, mit
+  der eine Pflegekraft nach einer Unterbrechung zurückkommt.
+
+Zwei Befunde bewusst abgelehnt:
+
+- *Live-Region für den Stand*: der Stand ist Dauerzustand, keine Ankündigung
+  eines Ergebnisses. Beim Zurückkehren aus Foto oder Prüfen setzt der
+  Screenreader den Fokus ohnehin neu in den Screen; eine Live-Region würde bei
+  jedem Rebuild dazwischenreden.
+- *Welche Felder fehlen, schon im Stand nennen*: der Abschluss-Screen nennt sie
+  und ist die Stelle, an der es zählt — vor dem Verlassen der Wohnung. Der
+  Erfassungs-Screen bleibt ein Ziel für den Daumen, keine Liste.
+
+Gesamtlauf **252 grün**, Analyzer sauber, Goldens erneuert und die Bilddiffs
+angesehen. Beides auf dem Gerät belegt, hell und dunkel.
 
 ## Erledigt (Gerätedurchlauf und drei Fehler, 2026-08-12)
 
