@@ -7,7 +7,6 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/app/bootstrap.dart';
-import 'package:wunddoku/core/id_generator.dart';
 import 'package:wunddoku/data/db/app_database.dart';
 import 'package:wunddoku/data/capture/audio_recorder.dart';
 import 'package:wunddoku/data/capture/example_dictations.dart';
@@ -15,6 +14,7 @@ import 'package:wunddoku/data/capture/speech_recognizer.dart';
 import 'package:wunddoku/data/media/wound_camera.dart';
 import 'package:wunddoku/data/patient_repository.dart';
 import 'package:wunddoku/data/visit_repository.dart';
+import 'package:wunddoku/data/wound_repository.dart';
 import 'package:wunddoku/domain/model/ids.dart';
 import 'package:wunddoku/domain/model/visit_draft.dart';
 import 'package:wunddoku/features/besuch/ui/capture_view_model.dart';
@@ -24,6 +24,9 @@ import 'package:wunddoku/main.dart';
 import 'support/fake_camera.dart';
 import 'support/fake_media_store.dart';
 import 'support/test_app.dart';
+
+/// The wound every corridor test documents.
+late WoundId _wound;
 
 /// Builds what the corridor needs, on an in-memory database.
 Future<AppDependencies> _dependencies({
@@ -43,24 +46,18 @@ Future<AppDependencies> _dependencies({
     city: '',
   );
 
-  final wound = WoundId(newId());
-  await database
-      .into(database.wounds)
-      .insert(
-        WoundsCompanion.insert(
-          id: wound.value,
-          patientId: patient.id.value,
-          location: 'linker Unterschenkel, distal',
-          createdAt: DateTime(2026, 8, 11),
-        ),
-      );
+  final wounds = WoundRepository(database, clock: () => DateTime(2026, 8, 11));
+  _wound = (await wounds.create(
+    patient: patient.id,
+    location: 'linker Unterschenkel, distal',
+  )).id;
 
   return AppDependencies(
     database: database,
     patients: patients,
     visits: VisitRepository(database, media),
+    wounds: wounds,
     media: media,
-    demoWound: wound,
     camera: camera ?? PackageWoundCamera.new,
   );
 }
@@ -73,13 +70,13 @@ void main() {
     addTearDown(dependencies.dispose);
 
     await tester.pumpWidget(
-      TestApp(child: VisitCorridor(dependencies: dependencies)),
+      TestApp(child: VisitCorridor(dependencies: dependencies, wound: _wound)),
     );
     await tester.pump();
 
     expect(find.text('Befund sprechen'), findsOneWidget);
     expect(
-      await dependencies.visits.openDraft(dependencies.demoWound),
+      await dependencies.visits.openDraft(_wound),
       isNotNull,
       reason: 'a visit is opened so autosave has somewhere to write',
     );
@@ -93,7 +90,7 @@ void main() {
 
     // What the previous session left behind before the app was killed.
     final earlier = await dependencies.visits.startVisit(
-      dependencies.demoWound,
+      _wound,
     );
     await dependencies.visits.saveValue(
       earlier,
@@ -102,11 +99,11 @@ void main() {
     );
 
     await tester.pumpWidget(
-      TestApp(child: VisitCorridor(dependencies: dependencies)),
+      TestApp(child: VisitCorridor(dependencies: dependencies, wound: _wound)),
     );
     await tester.pump();
 
-    final resumed = await dependencies.visits.openDraft(dependencies.demoWound);
+    final resumed = await dependencies.visits.openDraft(_wound);
     expect(resumed, earlier, reason: 'the same visit, not a fresh one');
 
     final draft = await dependencies.visits.loadDraft(resumed!);
@@ -117,15 +114,15 @@ void main() {
     final dependencies = await _dependencies();
     addTearDown(dependencies.dispose);
 
-    final done = await dependencies.visits.startVisit(dependencies.demoWound);
+    final done = await dependencies.visits.startVisit(_wound);
     await dependencies.visits.completeVisit(done, withGaps: false);
 
     await tester.pumpWidget(
-      TestApp(child: VisitCorridor(dependencies: dependencies)),
+      TestApp(child: VisitCorridor(dependencies: dependencies, wound: _wound)),
     );
     await tester.pump();
 
-    final current = await dependencies.visits.openDraft(dependencies.demoWound);
+    final current = await dependencies.visits.openDraft(_wound);
     expect(current, isNotNull);
     expect(current, isNot(done), reason: 'a finished visit stays finished');
   });
@@ -167,6 +164,7 @@ void main() {
       TestApp(
         child: VisitCorridor(
           dependencies: dependencies,
+          wound: _wound,
           // Real encoding never returns inside the fake async zone; the
           // drawing itself is checked against real images elsewhere.
           burn: (_, _) async => Uint8List.fromList([7, 7, 7]),
@@ -197,7 +195,7 @@ void main() {
     await tester.tap(find.text('Markierung übernehmen'));
     await tester.pumpAndSettle();
 
-    final visit = await dependencies.visits.openDraft(dependencies.demoWound);
+    final visit = await dependencies.visits.openDraft(_wound);
     final stored = await dependencies.visits.photosOf(visit!);
 
     // The original untouched, the marked copy beside it, and the outline as
@@ -220,6 +218,7 @@ void main() {
       TestApp(
         child: VisitCorridor(
           dependencies: dependencies,
+          wound: _wound,
           // The same example the app serves, without the asset bundle and
           // the temporary directory a widget test does not have.
           capture: _cannedCapture,
@@ -244,7 +243,7 @@ void main() {
     await tester.tap(find.text('Übernehmen'));
     await tester.pumpAndSettle();
 
-    final visit = await dependencies.visits.openDraft(dependencies.demoWound);
+    final visit = await dependencies.visits.openDraft(_wound);
     final draft = await dependencies.visits.loadDraft(visit!);
 
     // A rejected value that reaches the record is worse than no app at all:
@@ -260,11 +259,11 @@ void main() {
     addTearDown(dependencies.dispose);
 
     await tester.pumpWidget(
-      TestApp(child: VisitCorridor(dependencies: dependencies)),
+      TestApp(child: VisitCorridor(dependencies: dependencies, wound: _wound)),
     );
     await tester.pumpAndSettle();
 
-    final closed = await dependencies.visits.openDraft(dependencies.demoWound);
+    final closed = await dependencies.visits.openDraft(_wound);
 
     await tester.tap(find.text('Besuch abschließen'));
     await tester.pumpAndSettle();
@@ -283,7 +282,7 @@ void main() {
     expect(row.completedAt, isNotNull);
 
     // The next patient is the next visit: a fresh draft is open afterwards.
-    final next = await dependencies.visits.openDraft(dependencies.demoWound);
+    final next = await dependencies.visits.openDraft(_wound);
     expect(next, isNotNull);
     expect(next, isNot(closed));
   });

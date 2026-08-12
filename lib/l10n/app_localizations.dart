@@ -1011,6 +1011,192 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bericht erzeugen'**
   String get reportShare;
+
+  /// Titel der Patientenliste, dem Startbildschirm der App.
+  ///
+  /// In de, this message translates to:
+  /// **'Patienten'**
+  String get patientsTitle;
+
+  /// Beschriftung des Suchfeldes über der Patientenliste.
+  ///
+  /// In de, this message translates to:
+  /// **'Name suchen'**
+  String get patientsSearch;
+
+  /// Leerzustand der Patientenliste, wenn überhaupt niemand erfasst ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Noch kein Patient angelegt.'**
+  String get patientsEmpty;
+
+  /// Zweite Zeile im Leerzustand der Patientenliste.
+  ///
+  /// In de, this message translates to:
+  /// **'Leg den ersten an, dann kann der Besuch beginnen.'**
+  String get patientsEmptyHint;
+
+  /// Ergebnis einer Suche, die niemanden gefunden hat.
+  ///
+  /// In de, this message translates to:
+  /// **'Kein Treffer für „{query}“.'**
+  String patientsNoMatch(String query);
+
+  /// Aktion, die das Formular für einen neuen Patienten öffnet.
+  ///
+  /// In de, this message translates to:
+  /// **'Patient anlegen'**
+  String get patientsAdd;
+
+  /// Geburtsdatum unter dem Namen in der Patientenliste. Kurzform, weil es nur der Unterscheidung gleicher Namen dient.
+  ///
+  /// In de, this message translates to:
+  /// **'geb. {date}'**
+  String patientBirthDate(DateTime date);
+
+  /// Wie viele Wunden bei diesem Patienten geführt werden.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0{keine Wunde} =1{1 Wunde} other{{count} Wunden}}'**
+  String patientWoundCount(int count);
+
+  /// Titel des Formulars zum Anlegen eines Patienten.
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Patient'**
+  String get patientFormTitle;
+
+  /// Feldbeschriftung im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Vorname'**
+  String get patientGivenName;
+
+  /// Feldbeschriftung im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Nachname'**
+  String get patientFamilyName;
+
+  /// Feldbeschriftung im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtsdatum'**
+  String get patientBirthDateLabel;
+
+  /// Feldbeschriftung im Patientenformular. Zugleich der Besuchsort.
+  ///
+  /// In de, this message translates to:
+  /// **'Straße und Hausnummer'**
+  String get patientStreet;
+
+  /// Feldbeschriftung im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'PLZ'**
+  String get patientPostalCode;
+
+  /// Feldbeschriftung im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Ort'**
+  String get patientCity;
+
+  /// Primäraktion im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get patientSave;
+
+  /// Fehlertext unter einem leeren Pflichtfeld im Patientenformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Pflichtangabe'**
+  String get patientRequired;
+
+  /// Aktion, die den Datumsdialog für das Geburtsdatum öffnet.
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtsdatum wählen'**
+  String get patientPickBirthDate;
+
+  /// Titel über der Wundliste eines Patienten.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunden'**
+  String get woundsTitle;
+
+  /// Leerzustand der Wundliste.
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Patienten ist noch keine Wunde angelegt.'**
+  String get woundsEmpty;
+
+  /// Aktion, die das Formular für eine neue Wunde öffnet.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunde anlegen'**
+  String get woundsAdd;
+
+  /// Zweite Zeile einer offenen Wunde in der Liste.
+  ///
+  /// In de, this message translates to:
+  /// **'seit {date} in Behandlung'**
+  String woundOpenSince(DateTime date);
+
+  /// Zweite Zeile einer abgeheilten Wunde in der Liste.
+  ///
+  /// In de, this message translates to:
+  /// **'abgeheilt am {date}'**
+  String woundClosedOn(DateTime date);
+
+  /// Wie viele Besuche zu dieser Wunde dokumentiert sind.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0{noch kein Besuch} =1{1 Besuch} other{{count} Besuche}}'**
+  String woundVisitCount(int count);
+
+  /// Titel des Formulars zum Anlegen einer Wunde.
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Wunde'**
+  String get woundFormTitle;
+
+  /// Feldbeschriftung: wo am Körper die Wunde sitzt. Freitext in den Worten der Pflegekraft.
+  ///
+  /// In de, this message translates to:
+  /// **'Lokalisation'**
+  String get woundLocation;
+
+  /// Beispiel unter dem Lokalisationsfeld.
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. linker Unterschenkel, distal'**
+  String get woundLocationHint;
+
+  /// Fehlertext, wenn die Lokalisation leer bleibt. Nennt den Grund, nicht nur die Pflicht.
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Lokalisation lassen sich zwei Wunden nicht auseinanderhalten.'**
+  String get woundLocationRequired;
+
+  /// Feldbeschriftung für die Diagnose.
+  ///
+  /// In de, this message translates to:
+  /// **'ICD-10-Code (optional)'**
+  String get woundIcd10;
+
+  /// Primäraktion im Wundformular.
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get woundSave;
+
+  /// Aktion auf einer Wunde, die den Besuchskorridor öffnet.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch beginnen'**
+  String get woundStartVisit;
 }
 
 class _AppLocalizationsDelegate

@@ -28,6 +28,7 @@ import 'features/besuch/ui/closing_screen.dart';
 import 'features/besuch/ui/closing_view_model.dart';
 import 'features/besuch/ui/confirmation_screen.dart';
 import 'features/besuch/ui/confirmation_view_model.dart';
+import 'features/patienten/ui/patients_flow.dart';
 import 'shared/text/field_presentation.dart';
 import 'features/besuch/ui/marking_screen.dart';
 import 'features/besuch/ui/photo_screen.dart';
@@ -66,7 +67,10 @@ class WunddokuApp extends StatelessWidget {
         AsyncSnapshot(hasError: true, :final error?) => _StartupFailed(
           error: error,
         ),
-        AsyncSnapshot(:final data?) => VisitCorridor(dependencies: data),
+        AsyncSnapshot(:final data?) => PatientsFlow(
+          dependencies: data,
+          openVisit: (wound) => VisitCorridor(dependencies: data, wound: wound),
+        ),
         _ => const Scaffold(body: Center(child: CircularProgressIndicator())),
       },
     ),
@@ -163,12 +167,19 @@ class _ClosingResult {
 class VisitCorridor extends StatefulWidget {
   const VisitCorridor({
     required this.dependencies,
+    required this.wound,
     this.burn = burnWithPainter,
     this.capture = buildCapture,
     super.key,
   });
 
   final AppDependencies dependencies;
+
+  /// The wound this visit documents.
+  ///
+  /// Chosen before the corridor opens: a finding without a wound has nowhere
+  /// to go, and two wounds of one patient are two separate courses.
+  final WoundId wound;
 
   /// Builds the capture view model.
   ///
@@ -221,7 +232,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
   /// This is what makes an interruption survivable: the re-entry point is the
   /// record, not the navigation stack.
   Future<void> _resumeOrStart() async {
-    final wound = widget.dependencies.demoWound;
+    final wound = widget.wound;
     final visit =
         await _visits.openDraft(wound) ?? await _visits.startVisit(wound);
     final draft = await _visits.loadDraft(visit);
@@ -305,7 +316,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
   /// Read before the dressing comes off: the course is what says whether the
   /// treatment works, and a single finding cannot.
   Future<void> _showHistory() async {
-    final history = await _visits.historyOf(widget.dependencies.demoWound);
+    final history = await _visits.historyOf(widget.wound);
     if (!mounted) return;
 
     await Navigator.of(context).push(
@@ -327,7 +338,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
   Future<void> _createReport(WoundHistory history) async {
     final l10n = AppLocalizations.of(context)!;
     final wound = await widget.dependencies.patients.contextOfWound(
-      widget.dependencies.demoWound,
+      widget.wound,
     );
     if (wound == null || !mounted) return;
 
@@ -424,7 +435,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
     if (visit == null) return;
 
     final previous = await _visits.lastPhotoOfWound(
-      widget.dependencies.demoWound,
+      widget.wound,
       before: visit,
     );
     final previousBytes = previous == null

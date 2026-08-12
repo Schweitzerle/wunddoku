@@ -305,6 +305,25 @@ class VisitRepository {
     ]);
   }
 
+  /// How many visits are documented per wound, for the given wounds.
+  ///
+  /// One query for the whole list, for the same reason as
+  /// `WoundRepository.countsByPatient`.
+  Future<Map<WoundId, int>> countsOfWounds(List<WoundId> wounds) async {
+    if (wounds.isEmpty) return const {};
+
+    final count = _db.visits.id.count();
+    final query = _db.selectOnly(_db.visits)
+      ..addColumns([_db.visits.woundId, count])
+      ..where(_db.visits.woundId.isIn([for (final id in wounds) id.value]))
+      ..groupBy([_db.visits.woundId]);
+
+    return {
+      for (final row in await query.get())
+        WoundId(row.read(_db.visits.woundId)!): row.read(count) ?? 0,
+    };
+  }
+
   /// Stores the verbatim transcript with the visit.
   Future<void> saveTranscript(VisitId visit, String transcript) async {
     await (_db.update(_db.visits)..where((v) => v.id.equals(visit.value)))

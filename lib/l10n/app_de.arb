@@ -801,5 +801,162 @@
   "reportShare": "Bericht erzeugen",
   "@reportShare": {
     "description": "Aktion im Verlauf: den Wundbericht als PDF erzeugen und weitergeben."
+  },
+  "patientsTitle": "Patienten",
+  "@patientsTitle": {
+    "description": "Titel der Patientenliste, dem Startbildschirm der App."
+  },
+  "patientsSearch": "Name suchen",
+  "@patientsSearch": {
+    "description": "Beschriftung des Suchfeldes über der Patientenliste."
+  },
+  "patientsEmpty": "Noch kein Patient angelegt.",
+  "@patientsEmpty": {
+    "description": "Leerzustand der Patientenliste, wenn überhaupt niemand erfasst ist."
+  },
+  "patientsEmptyHint": "Leg den ersten an, dann kann der Besuch beginnen.",
+  "@patientsEmptyHint": {
+    "description": "Zweite Zeile im Leerzustand der Patientenliste."
+  },
+  "patientsNoMatch": "Kein Treffer für „{query}“.",
+  "@patientsNoMatch": {
+    "description": "Ergebnis einer Suche, die niemanden gefunden hat.",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "patientsAdd": "Patient anlegen",
+  "@patientsAdd": {
+    "description": "Aktion, die das Formular für einen neuen Patienten öffnet."
+  },
+  "patientBirthDate": "geb. {date}",
+  "@patientBirthDate": {
+    "description": "Geburtsdatum unter dem Namen in der Patientenliste. Kurzform, weil es nur der Unterscheidung gleicher Namen dient.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "patientWoundCount": "{count, plural, =0{keine Wunde} =1{1 Wunde} other{{count} Wunden}}",
+  "@patientWoundCount": {
+    "description": "Wie viele Wunden bei diesem Patienten geführt werden.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientFormTitle": "Neuer Patient",
+  "@patientFormTitle": {
+    "description": "Titel des Formulars zum Anlegen eines Patienten."
+  },
+  "patientGivenName": "Vorname",
+  "@patientGivenName": {
+    "description": "Feldbeschriftung im Patientenformular."
+  },
+  "patientFamilyName": "Nachname",
+  "@patientFamilyName": {
+    "description": "Feldbeschriftung im Patientenformular."
+  },
+  "patientBirthDateLabel": "Geburtsdatum",
+  "@patientBirthDateLabel": {
+    "description": "Feldbeschriftung im Patientenformular."
+  },
+  "patientStreet": "Straße und Hausnummer",
+  "@patientStreet": {
+    "description": "Feldbeschriftung im Patientenformular. Zugleich der Besuchsort."
+  },
+  "patientPostalCode": "PLZ",
+  "@patientPostalCode": {
+    "description": "Feldbeschriftung im Patientenformular."
+  },
+  "patientCity": "Ort",
+  "@patientCity": {
+    "description": "Feldbeschriftung im Patientenformular."
+  },
+  "patientSave": "Anlegen",
+  "@patientSave": {
+    "description": "Primäraktion im Patientenformular."
+  },
+  "patientRequired": "Pflichtangabe",
+  "@patientRequired": {
+    "description": "Fehlertext unter einem leeren Pflichtfeld im Patientenformular."
+  },
+  "patientPickBirthDate": "Geburtsdatum wählen",
+  "@patientPickBirthDate": {
+    "description": "Aktion, die den Datumsdialog für das Geburtsdatum öffnet."
+  },
+  "woundsTitle": "Wunden",
+  "@woundsTitle": {
+    "description": "Titel über der Wundliste eines Patienten."
+  },
+  "woundsEmpty": "Für diesen Patienten ist noch keine Wunde angelegt.",
+  "@woundsEmpty": {
+    "description": "Leerzustand der Wundliste."
+  },
+  "woundsAdd": "Wunde anlegen",
+  "@woundsAdd": {
+    "description": "Aktion, die das Formular für eine neue Wunde öffnet."
+  },
+  "woundOpenSince": "seit {date} in Behandlung",
+  "@woundOpenSince": {
+    "description": "Zweite Zeile einer offenen Wunde in der Liste.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "woundClosedOn": "abgeheilt am {date}",
+  "@woundClosedOn": {
+    "description": "Zweite Zeile einer abgeheilten Wunde in der Liste.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "woundVisitCount": "{count, plural, =0{noch kein Besuch} =1{1 Besuch} other{{count} Besuche}}",
+  "@woundVisitCount": {
+    "description": "Wie viele Besuche zu dieser Wunde dokumentiert sind.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "woundFormTitle": "Neue Wunde",
+  "@woundFormTitle": {
+    "description": "Titel des Formulars zum Anlegen einer Wunde."
+  },
+  "woundLocation": "Lokalisation",
+  "@woundLocation": {
+    "description": "Feldbeschriftung: wo am Körper die Wunde sitzt. Freitext in den Worten der Pflegekraft."
+  },
+  "woundLocationHint": "z. B. linker Unterschenkel, distal",
+  "@woundLocationHint": {
+    "description": "Beispiel unter dem Lokalisationsfeld."
+  },
+  "woundLocationRequired": "Ohne Lokalisation lassen sich zwei Wunden nicht auseinanderhalten.",
+  "@woundLocationRequired": {
+    "description": "Fehlertext, wenn die Lokalisation leer bleibt. Nennt den Grund, nicht nur die Pflicht."
+  },
+  "woundIcd10": "ICD-10-Code (optional)",
+  "@woundIcd10": {
+    "description": "Feldbeschriftung für die Diagnose."
+  },
+  "woundSave": "Anlegen",
+  "@woundSave": {
+    "description": "Primäraktion im Wundformular."
+  },
+  "woundStartVisit": "Besuch beginnen",
+  "@woundStartVisit": {
+    "description": "Aktion auf einer Wunde, die den Besuchskorridor öffnet."
   }
 }

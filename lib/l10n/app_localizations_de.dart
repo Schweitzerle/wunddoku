@@ -674,4 +674,135 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get reportShare => 'Bericht erzeugen';
+
+  @override
+  String get patientsTitle => 'Patienten';
+
+  @override
+  String get patientsSearch => 'Name suchen';
+
+  @override
+  String get patientsEmpty => 'Noch kein Patient angelegt.';
+
+  @override
+  String get patientsEmptyHint =>
+      'Leg den ersten an, dann kann der Besuch beginnen.';
+
+  @override
+  String patientsNoMatch(String query) {
+    return 'Kein Treffer für „$query“.';
+  }
+
+  @override
+  String get patientsAdd => 'Patient anlegen';
+
+  @override
+  String patientBirthDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'geb. $dateString';
+  }
+
+  @override
+  String patientWoundCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Wunden',
+      one: '1 Wunde',
+      zero: 'keine Wunde',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get patientFormTitle => 'Neuer Patient';
+
+  @override
+  String get patientGivenName => 'Vorname';
+
+  @override
+  String get patientFamilyName => 'Nachname';
+
+  @override
+  String get patientBirthDateLabel => 'Geburtsdatum';
+
+  @override
+  String get patientStreet => 'Straße und Hausnummer';
+
+  @override
+  String get patientPostalCode => 'PLZ';
+
+  @override
+  String get patientCity => 'Ort';
+
+  @override
+  String get patientSave => 'Anlegen';
+
+  @override
+  String get patientRequired => 'Pflichtangabe';
+
+  @override
+  String get patientPickBirthDate => 'Geburtsdatum wählen';
+
+  @override
+  String get woundsTitle => 'Wunden';
+
+  @override
+  String get woundsEmpty =>
+      'Für diesen Patienten ist noch keine Wunde angelegt.';
+
+  @override
+  String get woundsAdd => 'Wunde anlegen';
+
+  @override
+  String woundOpenSince(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'seit $dateString in Behandlung';
+  }
+
+  @override
+  String woundClosedOn(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'abgeheilt am $dateString';
+  }
+
+  @override
+  String woundVisitCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Besuche',
+      one: '1 Besuch',
+      zero: 'noch kein Besuch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get woundFormTitle => 'Neue Wunde';
+
+  @override
+  String get woundLocation => 'Lokalisation';
+
+  @override
+  String get woundLocationHint => 'z. B. linker Unterschenkel, distal';
+
+  @override
+  String get woundLocationRequired =>
+      'Ohne Lokalisation lassen sich zwei Wunden nicht auseinanderhalten.';
+
+  @override
+  String get woundIcd10 => 'ICD-10-Code (optional)';
+
+  @override
+  String get woundSave => 'Anlegen';
+
+  @override
+  String get woundStartVisit => 'Besuch beginnen';
 }
