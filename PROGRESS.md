@@ -41,10 +41,32 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Kleinere Whisper-Modelle messen (`small`, `medium`, quantisiert über
-   whisper.cpp), damit die Frage Mistral gegen On-Device entscheidungsreif wird
-2. `/eps:abgabe` vorbereiten
-3. Offene Fragen an den Auftraggeber bündeln (siehe unten)
+1. `/eps:abgabe` vorbereiten
+2. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
+   Pflegekräfte ist davon die wertvollste
+3. Zweiter Erkennerlauf auf dem Zielgerät statt auf dem Entwicklungsrechner,
+   sobald die Wortliste da ist
+
+## Erledigt (Erkennergrößen gemessen, 2026-08-12)
+
+Fünf Whisper-Größen an denselben vier Aufnahmen, bewertet nach dem, was im
+**Befund** ankommt statt danach, wie der Text aussieht. Der Vergleich läuft als
+Test mit (`test/domain/recogniser_size_test.dart`); Tabelle und Folgerungen in
+`DECISIONS.md`.
+
+Zwei Ergebnisse, die die Entscheidung tragen:
+
+- **`base` erfindet Messwerte.** Aus „Breite 2" wurde „breite 2,5", die Tiefe
+  fiel weg. Eine Lücke ist sichtbar und erlaubt; ein erfundener Messwert sieht
+  aus wie ein erhobener. Damit scheiden `tiny` und `base` aus — nicht wegen der
+  Qualität, sondern wegen der Art des Fehlers.
+- **Größer ist nicht durchgehend besser.** `medium` hört die Selbstkorrektur,
+  verliert aber das Exsudat („Exkursat"); `small` umgekehrt. Erst `large-v3`
+  trägt beides — und ist mit 3,1 GB und 0,88× Echtzeit auf einer Desktop-CPU
+  für ein Feldgerät zu groß.
+
+Die Messung lief nicht auf dem Handy; grob geschätzt läge `small` dort bei
+1,2–1,8× Echtzeit. On-Device ist damit **weder abgehakt noch bestätigt**.
 
 ## Erledigt (echte Beispielaufnahmen, 2026-08-12)
 

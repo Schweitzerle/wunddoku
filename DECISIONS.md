@@ -497,3 +497,50 @@ danach ist die Frage Mistral gegen On-Device entscheidungsreif.
 **Rückholbar:** ja. Aufnahmen und Transkripte hängen nur am
 `CannedSpeechRecognizer`; ein Anbieteradapter ersetzt ihn, ohne dass etwas
 anderes sich ändert.
+
+---
+
+## 2026-08-12 — On-Device-Spracherkennung: gemessen, noch nicht entschieden
+
+**Gemessen:** Whisper `tiny`, `base`, `small`, `medium`, `large-v3` (int8, CPU,
+16 Kerne, deutsch) an den vier Beispielaufnahmen. Bewertet wurde nicht der
+Text, sondern **was davon im Befund ankommt** — der Vergleich läuft als Test
+mit (`test/domain/recogniser_size_test.dart`).
+
+| Modell | Echtzeitfaktor | Größe | Maße | Korrektur | Fachwort |
+|---|---|---|---|---|---|
+| tiny | 0,08 | 75 MB | zerstört | nein | nein |
+| base | 0,10 | 145 MB | **falsch** | nein | nein |
+| small | 0,30 | 480 MB | vollständig | nein | ja |
+| medium | 0,78 | 1,5 GB | vollständig | **ja** | nein |
+| large-v3 | 0,88 | 3,1 GB | vollständig | **ja** | ja |
+
+**Was daraus folgt:**
+
+*tiny und base scheiden aus, und zwar nicht wegen der Qualität, sondern wegen
+der Art des Fehlers.* `base` machte aus „Breite 2" ein „breite 2,5" und ließ
+die Tiefe ganz weg. Eine Lücke ist in dieser App sichtbar und erlaubt; ein
+erfundener Messwert sieht aus wie ein erhobener. Das ist derselbe Fehler, den
+der Speicherpfad am selben Tag hatte, nur eine Schicht tiefer.
+
+*Die Reihenfolge ist nicht monoton.* `medium` hört die Selbstkorrektur („nein
+4,1"), verliert aber das Exsudat, weil es „Exkursat" schreibt — außerhalb der
+Editierdistanz, die der Interpreter tolerieren darf. `small` ist umgekehrt.
+Die Toleranz so weit aufzuziehen, dass „Exkursat" trifft, würde anfangen,
+andere Wörter zu treffen; die richtige Antwort ist die Wortliste des Kunden
+(offene Frage in `PROGRESS.md`), nicht ein lockereres Raten.
+
+*Die Messung lief nicht auf dem Zielgerät.* Ein Mittelklasse-Handy liegt grob
+vier- bis sechsfach unter dieser Desktop-CPU. `small` käme damit auf etwa
+1,2–1,8× Echtzeit: für ein 15-Sekunden-Diktat rund 20–30 Sekunden. Am offenen
+Verband zu lang für eine sofortige Rückmeldung, tragbar, wenn die Erkennung im
+Hintergrund läuft, während die Pflegekraft weiterarbeitet.
+
+**Noch nicht entschieden.** On-Device ist damit weder abgehakt noch bestätigt:
+kein Modell dieser Familie trägt den Befund heute vollständig, und die
+Cloud-Variante ist ohne Schlüssel weiterhin nicht messbar. Die nächste
+belastbare Messung braucht (a) die Wortliste des Kunden und (b) einen Lauf auf
+dem Zielgerät, nicht auf dem Entwicklungsrechner.
+
+**Rückholbar:** ja — die Erkennung sitzt hinter `SpeechRecognizer`, ein
+Wechsel tauscht eine Klasse.
