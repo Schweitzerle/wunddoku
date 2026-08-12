@@ -14,6 +14,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     required this.luecke,
     required this.offline,
     required this.mediaGround,
+    required this.onMediaGround,
   });
 
   /// Low confidence: highlighted, blocks saving.
@@ -38,6 +39,12 @@ class StatusColors extends ThemeExtension<StatusColors> {
   /// shift that perception between day and night shifts.
   final Color mediaGround;
 
+  /// Text and icons drawn on [mediaGround].
+  ///
+  /// Identical in both themes for the same reason the ground is: a label
+  /// taken from the theme turns dark grey on dark grey in the light theme.
+  final Color onMediaGround;
+
   static const light = StatusColors(
     entscheiden: Color(0xFFB3261E),
     pruefen: Color(0xFF8A5A00),
@@ -45,6 +52,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     luecke: Color(0xFF7A7E82),
     offline: Color(0xFF4A4E52),
     mediaGround: Color(0xFF3A3D40),
+    onMediaGround: Color(0xFFE6E8EA),
   );
 
   static const dark = StatusColors(
@@ -54,6 +62,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     luecke: Color(0xFF8A8E92),
     offline: Color(0xFFB4B8BC),
     mediaGround: Color(0xFF3A3D40),
+    onMediaGround: Color(0xFFE6E8EA),
   );
 
   @override
@@ -64,6 +73,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     Color? luecke,
     Color? offline,
     Color? mediaGround,
+    Color? onMediaGround,
   }) => StatusColors(
     entscheiden: entscheiden ?? this.entscheiden,
     pruefen: pruefen ?? this.pruefen,
@@ -71,6 +81,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     luecke: luecke ?? this.luecke,
     offline: offline ?? this.offline,
     mediaGround: mediaGround ?? this.mediaGround,
+    onMediaGround: onMediaGround ?? this.onMediaGround,
   );
 
   @override
@@ -83,6 +94,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
       luecke: Color.lerp(luecke, other.luecke, t)!,
       offline: Color.lerp(offline, other.offline, t)!,
       mediaGround: Color.lerp(mediaGround, other.mediaGround, t)!,
+      onMediaGround: Color.lerp(onMediaGround, other.onMediaGround, t)!,
     );
   }
 }

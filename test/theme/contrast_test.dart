@@ -53,6 +53,10 @@ void main() {
       // Non-text elements (borders, gap outlines): 3:1 per WCAG 1.4.11.
       ('outline on surface', scheme.outline, scheme.surface, 3.0),
       ('gap outline on card', status.luecke, scheme.surfaceContainer, 3.0),
+      // The ground behind photos does not follow the theme, so the text on it
+      // must not either — in the light theme a theme-derived label turns dark
+      // grey on dark grey.
+      ('label on the media ground', status.onMediaGround, status.mediaGround, 4.5),
     ];
 
     for (final (label, fg, bg, minimum) in pairs) {
@@ -77,5 +81,6 @@ void main() {
 
   test('the media ground is identical in both themes', () {
     expect(StatusColors.light.mediaGround, StatusColors.dark.mediaGround);
+    expect(StatusColors.light.onMediaGround, StatusColors.dark.onMediaGround);
   });
 }
