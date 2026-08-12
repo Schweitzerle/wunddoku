@@ -304,6 +304,21 @@ void main() {
     });
   });
 
+  /// Waits until every thumbnail has actually decoded.
+  ///
+  /// [WidgetTester.pumpAndSettle] returns once the frames are quiet, and
+  /// decoding a photo is not a frame — so without this the golden sometimes
+  /// captured empty thumbnails and sometimes did not.
+  Future<void> settleThumbnails(WidgetTester tester) async {
+    await tester.runAsync(() async {
+      await tester.pump();
+      for (final element in find.byType(Image).evaluate()) {
+        await precacheImage((element.widget as Image).image, element);
+      }
+    });
+    await tester.pumpAndSettle();
+  }
+
   group('goldens', () {
     testWidgets('a shrinking wound, light theme', (tester) async {
       await tester.pumpWidget(
@@ -311,7 +326,7 @@ void main() {
           child: HistoryScreen(history: shrinking(), loadPhoto: loadPhoto),
         ),
       );
-      await tester.pumpAndSettle();
+      await settleThumbnails(tester);
 
       await expectLater(
         find.byType(HistoryScreen),
@@ -326,7 +341,7 @@ void main() {
           child: HistoryScreen(history: shrinking(), loadPhoto: loadPhoto),
         ),
       );
-      await tester.pumpAndSettle();
+      await settleThumbnails(tester);
 
       await expectLater(
         find.byType(HistoryScreen),
