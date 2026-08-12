@@ -234,10 +234,13 @@ class _VisitRow extends StatelessWidget {
                     ),
                     if (change != null)
                       Text(
-                        l10n.historyAreaChange(_rounded(change)),
+                        // Direction is in the words, never in colour alone
+                        // (`23-a11y.md`) and not in a minus sign a gloved hand
+                        // can miss in sunlight. Growth is the alarm signal.
+                        change <= 0
+                            ? l10n.historyAreaDecrease(_rounded(-change))
+                            : l10n.historyAreaIncrease(_rounded(change)),
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          // Direction is in the sign as well, never in colour
-                          // alone (`23-a11y.md`).
                           color: change <= 0
                               ? status.sicher
                               : theme.colorScheme.onSurfaceVariant,
@@ -370,7 +373,9 @@ class _Placeholder extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            // The ground behind this label does not follow the theme, so the
+            // label must not take its colour from the theme either.
+            color: context.statusColors.onMediaGround,
           ),
         ),
       ),

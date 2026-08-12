@@ -802,11 +802,17 @@ abstract class AppLocalizations {
   /// **'Fläche als Näherung: Länge × Breite.'**
   String get historyAreaApprox;
 
-  /// Veränderung der Fläche gegenüber dem vorherigen Besuch; das Vorzeichen steckt in der Zahl.
+  /// Zunahme der Fläche gegenüber dem vorherigen Besuch. Wachstum ist das Warnsignal und wird benannt, nicht nur als Vorzeichen gezeigt.
   ///
   /// In de, this message translates to:
-  /// **'{value} cm² zum vorigen Besuch'**
-  String historyAreaChange(num value);
+  /// **'{value} cm² größer als beim vorigen Besuch'**
+  String historyAreaIncrease(num value);
+
+  /// Abnahme der Fläche gegenüber dem vorherigen Besuch.
+  ///
+  /// In de, this message translates to:
+  /// **'{value} cm² kleiner als beim vorigen Besuch'**
+  String historyAreaDecrease(num value);
 
   /// Die Wundtiefe in Zentimetern.
   ///

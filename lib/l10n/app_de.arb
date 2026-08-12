@@ -573,9 +573,19 @@
   "@historyAreaApprox": {
     "description": "Sagt, wie die Fläche entsteht. Sie ist kein gemessener Wert, und das muss dranstehen."
   },
-  "historyAreaChange": "{value} cm² zum vorigen Besuch",
-  "@historyAreaChange": {
-    "description": "Veränderung der Fläche gegenüber dem vorherigen Besuch; das Vorzeichen steckt in der Zahl.",
+  "historyAreaIncrease": "{value} cm² größer als beim vorigen Besuch",
+  "@historyAreaIncrease": {
+    "description": "Zunahme der Fläche gegenüber dem vorherigen Besuch. Wachstum ist das Warnsignal und wird benannt, nicht nur als Vorzeichen gezeigt.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "historyAreaDecrease": "{value} cm² kleiner als beim vorigen Besuch",
+  "@historyAreaDecrease": {
+    "description": "Abnahme der Fläche gegenüber dem vorherigen Besuch.",
     "placeholders": {
       "value": {
         "type": "num",

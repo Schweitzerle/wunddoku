@@ -476,12 +476,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get historyAreaApprox => 'Fläche als Näherung: Länge × Breite.';
 
   @override
-  String historyAreaChange(num value) {
+  String historyAreaIncrease(num value) {
     final intl.NumberFormat valueNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);
     final String valueString = valueNumberFormat.format(value);
 
-    return '$valueString cm² zum vorigen Besuch';
+    return '$valueString cm² größer als beim vorigen Besuch';
+  }
+
+  @override
+  String historyAreaDecrease(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return '$valueString cm² kleiner als beim vorigen Besuch';
   }
 
   @override

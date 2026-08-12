@@ -170,6 +170,43 @@ void main() {
       expect(dates.last, contains('14'));
     });
 
+    testWidgets('a growing wound says so, not just a number', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: HistoryScreen(
+            history: WoundHistory([
+              _entry(id: 'v1', at: DateTime(2026, 7, 14), length: 3, width: 2),
+              _entry(id: 'v2', at: DateTime(2026, 7, 21), length: 4, width: 3),
+            ]),
+            loadPhoto: loadPhoto,
+          ),
+        ),
+      );
+
+      // Growth is the alarm signal in wound care. A bare "6 cm²" reads as
+      // neutral next to the "-6 cm²" a shrinking wound gets.
+      expect(find.text('6 cm² größer als beim vorigen Besuch'), findsOneWidget);
+    });
+
+    testWidgets('a shrinking wound is named in the same words', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          child: HistoryScreen(
+            history: WoundHistory([
+              _entry(id: 'v1', at: DateTime(2026, 7, 14), length: 4, width: 3),
+              _entry(id: 'v2', at: DateTime(2026, 7, 21), length: 3, width: 2),
+            ]),
+            loadPhoto: loadPhoto,
+          ),
+        ),
+      );
+
+      expect(
+        find.text('6 cm² kleiner als beim vorigen Besuch'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('names the area as an approximation', (tester) async {
       await tester.pumpWidget(
         TestApp(
