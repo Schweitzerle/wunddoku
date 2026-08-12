@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:flutter/services.dart' show ByteData, rootBundle;
+
 /// Records the spoken finding to a file.
 ///
 /// The port exists for the same reason as [SpeechRecognizer]: the recording
@@ -91,5 +93,65 @@ class FakeAudioRecorder implements AudioRecorder {
     await _levels?.close();
     _levels = null;
     return exampleFile;
+  }
+}
+
+/// Serves the bundled example dictations as real files.
+///
+/// The development path needs an actual recording on disk, not just a name:
+/// everything downstream — the recogniser port, the queue when transcription
+/// is unavailable, the deletion path for raw audio — works on files, and a
+/// seam that hands back a path to nothing hides whatever breaks there.
+///
+/// Each recording serves the next example in turn, so one run through the app
+/// exercises all of them: a clean dictation, one with a correction, one with
+/// an implausible number, and a fragment.
+class ExampleAudioRecorder implements AudioRecorder {
+  ExampleAudioRecorder({
+    required this.assetNames,
+    required Future<Directory> Function() directory,
+    Future<ByteData> Function(String key)? load,
+    FakeAudioRecorder? levels,
+  }) : _directory = directory,
+       _load = load ?? rootBundle.load,
+       _levels = levels ?? FakeAudioRecorder(exampleFile: File('unused'));
+
+  /// Asset names under `assets/examples/`, in the order they are served.
+  final List<String> assetNames;
+
+  final Future<Directory> Function() _directory;
+
+  /// Reads an asset. A seam because the asset bundle is not available in a
+  /// plain `flutter test` run.
+  final Future<ByteData> Function(String key) _load;
+
+  /// Supplies the level curve; the example recorder only replaces the file.
+  final FakeAudioRecorder _levels;
+
+  int _next = 0;
+
+  /// Whether the microphone is currently open.
+  bool get isOpen => _levels.isOpen;
+
+  @override
+  Future<bool> hasPermission() => _levels.hasPermission();
+
+  @override
+  Future<bool> requestPermission() => _levels.requestPermission();
+
+  @override
+  Stream<double> start() => _levels.start();
+
+  @override
+  Future<File> stop() async {
+    await _levels.stop();
+
+    final name = assetNames[_next % assetNames.length];
+    _next++;
+
+    final bytes = await _load('assets/examples/$name');
+    final file = File('${(await _directory()).path}/$name');
+    await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+    return file;
   }
 }

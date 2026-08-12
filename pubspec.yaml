@@ -76,6 +76,12 @@ hooks:
 flutter:
   generate: true
 
+  # Example dictations for the development speech path. Synthetic findings,
+  # spoken for this purpose — no patient ever appears in them
+  # (`datenschutz-art9.md`).
+  assets:
+    - assets/examples/
+
   # One variable font carries every weight; see DECISIONS.md for the choice.
   fonts:
     - family: Geist

@@ -50,3 +50,7 @@ app.*.map.json
 
 # Golden diffs are build output, not source.
 test/**/failures/
+
+# Raw recordings as they came off the phone; the bundled copies live in
+# assets/examples/.
+/AudioTests/
