@@ -107,17 +107,14 @@ class _CaptureScreenState extends State<CaptureScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    final theme = Theme.of(context);
     final spacing = context.spacing;
     final context_ = widget.context;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          l10n.captureTitle,
-          style: theme.textTheme.titleMedium,
-          overflow: TextOverflow.ellipsis,
-        ),
+        // No title here: a bar that spends 56 dp on one word is wasted
+        // surface, and at 20 sp it cannot carry the size contrast the muted
+        // palette depends on. The title sits in the body, at 30.
         actions: [
           if (widget.onFinishVisit != null)
             IconButton(
@@ -159,10 +156,17 @@ class _CaptureScreenState extends State<CaptureScreen> {
 /// place at every text size — at 200 % the explanation grows, the button does
 /// not move.
 class _CaptureLayout extends StatelessWidget {
-  const _CaptureLayout({required this.children, required this.action});
+  const _CaptureLayout({
+    required this.children,
+    required this.action,
+    this.footer,
+  });
 
   final List<Widget> children;
   final Widget action;
+
+  /// Sits between the scrolling content and the primary action.
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -172,23 +176,32 @@ class _CaptureLayout extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Reading fills from the top; only what is touched belongs in the
-          // thumb's reach. Gathering the text at the bottom too left a hole
-          // above it and made the one large target look like the whole screen.
+          // Reading fills from the top, the paths sit low where the thumb is,
+          // and the gap between them lands between two groups rather than at
+          // the end of the screen. On a real phone that end-of-screen hole
+          // was the largest thing on it.
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(
-                spacing.s16,
-                spacing.s16,
-                spacing.s16,
-                spacing.s16,
-              ),
+              padding: EdgeInsets.all(spacing.s16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: children,
               ),
             ),
           ),
+          // What is touched sits low and does not scroll away: the paths and
+          // the one large target keep the same place at every text size, so
+          // the thumb finds them without looking.
+          if (footer != null)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                spacing.s16,
+                0,
+                spacing.s16,
+                spacing.s16,
+              ),
+              child: footer,
+            ),
           Padding(
             padding: EdgeInsets.fromLTRB(
               spacing.s24,
@@ -285,14 +298,23 @@ class _Idle extends StatelessWidget {
         label: l10n.captureStart,
         onPressed: onStart,
       ),
+      footer: _WayGroup(
+        ways: [
+          (Icons.checklist, l10n.captureUseCards, onUseCards),
+          (Icons.photo_camera_outlined, l10n.captureTakePhoto, onTakePhoto),
+          (Icons.show_chart, l10n.captureShowHistory, onShowHistory),
+        ],
+      ),
       children: [
         // Whose wound this is, in the body rather than in the app bar: at the
         // text sizes people actually run their phones at, a second line up
         // there collides with the title and the action.
+        Text(l10n.captureTitle, style: theme.textTheme.headlineMedium),
         if (address != null) ...[
+          SizedBox(height: spacing.s4),
           _Address(text: address!),
-          SizedBox(height: spacing.s24),
         ],
+        SizedBox(height: spacing.s24),
         // On a visit under way the standing leads: the first thing a nurse
         // coming back from an interruption needs is where she left off.
         if (!standing.isEmpty) ...[
@@ -316,14 +338,6 @@ class _Idle extends StatelessWidget {
           SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleTwo),
         ],
-        SizedBox(height: spacing.s32),
-        _WayGroup(
-          ways: [
-            (Icons.checklist, l10n.captureUseCards, onUseCards),
-            (Icons.photo_camera_outlined, l10n.captureTakePhoto, onTakePhoto),
-            (Icons.show_chart, l10n.captureShowHistory, onShowHistory),
-          ],
-        ),
       ],
     );
   }
@@ -352,8 +366,8 @@ class _Address extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ),

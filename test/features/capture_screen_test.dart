@@ -11,6 +11,7 @@ import 'package:wunddoku/features/besuch/ui/capture_screen.dart';
 import 'package:wunddoku/features/besuch/ui/capture_view_model.dart';
 import 'package:wunddoku/features/besuch/ui/widgets/level_meter.dart';
 
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 const _exampleName = 'befund_01.m4a';
@@ -175,6 +176,26 @@ void main() {
       await stopRecording(tester, vm);
     });
 
+    testWidgets('recording, dark', (tester) async {
+      await useScreen(tester);
+      final vm = model();
+      await tester.pumpWidget(
+        TestApp(brightness: Brightness.dark, child: CaptureScreen(viewModel: vm)),
+      );
+      await startRecording(tester);
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 200));
+
+      // The state a nurse sees most often, in the theme of the night shift:
+      // the level meter must not read as an alarm in either.
+      await expectLater(
+        find.byType(CaptureScreen),
+        matchesGoldenFile('goldens/capture_recording_dark.png'),
+      );
+
+      await stopRecording(tester, vm);
+    });
+
     testWidgets('stopping interprets the recording and reports it', (
       tester,
     ) async {
@@ -326,6 +347,7 @@ void main() {
 
   group('goldens', () {
     testWidgets('a visit under way', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           child: CaptureScreen(
@@ -358,6 +380,7 @@ void main() {
     });
 
     testWidgets('a visit under way, dark', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           brightness: Brightness.dark,
@@ -391,6 +414,9 @@ void main() {
     });
 
     testWidgets('a visit under way at 200 percent text', (tester) async {
+      // The narrow end and the largest text at once: if it survives this it
+      // survives the tour.
+      await useScreen(tester, size: narrowSize);
       await tester.pumpWidget(
         TestApp(
           textScale: 2,
@@ -424,6 +450,7 @@ void main() {
     });
 
     testWidgets('idle', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(child: CaptureScreen(viewModel: model())),
       );
@@ -435,6 +462,7 @@ void main() {
     });
 
     testWidgets('recording', (tester) async {
+      await useScreen(tester);
       final vm = model();
       await tester.pumpWidget(TestApp(child: CaptureScreen(viewModel: vm)));
       await startRecording(tester);

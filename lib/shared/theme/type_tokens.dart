@@ -67,7 +67,7 @@ TextStyle _style({
 /// |---|---|---|
 /// | display 40/700 | displayMedium | a figure that has to be read across the room |
 /// | headline 30/700 | headlineMedium | screen title |
-/// | headline 30/700 | headlineLarge | same size, for a figure beside a title |
+/// | figure 34/600 | headlineLarge | the one figure that has to win a row |
 /// | section 22/600 | headlineSmall, titleLarge | section heading |
 /// | title 20/600 | titleMedium | card heading |
 /// | body 16/400 | bodyMedium | running text, transcript |
@@ -106,8 +106,8 @@ TextTheme buildTextTheme(AppFontFamily font) {
     // family — invisible on a device with a system font, obvious in a golden.
     headlineLarge: _style(
       family: family,
-      size: 30,
-      height: 1.15,
+      size: 34,
+      height: 1.10,
       weight: 600,
       letterSpacing: -0.5,
       tabular: true,

@@ -19,7 +19,6 @@ class LevelMeter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final status = context.statusColors;
     final spacing = context.spacing;
     final lit = (level.clamp(0.0, 1.0) * barCount).round();
 
@@ -38,8 +37,13 @@ class LevelMeter extends StatelessWidget {
                     curve: context.motion.kurzCurve,
                     height: i < lit ? spacing.s48 : spacing.s8,
                     decoration: BoxDecoration(
+                      // The accent, not the "decide" red: a running
+                      // recording is the normal case, and the palette
+                      // reserves red for a value that blocks saving. A red
+                      // bar across the screen while the patient watches
+                      // reads as an alarm that is not happening.
                       color: i < lit
-                          ? status.entscheiden
+                          ? theme.colorScheme.primary
                           : theme.colorScheme.outlineVariant,
                       borderRadius: BorderRadius.circular(spacing.r4),
                     ),
