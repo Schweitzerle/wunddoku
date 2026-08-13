@@ -44,12 +44,12 @@ class HistoryScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.historyTitle),
         actions: [
           if (onCreateReport != null && !history.isEmpty)
-            TextButton(
+            IconButton(
               onPressed: onCreateReport,
-              child: Text(l10n.reportShare),
+              icon: const Icon(Icons.description_outlined),
+              tooltip: l10n.reportShare,
             ),
         ],
       ),
@@ -124,20 +124,10 @@ class _Course extends StatelessWidget {
         spacing.s16,
       ),
       children: [
+        Text(l10n.historyTitle, style: theme.textTheme.headlineMedium),
+        SizedBox(height: spacing.s24),
         if (history.isComparable) ...[
-          Text(
-            l10n.historyAreaLabel,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          AreaChart(series: history.areaSeries, label: l10n.historyAreaLabel),
-          Text(
-            l10n.historyAreaApprox,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
+          _ChartBlock(history: history),
         ] else
           Text(
             l10n.historySingleHint,
@@ -145,7 +135,7 @@ class _Course extends StatelessWidget {
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
-        SizedBox(height: spacing.s24),
+        SizedBox(height: spacing.s32),
         for (final entry in newestFirst)
           Padding(
             padding: EdgeInsets.only(bottom: spacing.s12),
@@ -156,6 +146,73 @@ class _Course extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+}
+
+/// The curve with the two numbers that make it readable.
+///
+/// A line without a scale claims a trend without saying between which values
+/// or over what period. Rather than drawing axes — which cost height a phone
+/// does not have — the first and last measured value and the period are set
+/// as text around it.
+class _ChartBlock extends StatelessWidget {
+  const _ChartBlock({required this.history});
+
+  final WoundHistory history;
+
+  /// One decimal, like everywhere the area is shown.
+  static num _rounded(double value) => (value * 10).round() / 10;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    final measured = [
+      for (final entry in history.entries)
+        if (entry.areaCm2 != null) entry,
+    ];
+    final first = measured.first;
+    final last = measured.last;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(spacing.r12),
+      ),
+      padding: EdgeInsets.all(spacing.s16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.historyChartLatest(_rounded(last.areaCm2!)),
+            style: theme.textTheme.headlineLarge,
+          ),
+          Text(
+            l10n.historyChartFirst(_rounded(first.areaCm2!)),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          SizedBox(height: spacing.s8),
+          AreaChart(series: history.areaSeries, label: l10n.historyAreaLabel),
+          SizedBox(height: spacing.s8),
+          Text(
+            l10n.historyChartSpan(first.recordedAt, last.recordedAt),
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            l10n.historyAreaApprox,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

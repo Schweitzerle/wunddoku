@@ -1002,5 +1002,39 @@
   "captureExamplesHeading": "So kann das klingen",
   "@captureExamplesHeading": {
     "description": "Überschrift über den Beispielsätzen, die zeigen, wie ein gesprochener Befund klingt."
+  },
+  "historyChartSpan": "{from} bis {to}",
+  "@historyChartSpan": {
+    "description": "Zeitraum unter der Verlaufskurve. Ohne ihn sagt die Kurve nicht, über welche Strecke sie verläuft.",
+    "placeholders": {
+      "from": {
+        "type": "DateTime",
+        "format": "yMd"
+      },
+      "to": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
+  "historyChartLatest": "zuletzt {value} cm²",
+  "@historyChartLatest": {
+    "description": "Der jüngste Flächenwert, als Beschriftung am Ende der Kurve.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "historyChartFirst": "zu Beginn {value} cm²",
+  "@historyChartFirst": {
+    "description": "Der erste Flächenwert des Zeitraums, als Beschriftung am Anfang der Kurve.",
+    "placeholders": {
+      "value": {
+        "type": "num",
+        "format": "decimalPattern"
+      }
+    }
   }
 }

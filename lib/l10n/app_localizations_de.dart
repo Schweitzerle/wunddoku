@@ -834,4 +834,32 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get captureExamplesHeading => 'So kann das klingen';
+
+  @override
+  String historyChartSpan(DateTime from, DateTime to) {
+    final intl.DateFormat fromDateFormat = intl.DateFormat.yMd(localeName);
+    final String fromString = fromDateFormat.format(from);
+    final intl.DateFormat toDateFormat = intl.DateFormat.yMd(localeName);
+    final String toString = toDateFormat.format(to);
+
+    return '$fromString bis $toString';
+  }
+
+  @override
+  String historyChartLatest(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return 'zuletzt $valueString cm²';
+  }
+
+  @override
+  String historyChartFirst(num value) {
+    final intl.NumberFormat valueNumberFormat =
+        intl.NumberFormat.decimalPattern(localeName);
+    final String valueString = valueNumberFormat.format(value);
+
+    return 'zu Beginn $valueString cm²';
+  }
 }

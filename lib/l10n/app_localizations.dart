@@ -1251,6 +1251,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'So kann das klingen'**
   String get captureExamplesHeading;
+
+  /// Zeitraum unter der Verlaufskurve. Ohne ihn sagt die Kurve nicht, über welche Strecke sie verläuft.
+  ///
+  /// In de, this message translates to:
+  /// **'{from} bis {to}'**
+  String historyChartSpan(DateTime from, DateTime to);
+
+  /// Der jüngste Flächenwert, als Beschriftung am Ende der Kurve.
+  ///
+  /// In de, this message translates to:
+  /// **'zuletzt {value} cm²'**
+  String historyChartLatest(num value);
+
+  /// Der erste Flächenwert des Zeitraums, als Beschriftung am Anfang der Kurve.
+  ///
+  /// In de, this message translates to:
+  /// **'zu Beginn {value} cm²'**
+  String historyChartFirst(num value);
 }
 
 class _AppLocalizationsDelegate

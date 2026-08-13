@@ -9,6 +9,7 @@ import 'package:wunddoku/domain/model/wound_history.dart';
 import 'package:wunddoku/features/verlauf/ui/history_screen.dart';
 import 'package:wunddoku/features/verlauf/ui/widgets/area_chart.dart';
 
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 /// A synthetic wound photo — never a real one (`datenschutz-art9.md`).
@@ -154,6 +155,9 @@ void main() {
     });
 
     testWidgets('shows the newest visit first', (tester) async {
+      // Tall enough for every row: a ListView builds only what is visible,
+      // and the assertion is about order, not about what fits.
+      await useScreen(tester, size: const Size(390, 1600));
       await tester.pumpWidget(
         TestApp(
           child: HistoryScreen(history: shrinking(), loadPhoto: loadPhoto),
@@ -164,7 +168,9 @@ void main() {
           .widgetList<Text>(find.byType(Text))
           .map((text) => text.data)
           .whereType<String>()
-          .where((text) => text.contains('2026'))
+          // Only the visit rows: the period under the chart is a date too,
+          // and it is written in the short form.
+          .where((text) => text.contains('Juli 2026'))
           .toList();
       expect(dates.first, contains('28'));
       expect(dates.last, contains('14'));
@@ -340,6 +346,7 @@ void main() {
 
   group('goldens', () {
     testWidgets('a shrinking wound, light theme', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           child: HistoryScreen(history: shrinking(), loadPhoto: loadPhoto),
@@ -354,6 +361,7 @@ void main() {
     });
 
     testWidgets('a shrinking wound, dark theme', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           brightness: Brightness.dark,
