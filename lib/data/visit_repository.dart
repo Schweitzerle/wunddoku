@@ -84,6 +84,27 @@ class VisitRepository {
     return row == null ? null : VisitId(row.id);
   }
 
+  /// The patients who have a visit that was begun and never closed.
+  ///
+  /// An unfinished visit is the one thing the record cannot fix by itself: it
+  /// means a nurse left a flat with the finding half written, which is the
+  /// evening in the office this app exists to remove. The list puts those
+  /// patients first, so one query rather than one per row.
+  Future<Set<PatientId>> patientsWithOpenVisit() async {
+    final query = _db.selectOnly(_db.visits)
+      ..join([
+        innerJoin(_db.wounds, _db.wounds.id.equalsExp(_db.visits.woundId)),
+      ])
+      ..addColumns([_db.wounds.patientId])
+      ..where(_db.visits.status.equalsValue(VisitStatus.draft))
+      ..groupBy([_db.wounds.patientId]);
+
+    final rows = await query.get();
+    return {
+      for (final row in rows) PatientId(row.read(_db.wounds.patientId)!),
+    };
+  }
+
   /// When [visit] was started, or null when there is no such visit.
   ///
   /// The header of every screen inside a visit shows it, so a draft resumed

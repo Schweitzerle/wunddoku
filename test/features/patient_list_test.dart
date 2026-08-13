@@ -3,19 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/data/db/app_database.dart';
 import 'package:wunddoku/data/patient_repository.dart';
+import 'package:wunddoku/data/visit_repository.dart';
+import 'package:wunddoku/data/wound_repository.dart';
 import 'package:wunddoku/domain/model/patient.dart';
 import 'package:wunddoku/features/patienten/ui/patient_list_screen.dart';
 import 'package:wunddoku/features/patienten/ui/patient_list_view_model.dart';
 
+import '../support/fake_media_store.dart';
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 void main() {
   late AppDatabase database;
   late PatientRepository patients;
+  late VisitRepository visits;
+  late WoundRepository wounds;
 
   setUp(() {
     database = AppDatabase.forTesting(NativeDatabase.memory());
     patients = PatientRepository(database);
+    visits = VisitRepository(database, FakeMediaStore());
+    wounds = WoundRepository(database);
   });
 
   tearDown(() => database.close());
@@ -34,7 +42,7 @@ void main() {
     void Function(Patient)? onOpen,
     int wounds = 1,
   }) async {
-    final model = PatientListViewModel(patients);
+    final model = PatientListViewModel(patients, visits);
     addTearDown(model.dispose);
     await tester.pumpWidget(
       TestApp(
@@ -120,9 +128,139 @@ void main() {
     handle.dispose();
   });
 
+  testWidgets('an unfinished visit lifts the patient out of the alphabet', (
+    tester,
+  ) async {
+    await addPatient('Erika', 'Mustermann');
+    final zwilling = await patients.create(
+      givenName: 'Hans',
+      familyName: 'Beispiel',
+      birthDate: DateTime(1950, 1, 1),
+      street: 'Musterweg 2',
+      postalCode: '12345',
+      city: 'Musterstadt',
+    );
+    final wound = await wounds.create(
+      patient: zwilling.id,
+      location: 'linker Unterschenkel',
+    );
+    await visits.startVisit(wound.id);
+
+    await pumpList(tester);
+
+    // A visit begun and not closed is the work that has to end today. It may
+    // not sit somewhere in the alphabet.
+    expect(find.text('Besuch offen · 1'), findsOneWidget);
+    expect(find.text('Alle übrigen · 1'), findsOneWidget);
+    expect(find.text('Besuch offen'), findsOneWidget);
+  });
+
+  testWidgets('a closed visit leaves no mark on the list', (tester) async {
+    final patient = await patients.create(
+      givenName: 'Hans',
+      familyName: 'Beispiel',
+      birthDate: DateTime(1950, 1, 1),
+      street: 'Musterweg 2',
+      postalCode: '12345',
+      city: 'Musterstadt',
+    );
+    final wound = await wounds.create(
+      patient: patient.id,
+      location: 'linker Unterschenkel',
+    );
+    final visit = await visits.startVisit(wound.id);
+    await visits.completeVisit(visit, withGaps: false);
+
+    await pumpList(tester);
+
+    expect(find.text('Besuch offen'), findsNothing);
+    expect(find.textContaining('Alle übrigen'), findsNothing);
+  });
+
+  testWidgets('searching drops the headings and shows the hits', (
+    tester,
+  ) async {
+    await addPatient('Erika', 'Mustermann');
+    final other = await patients.create(
+      givenName: 'Hans',
+      familyName: 'Beispiel',
+      birthDate: DateTime(1950, 1, 1),
+      street: 'Musterweg 2',
+      postalCode: '12345',
+      city: 'Musterstadt',
+    );
+    final wound = await wounds.create(
+      patient: other.id,
+      location: 'linker Unterschenkel',
+    );
+    await visits.startVisit(wound.id);
+
+    final model = await pumpList(tester);
+    await model.searchFor('Muster');
+    await tester.pumpAndSettle();
+
+    // Someone typing a name is looking for that person; a heading between
+    // them and the hit is in the way.
+    expect(find.textContaining('Besuch offen ·'), findsNothing);
+    expect(find.text('Mustermann, Erika'), findsOneWidget);
+  });
+
+  testWidgets('golden: the list with an unfinished visit', (tester) async {
+    await useScreen(tester);
+    await addPatient('Erika', 'Mustermann');
+    await addPatient('Nour', 'Abadi');
+    final open = await patients.create(
+      givenName: 'Ilse',
+      familyName: 'Brandt',
+      birthDate: DateTime(1948, 3, 4),
+      street: 'Lindenweg 12',
+      postalCode: '34117',
+      city: 'Kassel',
+    );
+    final wound = await wounds.create(
+      patient: open.id,
+      location: 'linker Unterschenkel',
+    );
+    await visits.startVisit(wound.id);
+
+    await pumpList(tester, wounds: 2);
+
+    await expectLater(
+      find.byType(PatientListScreen),
+      matchesGoldenFile('goldens/patients_list.png'),
+    );
+  });
+
+  testWidgets('golden: the list at 200 percent text on a narrow phone', (
+    tester,
+  ) async {
+    await useScreen(tester, size: narrowSize);
+    await addPatient('Erika', 'Mustermann');
+
+    final model = PatientListViewModel(patients, visits);
+    addTearDown(model.dispose);
+    await tester.pumpWidget(
+      TestApp(
+        textScale: 2,
+        child: PatientListScreen(
+          viewModel: model,
+          woundCount: (_) => 2,
+          onAdd: () {},
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    await expectLater(
+      find.byType(PatientListScreen),
+      matchesGoldenFile('goldens/patients_list_text200.png'),
+    );
+  });
+
   testWidgets('survives 200 percent text scaling', (tester) async {
     await addPatient('Erika', 'Mustermann');
-    final model = PatientListViewModel(patients);
+    final model = PatientListViewModel(patients, visits);
     addTearDown(model.dispose);
 
     await tester.pumpWidget(

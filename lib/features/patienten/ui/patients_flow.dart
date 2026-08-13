@@ -42,7 +42,10 @@ class _PatientsFlowState extends State<PatientsFlow> {
   @override
   void initState() {
     super.initState();
-    _list = PatientListViewModel(widget.dependencies.patients);
+    _list = PatientListViewModel(
+      widget.dependencies.patients,
+      widget.dependencies.visits,
+    );
     _refreshCounts();
   }
 
@@ -92,7 +95,12 @@ class _PatientsFlowState extends State<PatientsFlow> {
         ),
       ),
     );
-    if (mounted) await _refreshCounts();
+    if (!mounted) return;
+    // Reloads the list as well as the counts: the visit that was just closed
+    // is what the "Besuch offen" mark hangs on, and a mark that outlives the
+    // visit sends the nurse back into a flat she is finished with.
+    await _list.load();
+    await _refreshCounts();
   }
 
   @override

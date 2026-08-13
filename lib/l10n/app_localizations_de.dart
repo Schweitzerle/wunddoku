@@ -697,6 +697,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get patientsAdd => 'Patient anlegen';
 
   @override
+  String patientsUnfinishedHeading(int count) {
+    return 'Besuch offen · $count';
+  }
+
+  @override
+  String patientsRestHeading(int count) {
+    return 'Alle übrigen · $count';
+  }
+
+  @override
+  String get patientOpenVisitBadge => 'Besuch offen';
+
+  @override
   String patientBirthDate(DateTime date) {
     final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
     final String dateString = dateDateFormat.format(date);

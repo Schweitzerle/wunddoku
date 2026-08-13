@@ -831,6 +831,28 @@
   "@patientsAdd": {
     "description": "Aktion, die das Formular für einen neuen Patienten öffnet."
   },
+  "patientsUnfinishedHeading": "Besuch offen · {count}",
+  "@patientsUnfinishedHeading": {
+    "description": "Überschrift über den Patienten mit einem begonnenen, nicht abgeschlossenen Besuch. Sie stehen zuoberst, weil das die Arbeit ist, die heute noch zu Ende gehen muss.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientsRestHeading": "Alle übrigen · {count}",
+  "@patientsRestHeading": {
+    "description": "Überschrift über den Patienten ohne offenen Besuch. Erscheint nur, wenn es darüber eine Gruppe gibt.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "patientOpenVisitBadge": "Besuch offen",
+  "@patientOpenVisitBadge": {
+    "description": "Merkzeichen auf der Zeile eines Patienten, dessen Besuch begonnen und nicht abgeschlossen wurde."
+  },
   "patientBirthDate": "geb. {date}",
   "@patientBirthDate": {
     "description": "Geburtsdatum unter dem Namen in der Patientenliste. Kurzform, weil es nur der Unterscheidung gleicher Namen dient.",

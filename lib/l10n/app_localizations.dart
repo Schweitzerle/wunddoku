@@ -1048,6 +1048,24 @@ abstract class AppLocalizations {
   /// **'Patient anlegen'**
   String get patientsAdd;
 
+  /// Überschrift über den Patienten mit einem begonnenen, nicht abgeschlossenen Besuch. Sie stehen zuoberst, weil das die Arbeit ist, die heute noch zu Ende gehen muss.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch offen · {count}'**
+  String patientsUnfinishedHeading(int count);
+
+  /// Überschrift über den Patienten ohne offenen Besuch. Erscheint nur, wenn es darüber eine Gruppe gibt.
+  ///
+  /// In de, this message translates to:
+  /// **'Alle übrigen · {count}'**
+  String patientsRestHeading(int count);
+
+  /// Merkzeichen auf der Zeile eines Patienten, dessen Besuch begonnen und nicht abgeschlossen wurde.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch offen'**
+  String get patientOpenVisitBadge;
+
   /// Geburtsdatum unter dem Namen in der Patientenliste. Kurzform, weil es nur der Unterscheidung gleicher Namen dient.
   ///
   /// In de, this message translates to:
