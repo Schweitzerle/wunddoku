@@ -73,7 +73,16 @@ TextStyle _style({
 /// | body 16/400 | bodyMedium | running text, transcript |
 /// | bodyStrong 16/600 | bodyLarge | value in a compact row |
 /// | label 13/600 caps | labelMedium | field name above a value |
-/// | labelPlain 13/500 | labelSmall, bodySmall | secondary annotations |
+/// | labelPlain 13/600 | labelSmall, bodySmall | secondary annotations |
+///
+/// Two weights carry a surface: 400 for running text, 600 for everything
+/// else. The small annotations are 600 rather than the 400–500 the numbers
+/// suggest, because at 13 px a light weight fails `textContrastGuideline`:
+/// antialiasing eats the effective contrast, and the check measures rendered
+/// pixels rather than the nominal colour pair. Readability and the
+/// two-weight rule pull the same way here.
+///
+/// 700 exists only for the recording timer, a screen with three roles on it.
 TextTheme buildTextTheme(AppFontFamily font) {
   final family = font.family;
   return TextTheme(
@@ -89,7 +98,7 @@ TextTheme buildTextTheme(AppFontFamily font) {
       family: family,
       size: 30,
       height: 1.15,
-      weight: 700,
+      weight: 600,
       letterSpacing: -0.5,
     ),
     // Roles Material widgets and screens reach for that the scale did not
@@ -99,7 +108,7 @@ TextTheme buildTextTheme(AppFontFamily font) {
       family: family,
       size: 30,
       height: 1.15,
-      weight: 700,
+      weight: 600,
       letterSpacing: -0.5,
       tabular: true,
     ),
@@ -113,7 +122,7 @@ TextTheme buildTextTheme(AppFontFamily font) {
     titleLarge: _style(family: family, size: 22, height: 1.25, weight: 600),
     labelLarge: _style(family: family, size: 16, height: 1.25, weight: 600),
     titleMedium: _style(family: family, size: 20, height: 1.30, weight: 600),
-    bodySmall: _style(family: family, size: 13, height: 1.40, weight: 500),
+    bodySmall: _style(family: family, size: 13, height: 1.40, weight: 600),
     bodyMedium: _style(family: family, size: 16, height: 1.50, weight: 400),
     bodyLarge: _style(
       family: family,
@@ -132,6 +141,6 @@ TextTheme buildTextTheme(AppFontFamily font) {
       weight: 600,
       letterSpacing: 1.0,
     ),
-    labelSmall: _style(family: family, size: 13, height: 1.30, weight: 500),
+    labelSmall: _style(family: family, size: 13, height: 1.30, weight: 600),
   );
 }

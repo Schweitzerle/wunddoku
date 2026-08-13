@@ -357,6 +357,39 @@ void main() {
       );
     });
 
+    testWidgets('a visit under way, dark', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          brightness: Brightness.dark,
+          child: CaptureScreen(
+            viewModel: model(),
+            context: 'Mustermann · linker Unterschenkel, distal',
+            onUseCards: () {},
+            onTakePhoto: () {},
+            onShowHistory: () {},
+            onFinishVisit: () {},
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {
+                  'measurement.lengthCm': CentimetreValue(3.5),
+                  'measurement.widthCm': CentimetreValue(2),
+                  'tissue.granulation': PercentValue(60),
+                },
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 1,
+              markedPhotoCount: 1,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await expectLater(
+        find.byType(CaptureScreen),
+        matchesGoldenFile('goldens/capture_standing_dark.png'),
+      );
+    });
+
     testWidgets('a visit under way at 200 percent text', (tester) async {
       await tester.pumpWidget(
         TestApp(
