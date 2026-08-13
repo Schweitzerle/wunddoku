@@ -57,6 +57,28 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
     });
   }
 
+  /// Opens the full record of one visit, with the words it was spoken in.
+  Future<void> _openVisit(HistoryEntry entry) async {
+    final history = _history;
+    if (history == null) return;
+    final transcript = await widget.dependencies.visits.transcriptOf(
+      entry.visit,
+    );
+    if (!mounted) return;
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => VisitDetailScreen(
+          entry: entry,
+          areaChange: history.areaChangeBefore(entry),
+          expectedSlots: FieldPresentation.woundBedSlots,
+          loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
+          transcript: transcript,
+        ),
+      ),
+    );
+  }
+
   /// The bytes behind [ref], or null when the file no longer reads.
   ///
   /// A thumbnail that cannot be loaded costs its picture and nothing else.
@@ -142,16 +164,7 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
       loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
       onCreateReport: () => _createReport(history),
       creatingReport: _creatingReport,
-      onOpenVisit: (entry) => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => VisitDetailScreen(
-            entry: entry,
-            areaChange: history.areaChangeBefore(entry),
-            expectedSlots: FieldPresentation.woundBedSlots,
-            loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
-          ),
-        ),
-      ),
+      onOpenVisit: _openVisit,
     );
   }
 }

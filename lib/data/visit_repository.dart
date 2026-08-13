@@ -359,6 +359,20 @@ class VisitRepository {
   }
 
   /// Stores the verbatim transcript with the visit.
+  /// The verbatim dictation of [visit], or null when it was never spoken.
+  ///
+  /// The evidence that a finding came from the nurse's own words, and the
+  /// only place a misheard term can still be recognised as one after the
+  /// fact.
+  Future<String?> transcriptOf(VisitId visit) async {
+    final row =
+        await (_db.select(_db.visits)
+              ..where((v) => v.id.equals(visit.value))
+              ..limit(1))
+            .getSingleOrNull();
+    return row?.transcript;
+  }
+
   Future<void> saveTranscript(VisitId visit, String transcript) async {
     await (_db.update(_db.visits)..where((v) => v.id.equals(visit.value)))
         .write(VisitsCompanion(transcript: Value(transcript)));

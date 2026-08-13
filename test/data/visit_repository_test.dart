@@ -159,6 +159,14 @@ void main() {
       expect(await repository.openDraft(wound), isNull);
     });
 
+    test('the verbatim dictation reads back with the visit', () async {
+      final visit = await repository.startVisit(wound);
+      expect(await repository.transcriptOf(visit), isNull);
+
+      await repository.saveTranscript(visit, 'Länge drei Komma fünf');
+      expect(await repository.transcriptOf(visit), 'Länge drei Komma fünf');
+    });
+
     test('a resumed visit still knows which day it belongs to', () async {
       // The header of every screen inside a visit shows this date, so a draft
       // picked up the next morning is not mistaken for today's visit.

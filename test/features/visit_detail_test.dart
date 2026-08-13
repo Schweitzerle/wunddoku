@@ -85,6 +85,42 @@ void main() {
     expect(find.text('Besuch offen'), findsOneWidget);
   });
 
+  testWidgets('the words the finding was spoken in stay with it', (
+    tester,
+  ) async {
+    await useScreen(tester);
+    await tester.pumpWidget(
+      TestApp(
+        child: VisitDetailScreen(
+          entry: _entry(),
+          areaChange: -1.4,
+          expectedSlots: FieldPresentation.woundBedSlots,
+          loadPhoto: _noPhoto,
+          transcript: 'Länge vier Komma zwei, Breite zwei Komma acht. '
+              'Excusat gering, seriös.',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Weeks later this is the only place where a misheard term is still
+    // recognisable as one. It sits at the end of the record, so the test
+    // scrolls the way the reader would.
+    await tester.scrollUntilVisible(find.text('Wortlaut'), 300);
+    expect(find.text('Wortlaut'), findsOneWidget);
+    expect(find.textContaining('Excusat gering'), findsOneWidget);
+  });
+
+  testWidgets('a visit entered through the cards has no wording', (
+    tester,
+  ) async {
+    await useScreen(tester);
+    await tester.pumpWidget(_screen());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Wortlaut'), findsNothing);
+  });
+
   testWidgets('meets the four guidelines', (tester) async {
     final handle = tester.ensureSemantics();
     await useScreen(tester);

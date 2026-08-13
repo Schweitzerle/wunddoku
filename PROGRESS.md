@@ -43,9 +43,7 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 1. Offen bleibt der mitlaufende Zwischenstand während der Aufnahme („Bisher
    verstanden"). Er braucht einen Erkenner, der einen Strom liefert statt eines
-   Ergebnisses — eine Runde `/eps:technikwahl`. Ebenfalls offen: der Wortlaut
-   der Aufnahme in der Besuchsdetailansicht (Lesemethode im
-   `VisitRepository`).
+   Ergebnisses — eine Runde `/eps:technikwahl`.
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
@@ -136,8 +134,11 @@ nichts über den Wundrand festgehalten hat, ist ein anderer Sachverhalt als
 einer, bei dem der Wundrand normal war — und im Büro lassen sich die beiden
 nicht auseinanderhalten, wenn die Lücke einfach fehlt.
 
-**Noch nicht drin:** der Wortlaut der Aufnahme. Er liegt am Besuch, aber nicht
-im `HistoryEntry`; dafür braucht es eine Lesemethode im `VisitRepository`.
+**Der Wortlaut steht jetzt auch dort** (`VisitRepository.transcriptOf`). Er ist
+der Beleg, dass der Befund aus den eigenen Worten der Pflegekraft stammt — und
+Wochen später die einzige Stelle, an der ein verhörtes Wort („Excusat" für
+Exsudat) noch als solches erkennbar ist. Bei einem Besuch, der über die Karten
+erfasst wurde, fehlt der Abschnitt, weil nichts gesprochen wurde.
 
 ## Erledigt (Wert selbst eingeben statt Vermutung bestätigen, 2026-08-13)
 

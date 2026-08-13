@@ -19,6 +19,7 @@ class VisitDetailScreen extends StatelessWidget {
     required this.areaChange,
     required this.expectedSlots,
     required this.loadPhoto,
+    this.transcript,
     super.key,
   });
 
@@ -31,6 +32,14 @@ class VisitDetailScreen extends StatelessWidget {
   final List<String> expectedSlots;
 
   final PhotoLoader loadPhoto;
+
+  /// What was said that day, verbatim.
+  ///
+  /// The evidence that the finding came from the nurse's own words — and the
+  /// only place where a misheard term ("Excusat" for "Exsudat") can still be
+  /// recognised as one weeks later. Null on a visit entered through the
+  /// cards, where nothing was spoken.
+  final String? transcript;
 
   /// One decimal, like everywhere the area is shown.
   static num _rounded(double value) => (value * 10).round() / 10;
@@ -179,6 +188,35 @@ class VisitDetailScreen extends StatelessWidget {
                   value: l10n.confidenceMissing,
                   quiet: true,
                 ),
+            ],
+            if (transcript != null && transcript!.isNotEmpty) ...[
+              _SectionHeading(text: l10n.provenanceTitle),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: spacing.s16),
+                child: Container(
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.s12,
+                    spacing.s8,
+                    spacing.s12,
+                    spacing.s8,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      left: BorderSide(
+                        color: theme.colorScheme.outline,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    transcript!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ],
         ),
