@@ -578,6 +578,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get historyVisitWithGaps => 'Mit Lücken abgeschlossen';
 
   @override
+  String get visitDetailRecorded => 'Erfasst';
+
+  @override
+  String get visitDetailGaps => 'Nicht erfasst';
+
+  @override
+  String get visitDetailComplete => 'Vollständig abgeschlossen';
+
+  @override
   String get historyPhotoMissing => 'Foto nicht lesbar';
 
   @override

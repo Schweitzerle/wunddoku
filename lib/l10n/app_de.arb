@@ -674,6 +674,18 @@
   "@historyVisitWithGaps": {
     "description": "Kennzeichnet einen Besuch, der bewusst unvollständig abgeschlossen wurde."
   },
+  "visitDetailRecorded": "Erfasst",
+  "@visitDetailRecorded": {
+    "description": "Überschrift über den Werten, die dieser Besuch festgehalten hat."
+  },
+  "visitDetailGaps": "Nicht erfasst",
+  "@visitDetailGaps": {
+    "description": "Überschrift über den Angaben, zu denen dieser Besuch nichts festgehalten hat. Sie stehen da, statt zu fehlen: eine Lücke ist eine Aussage über den Besuch."
+  },
+  "visitDetailComplete": "Vollständig abgeschlossen",
+  "@visitDetailComplete": {
+    "description": "Zustand eines Besuchs, der ohne Lücken abgeschlossen wurde."
+  },
   "historyPhotoMissing": "Foto nicht lesbar",
   "@historyPhotoMissing": {
     "description": "Platzhalter, wenn die Bilddatei fehlt oder nicht entschlüsselt werden kann. Die übrigen Daten des Besuchs bleiben nutzbar."

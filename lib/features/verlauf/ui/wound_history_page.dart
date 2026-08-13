@@ -12,6 +12,7 @@ import '../../../domain/report/report_content.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/text/field_presentation.dart';
 import 'history_screen.dart';
+import 'visit_detail_screen.dart';
 
 /// The course of one wound, loaded from the record.
 ///
@@ -120,6 +121,16 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
       woundLocation: _location,
       loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
       onCreateReport: () => _createReport(history),
+      onOpenVisit: (entry) => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => VisitDetailScreen(
+            entry: entry,
+            areaChange: history.areaChangeBefore(entry),
+            expectedSlots: FieldPresentation.woundBedSlots,
+            loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
+          ),
+        ),
+      ),
     );
   }
 }

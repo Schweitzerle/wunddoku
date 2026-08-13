@@ -892,6 +892,24 @@ abstract class AppLocalizations {
   /// **'Mit Lücken abgeschlossen'**
   String get historyVisitWithGaps;
 
+  /// Überschrift über den Werten, die dieser Besuch festgehalten hat.
+  ///
+  /// In de, this message translates to:
+  /// **'Erfasst'**
+  String get visitDetailRecorded;
+
+  /// Überschrift über den Angaben, zu denen dieser Besuch nichts festgehalten hat. Sie stehen da, statt zu fehlen: eine Lücke ist eine Aussage über den Besuch.
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht erfasst'**
+  String get visitDetailGaps;
+
+  /// Zustand eines Besuchs, der ohne Lücken abgeschlossen wurde.
+  ///
+  /// In de, this message translates to:
+  /// **'Vollständig abgeschlossen'**
+  String get visitDetailComplete;
+
   /// Platzhalter, wenn die Bilddatei fehlt oder nicht entschlüsselt werden kann. Die übrigen Daten des Besuchs bleiben nutzbar.
   ///
   /// In de, this message translates to:

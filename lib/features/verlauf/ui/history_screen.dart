@@ -19,6 +19,7 @@ class HistoryScreen extends StatelessWidget {
     required this.loadPhoto,
     this.woundLocation,
     this.onStartVisit,
+    this.onOpenVisit,
     this.onCreateReport,
     super.key,
   });
@@ -34,6 +35,9 @@ class HistoryScreen extends StatelessWidget {
 
   /// Called from the empty state.
   final VoidCallback? onStartVisit;
+
+  /// Called with the visit whose full record the nurse wants to see.
+  final void Function(HistoryEntry entry)? onOpenVisit;
 
   /// Called to produce the wound report for the office.
   ///
@@ -86,6 +90,7 @@ class HistoryScreen extends StatelessWidget {
                       history: history,
                       loadPhoto: loadPhoto,
                       woundLocation: woundLocation,
+                      onOpenVisit: onOpenVisit,
                     ),
             ),
           ],
@@ -138,11 +143,13 @@ class _Course extends StatelessWidget {
     required this.history,
     required this.loadPhoto,
     required this.woundLocation,
+    required this.onOpenVisit,
   });
 
   final WoundHistory history;
   final PhotoLoader loadPhoto;
   final String? woundLocation;
+  final void Function(HistoryEntry entry)? onOpenVisit;
 
   @override
   Widget build(BuildContext context) {
@@ -190,6 +197,7 @@ class _Course extends StatelessWidget {
               entry: entry,
               areaChange: history.areaChangeBefore(entry),
               loadPhoto: loadPhoto,
+              onOpen: onOpenVisit == null ? null : () => onOpenVisit!(entry),
             ),
           ),
       ],
@@ -274,11 +282,15 @@ class _VisitRow extends StatelessWidget {
     required this.entry,
     required this.areaChange,
     required this.loadPhoto,
+    required this.onOpen,
   });
 
   final HistoryEntry entry;
   final double? areaChange;
   final PhotoLoader loadPhoto;
+
+  /// Opens the full record of this visit.
+  final VoidCallback? onOpen;
 
   @override
   Widget build(BuildContext context) {
@@ -292,96 +304,102 @@ class _VisitRow extends StatelessWidget {
     final change = areaChange;
 
     return MergeSemantics(
-      child: Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(spacing.r12),
-        ),
-        padding: EdgeInsets.all(spacing.s12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PhotoThumbnail(
-              // The marked copy where there is one: the outline is what makes
-              // two photos comparable at a glance.
-              ref: entry.markedPhotoRef ?? entry.photoRef,
-              loadPhoto: loadPhoto,
-              noPhotoLabel: l10n.historyNoPhoto,
-              missingLabel: l10n.historyPhotoMissing,
-            ),
-            SizedBox(width: spacing.s12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+      child: Material(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(spacing.r12),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onOpen,
+          child: Padding(
+            padding: EdgeInsets.all(spacing.s12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PhotoThumbnail(
+                  // The marked copy where there is one: the outline is what makes
+                  // two photos comparable at a glance.
+                  ref: entry.markedPhotoRef ?? entry.photoRef,
+                  loadPhoto: loadPhoto,
+                  noPhotoLabel: l10n.historyNoPhoto,
+                  missingLabel: l10n.historyPhotoMissing,
+                ),
+                SizedBox(width: spacing.s12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: Text(
-                          l10n.historyDate(entry.recordedAt),
-                          style: theme.textTheme.titleMedium,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l10n.historyDate(entry.recordedAt),
+                              style: theme.textTheme.titleMedium,
+                            ),
+                          ),
+                          if (entry.isOpen)
+                            _Tag(
+                              text: l10n.historyVisitOpen,
+                              colour: status.pruefen,
+                            ),
+                        ],
                       ),
-                      if (entry.isOpen)
-                        _Tag(
-                          text: l10n.historyVisitOpen,
-                          colour: status.pruefen,
+                      SizedBox(height: spacing.s4),
+                      if (area == null)
+                        Text(
+                          l10n.historyNoMeasurements,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: status.luecke,
+                          ),
+                        )
+                      else ...[
+                        Text(
+                          l10n.historyArea(_rounded(area)),
+                          style: theme.textTheme.headlineSmall,
                         ),
+                        if (change != null)
+                          Text(
+                            // Direction is in the words, never in colour alone
+                            // (`23-a11y.md`) and not in a minus sign a gloved hand
+                            // can miss in sunlight.
+                            switch (change) {
+                              0 => l10n.historyAreaUnchanged,
+                              < 0 => l10n.historyAreaDecrease(
+                                _rounded(-change),
+                              ),
+                              _ => l10n.historyAreaIncrease(_rounded(change)),
+                            },
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              // Growth is the alarm signal, so it may not be the
+                              // quieter of the two: the amber that means "look at
+                              // this" elsewhere in the app means it here too.
+                              color: switch (change) {
+                                0 => theme.colorScheme.onSurfaceVariant,
+                                < 0 => status.sicher,
+                                _ => status.pruefen,
+                              },
+                            ),
+                          ),
+                      ],
+                      if (depth != null)
+                        Text(
+                          l10n.historyDepth(_rounded(depth)),
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      if (entry.closedWithGaps) ...[
+                        SizedBox(height: spacing.s4),
+                        Text(
+                          l10n.historyVisitWithGaps,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                  SizedBox(height: spacing.s4),
-                  if (area == null)
-                    Text(
-                      l10n.historyNoMeasurements,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: status.luecke,
-                      ),
-                    )
-                  else ...[
-                    Text(
-                      l10n.historyArea(_rounded(area)),
-                      style: theme.textTheme.headlineSmall,
-                    ),
-                    if (change != null)
-                      Text(
-                        // Direction is in the words, never in colour alone
-                        // (`23-a11y.md`) and not in a minus sign a gloved hand
-                        // can miss in sunlight.
-                        switch (change) {
-                          0 => l10n.historyAreaUnchanged,
-                          < 0 => l10n.historyAreaDecrease(_rounded(-change)),
-                          _ => l10n.historyAreaIncrease(_rounded(change)),
-                        },
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          // Growth is the alarm signal, so it may not be the
-                          // quieter of the two: the amber that means "look at
-                          // this" elsewhere in the app means it here too.
-                          color: switch (change) {
-                            0 => theme.colorScheme.onSurfaceVariant,
-                            < 0 => status.sicher,
-                            _ => status.pruefen,
-                          },
-                        ),
-                      ),
-                  ],
-                  if (depth != null)
-                    Text(
-                      l10n.historyDepth(_rounded(depth)),
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                  if (entry.closedWithGaps) ...[
-                    SizedBox(height: spacing.s4),
-                    Text(
-                      l10n.historyVisitWithGaps,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
