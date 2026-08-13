@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../domain/model/image_marking.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
+import 'widgets/visit_chrome.dart';
 import 'widgets/marking_editor.dart';
 
 /// Marking the wound on the photo.
@@ -46,11 +47,36 @@ class _MarkingScreenState extends State<MarkingScreen> {
     final spacing = context.spacing;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.markingTitle)),
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Marking belongs to the photo step; the band keeps saying so
+            // while the nurse is drawing.
+            Padding(
+              padding: EdgeInsets.only(top: spacing.s8),
+              child: Row(
+                children: [
+                  if (Navigator.of(context).canPop())
+                    const BackButton()
+                  else
+                    SizedBox(width: spacing.s16),
+                  Expanded(
+                    child: Text(
+                      l10n.markingTitle,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: spacing.s16),
+                ],
+              ),
+            ),
+            SizedBox(height: spacing.s8),
+            const VisitBand(current: VisitStep.photo),
+            SizedBox(height: spacing.s12),
             Padding(
               padding: EdgeInsets.fromLTRB(
                 spacing.s16,

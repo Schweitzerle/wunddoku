@@ -7,6 +7,7 @@ import 'package:wunddoku/domain/model/image_marking.dart';
 import 'package:wunddoku/features/besuch/ui/marking_screen.dart';
 import 'package:wunddoku/features/besuch/ui/widgets/marking_editor.dart';
 
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 /// A synthetic stand-in for a wound photo.
@@ -316,6 +317,7 @@ void main() {
     }
 
     testWidgets('light theme', (tester) async {
+      await useScreen(tester);
       await pumpMarked(tester);
       await expectLater(
         find.byType(MarkingScreen),
@@ -324,6 +326,7 @@ void main() {
     });
 
     testWidgets('dark theme', (tester) async {
+      await useScreen(tester);
       await pumpMarked(tester, brightness: Brightness.dark);
       await expectLater(
         find.byType(MarkingScreen),
@@ -332,6 +335,7 @@ void main() {
     });
 
     testWidgets('200 percent text scaling', (tester) async {
+      await useScreen(tester, size: narrowSize);
       await pumpMarked(tester, textScale: 2);
       await expectLater(
         find.byType(MarkingScreen),

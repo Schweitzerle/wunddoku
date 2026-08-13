@@ -7,6 +7,7 @@ import 'package:wunddoku/data/media/wound_camera.dart';
 import 'package:wunddoku/features/besuch/ui/photo_screen.dart';
 
 import '../support/fake_camera.dart';
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 /// A synthetic stand-in for a wound photo — never a real one.
@@ -245,6 +246,7 @@ void main() {
 
   group('goldens', () {
     testWidgets('viewfinder with the framing aid', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           child: PhotoScreen(
@@ -268,6 +270,7 @@ void main() {
     });
 
     testWidgets('camera denied', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           brightness: Brightness.dark,

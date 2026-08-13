@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../data/media/wound_camera.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
+import 'widgets/visit_chrome.dart';
 
 /// Takes the wound photo.
 ///
@@ -93,10 +94,43 @@ class _PhotoScreenState extends State<PhotoScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final spacing = context.spacing;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.photoTitle)),
-      body: SafeArea(child: _body(l10n)),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // The band, not a title: the photo is the third step of the
+            // visit, and this is where the visit says so.
+            Padding(
+              padding: EdgeInsets.only(top: spacing.s8),
+              child: Row(
+                children: [
+                  if (Navigator.of(context).canPop())
+                    const BackButton()
+                  else
+                    SizedBox(width: spacing.s16),
+                  Expanded(
+                    child: Text(
+                      l10n.photoTitle,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: spacing.s16),
+                ],
+              ),
+            ),
+            SizedBox(height: spacing.s8),
+            const VisitBand(current: VisitStep.photo),
+            SizedBox(height: spacing.s12),
+            Expanded(child: _body(l10n)),
+          ],
+        ),
+      ),
     );
   }
 
