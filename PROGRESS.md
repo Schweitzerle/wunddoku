@@ -41,9 +41,12 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Rest des Entwurfs: 1f Karten, 1g Foto, 1h Markierung. Auf 1g/1h fehlt das
-   Besuchsband (`VisitStep.photo`), und ihre Goldens laufen als einzige noch
-   auf 800×600 statt in Telefonmaß.
+1. Der Entwurfsdurchgang ist zu (1a–1j). Als Nächstes die offenen Punkte, die
+   dabei stehengeblieben sind — der Reihe nach: aus einem verworfenen Vorschlag
+   direkt in die Karte dieses Feldes springen (1e), Detailansicht eines Besuchs
+   aus dem Verlauf, Rückmeldung während der Berichterzeugung, und der
+   mitlaufende Zwischenstand während der Aufnahme („Bisher verstanden", braucht
+   eine Runde `/eps:technikwahl` für einen Erkenner mit Strom).
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
@@ -104,6 +107,40 @@ der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
 Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
+
+## Erledigt (Karten, Foto, Markierung — Entwurfsdurchgang zu, 2026-08-13)
+
+**1f Karten.** Die vier Gewebeanteile bekommen einen Balken über den Zeilen: die
+Regel ist, dass sie 100 % ergeben, und ein Satz darüber ist eine Regel, während
+der Balken die Sache selbst ist — was fehlt, ist der leere Teil davon.
+Übervergabe, die dieser Screen beim Umverteilen absichtlich zulässt, skaliert
+gegen die Summe, statt den letzten Anteil hinten abzuschneiden. **Ein Akzent in
+zwei Stärken**, nicht vier Farben: das sind Teile eines Ganzen, keine vier
+Kategorien mit eigener Identität. Titel in den Body, Fertig-Leiste mit Kante,
+Kartenradius 20 → 12.
+
+**Nicht übernommen:** Die Maße sind im Entwurf drei Instrumentenkacheln ohne
+Weg, den Wert zu ändern. Die Stepper bleiben — diesen Screen gibt es, weil am
+Bett keine Tastatur steht, und eine Zahl, die man nicht ändern kann, ist ein
+Etikett.
+
+**1g Foto und 1h Markierung.** Beide trugen einen Titel in einer AppBar und
+sonst nichts; jetzt tragen sie das Band mit gefülltem Foto-Schritt. Damit hört
+die Antwort auf „wo bin ich" nicht ausgerechnet auf den zwei Screens auf, auf
+denen die Pflegekraft am weitesten von der Akte weg ist.
+
+**Damit laufen alle Goldens in Telefonmaß.** Foto und Markierung waren die
+letzten auf 800×600 — breiter als ein Tablet im Hochformat, ausgerechnet für
+zwei Screens, deren ganzes Layout ein Bild im Rest des Platzes ist.
+
+### Stolperstein
+
+**Eine `ColoredBox` ohne Kind fällt auf null zusammen.** Sie nimmt die kleinste
+erlaubte Größe an, und eine `Row` reicht ihren Kindern lose Querachsen-
+Constraints. Der Verteilungsbalken lag damit korrekt im Baum, hatte die richtige
+Größe im Layout (318×14) — und malte nichts. Sichtbar nur im Golden, nicht im
+Widget-Test: `find.byType(ColoredBox)` fand ihn ja.
+Gegenmittel: `crossAxisAlignment: CrossAxisAlignment.stretch`.
 
 ## Erledigt (Abschluss und Verlauf gegen den Entwurf, 2026-08-13)
 
