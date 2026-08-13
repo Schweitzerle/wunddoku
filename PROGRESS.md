@@ -41,11 +41,9 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Offen bleibt der mitlaufende Zwischenstand während der Aufnahme („Bisher
-   verstanden"). Er braucht einen Erkenner, der einen Strom liefert statt eines
-   Ergebnisses — eine Runde `/eps:technikwahl`.
-2. `/eps:abgabe` vorbereiten
-3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
+1. `/eps:abgabe` vorbereiten — der Entwurfsdurchgang ist zu, und die offenen
+   Punkte sind entweder erledigt oder als Entscheidung festgehalten.
+2. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
 
 ## Erledigt (Befund sprechen gegen den Entwurf, 2026-08-13)
@@ -104,6 +102,18 @@ der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
 Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
+
+## Entschieden (mitlaufender Zwischenstand beim Sprechen, 2026-08-13)
+
+`/eps:technikwahl` durchlaufen, Ergebnis in `DECISIONS.md`: **nicht gebaut, und
+warum**. `speech_to_text` ist aus zwei unabhängigen Gründen ausgeschlossen — er
+nimmt auf Android das Mikrofon (die Aufnahmedatei ist aber die Beweiskette und
+der Grund, warum ein fehlender Erkenner keine Sackgasse ist), und sein
+On-Device-Modus ist seit 2022 als fehlerhaft gemeldet, während der Weg ohne ihn
+Audio an einen Dritten übermittelt. `sherpa_onnx` bleibt offen, nicht verworfen:
+strömend, offline, Apache-2.0, aber ohne offizielles deutsches Streaming-Modell
+und ohne Zahlen vom Zielgerät. Die Messung, die es entscheidungsreif macht, ist
+im Eintrag benannt.
 
 ## Erledigt (Rückmeldung bei der Berichterzeugung, 2026-08-13)
 

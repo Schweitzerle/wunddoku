@@ -544,3 +544,60 @@ dem Zielgerät, nicht auf dem Entwicklungsrechner.
 
 **Rückholbar:** ja — die Erkennung sitzt hinter `SpeechRecognizer`, ein
 Wechsel tauscht eine Klasse.
+
+---
+
+## 2026-08-13 — Mitlaufender Zwischenstand beim Sprechen: nicht gebaut, und warum
+
+**Anforderung:** Die Pflegekraft sieht schon während des Sprechens, was von ihrem
+Befund angekommen ist — heute merkt sie eine verlorene Angabe erst beim Prüfen,
+und das ist nach dem Verbandwechsel.
+
+**Braucht es die Technik überhaupt?** Zum Teil nicht. Was gesagt werden *soll*,
+steht seit dem Entwurfsdurchgang während der Aufnahme als Liste da (Maße,
+Wundgrund, Exsudat, Schmerz), und der Prüfen-Screen öffnet sich unmittelbar nach
+dem Stoppen. Übrig bleibt genau eine Lücke: dass eine **nicht angekommene**
+Angabe erst auffällt, wenn der Verband schon zu ist.
+
+**Gewählt: nichts, noch nicht.** Beide Wege sind erhoben, einer ist
+ausgeschlossen, der andere ist nicht entscheidungsreif.
+
+**Verworfen: `speech_to_text` 7.4.0** (2026-05-19, 130/160 Punkte, BSD-3,
+478 000 Downloads/30 Tage — also gepflegt und verbreitet). Zwei voneinander
+unabhängige Gründe:
+
+1. **Er nimmt das Mikrofon.** Die eigene Dokumentation sagt für Android, dass
+   nicht gleichzeitig aufgenommen und erkannt werden kann. Die Aufnahmedatei ist
+   aber der Grund, warum ein fehlender Erkenner heute keine Sackgasse ist: die
+   Aufnahme wird eingereiht statt verworfen, und sie ist der Beleg, dass der
+   Befund aus den Worten der Pflegekraft stammt. Live-Text gegen Beweiskette
+   getauscht ist ein schlechtes Geschäft.
+2. **On-Device ist bei diesem Paket nicht verlässlich.** `SpeechListenOptions`
+   kennt `onDevice: true`, aber der Fehlerbericht dazu (csdcorp/speech_to_text
+   #349) ist seit Oktober 2022 offen: ohne das Flag meldet Android `error_network`,
+   mit dem Flag `error_client`. Ohne das Flag geht Audio an den
+   Plattformdienst — bei Gesundheitsdaten eine Übermittlung an einen Dritten
+   ohne Vertrag, also nach `art9.md` ausgeschlossen. Ein Weg, der nur mit einem
+   Flag zulässig ist, das nachweislich hakt, ist keiner.
+
+**Offen, nicht verworfen: `sherpa_onnx` 1.13.5** (2026-08-11, 150/160 Punkte,
+Apache-2.0). Es erkennt strömend und vollständig ohne Netz; wir füttern es mit
+denselben Abtastwerten, die in die Datei gehen, also bleibt die Aufnahme
+erhalten und das Audio verlässt das Gerät nicht. Was fehlt, ist die Grundlage
+für eine Entscheidung:
+
+- **Es gibt kein offizielles deutsches Streaming-Modell.** Die dokumentierten
+  vortrainierten Streaming-Modelle sind Englisch, Chinesisch und einige weitere;
+  für Deutsch gibt es Gemeindeuploads (Kroko-Zipformer2 auf Hugging Face), deren
+  Herkunft, Lizenz und Qualität ungeprüft sind.
+- **Kein Wert für Größe und Echtzeitfaktor auf dem Zielgerät.** Genau die Zahlen,
+  die die Whisper-Messung vom 2026-08-12 für den dateibasierten Weg geliefert hat,
+  fehlen hier.
+
+**Die nächste belastbare Messung** braucht dasselbe wie damals: ein Lauf auf dem
+Motorola, an denselben vier Beispielaufnahmen, bewertet danach, **was im Befund
+ankommt** — nicht danach, wie der Text aussieht. Ohne sie wäre die Wahl geraten.
+
+**Rückholbar:** ja, und billiger als beim dateibasierten Weg. Ein strömender
+Erkenner ist eine zweite Methode am bestehenden `SpeechRecognizer`-Port; der
+`TranscriptInterpreter` verarbeitet Teiltranskripte wie ganze.
