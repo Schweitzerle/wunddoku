@@ -6,6 +6,7 @@ import 'package:wunddoku/domain/model/visit_draft.dart';
 import 'package:wunddoku/features/besuch/ui/card_entry_screen.dart';
 import 'package:wunddoku/features/besuch/ui/card_entry_view_model.dart';
 
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 void main() {
@@ -227,6 +228,7 @@ void main() {
 
   group('goldens', () {
     testWidgets('empty', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(child: CardEntryScreen(viewModel: viewModel)),
       );
@@ -238,6 +240,7 @@ void main() {
     });
 
     testWidgets('part way through', (tester) async {
+      await useScreen(tester);
       for (var i = 0; i < 12; i++) {
         viewModel.adjustTissue(TissueType.granulation, 5);
       }

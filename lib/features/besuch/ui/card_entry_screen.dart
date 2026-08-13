@@ -25,13 +25,34 @@ class CardEntryScreen extends StatelessWidget {
     final spacing = context.spacing;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.cardsTitle)),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) => SafeArea(
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // Title in the body at 30, like every other screen: a 56 dp bar
+              // cannot carry the size contrast this palette lives on.
+              Padding(
+                padding: EdgeInsets.only(top: spacing.s8),
+                child: Row(
+                  children: [
+                    if (Navigator.of(context).canPop())
+                      const BackButton()
+                    else
+                      SizedBox(width: spacing.s16),
+                    Expanded(
+                      child: Text(
+                        l10n.cardsTitle,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                    SizedBox(width: spacing.s16),
+                  ],
+                ),
+              ),
+              SizedBox(height: spacing.s12),
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.fromLTRB(
@@ -49,20 +70,31 @@ class CardEntryScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Padding(
+              Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  border: Border(
+                    top: BorderSide(
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
+                ),
                 padding: EdgeInsets.fromLTRB(
                   spacing.s16,
-                  0,
+                  spacing.s16,
                   spacing.s16,
                   spacing.s16,
                 ),
-                child: FilledButton(
-                  // Nothing blocks finishing here. Every value on this screen
-                  // was chosen by the nurse herself, so none of it can be a
-                  // misread guess — the case the confirmation view guards
-                  // against does not exist on this path.
-                  onPressed: () => onDone?.call(viewModel.draft),
-                  child: Text(l10n.cardsDone),
+                child: SafeArea(
+                  top: false,
+                  child: FilledButton(
+                    // Nothing blocks finishing here. Every value on this screen
+                    // was chosen by the nurse herself, so none of it can be a
+                    // misread guess — the case the confirmation view guards
+                    // against does not exist on this path.
+                    onPressed: () => onDone?.call(viewModel.draft),
+                    child: Text(l10n.cardsDone),
+                  ),
                 ),
               ),
             ],

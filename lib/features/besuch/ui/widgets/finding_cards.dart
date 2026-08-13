@@ -36,7 +36,7 @@ class FindingCard extends StatelessWidget {
       padding: EdgeInsets.all(spacing.s20),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(spacing.r20),
+        borderRadius: BorderRadius.circular(spacing.r12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,6 +84,11 @@ class WoundBedCard extends StatelessWidget {
         ),
       ),
       children: [
+        // The whole, drawn. The rule is that four shares make 100 %, and a
+        // sentence saying so is a rule while a bar is the thing itself: what
+        // is left over is the empty part of it.
+        _DistributionBar(viewModel: viewModel),
+        SizedBox(height: context.spacing.s16),
         for (final type in TissueType.values)
           if (type != TissueType.other)
             StepperRow(
@@ -97,6 +102,79 @@ class WoundBedCard extends StatelessWidget {
               onIncrease: () => viewModel.adjustTissue(type, 5),
             ),
       ],
+    );
+  }
+}
+
+/// The four shares as one bar, in one accent at four strengths.
+///
+/// Not four colours: these are parts of one whole, not four categories that
+/// need identities of their own, and this palette has one accent (see
+/// `22-design-tokens.md`). The numbers stand under it either way, so nothing
+/// here rests on colour alone.
+class _DistributionBar extends StatelessWidget {
+  const _DistributionBar({required this.viewModel});
+
+  final CardEntryViewModel viewModel;
+
+  /// Height of the bar. A drawn line, not a spacing value.
+  static const _height = 14.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final types = [
+      for (final type in TissueType.values)
+        if (type != TissueType.other) type,
+    ];
+    final shares = [for (final type in types) viewModel.tissueShare(type)];
+    final given = shares.fold(0, (sum, share) => sum + share);
+    // Over-allocation is allowed while redistributing, so the bar shows the
+    // shares against whatever the larger of 100 and the sum is — otherwise a
+    // 110 % bar would silently drop the last share off its end.
+    final total = given > 100 ? given : 100;
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(_height / 2),
+      child: SizedBox(
+        // Explicit width: the card's column aligns its children to the start,
+        // so a box with only a height collapses to nothing.
+        width: double.infinity,
+        height: _height,
+        child: Row(
+          // A [ColoredBox] with no child takes the smallest size it is
+          // allowed, and a row hands its children loose cross-axis
+          // constraints — so without this the segments lay out at full width
+          // and paint nothing at all.
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            for (final (index, share) in shares.indexed)
+              if (share > 0)
+                Expanded(
+                  flex: share,
+                  child: ColoredBox(
+                    // Every second share a step lighter, so two neighbours
+                    // never run into each other.
+                    color: index.isEven
+                        ? theme.colorScheme.primary
+                        : Color.lerp(
+                            theme.colorScheme.primary,
+                            theme.colorScheme.surfaceContainer,
+                            0.45,
+                          )!,
+                  ),
+                ),
+            if (total > given)
+              Expanded(
+                flex: total - given,
+                child: ColoredBox(
+                  color: theme.colorScheme.surfaceContainerHighest,
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
