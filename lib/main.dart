@@ -355,6 +355,12 @@ class _VisitCorridorState extends State<VisitCorridor> {
     final result = await navigator.push<_ClosingResult>(
       MaterialPageRoute<_ClosingResult>(
         builder: (_) => ClosingScreen(
+          // The last photo, marked copy preferred: what the nurse checks
+          // before leaving is whether the picture is really in the record.
+          photoRef: photos.isEmpty
+              ? null
+              : (photos.last.markedRef?.name ?? photos.last.originalRef.name),
+          loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
           summary: ClosingSummary(
             draft: _draft,
             expectedSlots: FieldPresentation.woundBedSlots,

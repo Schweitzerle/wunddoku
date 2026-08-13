@@ -6,6 +6,7 @@ import 'package:wunddoku/features/besuch/ui/closing_screen.dart';
 import 'package:wunddoku/features/besuch/ui/closing_view_model.dart';
 import 'package:wunddoku/shared/text/field_presentation.dart';
 
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 /// A draft with every expected field filled and the wound bed adding up.
@@ -244,6 +245,7 @@ void main() {
 
   group('goldens', () {
     testWidgets('complete, light theme', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           child: ClosingScreen(summary: _summary(), onFinish: (_) {}),
@@ -258,6 +260,7 @@ void main() {
     });
 
     testWidgets('with gaps, dark theme', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           brightness: Brightness.dark,

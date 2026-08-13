@@ -3,8 +3,10 @@ import 'package:flutter/semantics.dart';
 
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
-import 'closing_view_model.dart';
 import '../../../shared/text/field_presentation.dart';
+import '../../../shared/widgets/photo_thumbnail.dart';
+import 'closing_view_model.dart';
+import 'widgets/visit_chrome.dart';
 
 /// Where the visit is closed.
 ///
@@ -17,6 +19,8 @@ import '../../../shared/text/field_presentation.dart';
 class ClosingScreen extends StatelessWidget {
   const ClosingScreen({
     required this.summary,
+    this.photoRef,
+    this.loadPhoto,
     this.onFinish,
     this.onFillGap,
     this.onBack,
@@ -24,6 +28,11 @@ class ClosingScreen extends StatelessWidget {
   });
 
   final ClosingSummary summary;
+
+  /// Handle of the photo that travels with the visit, marked copy preferred.
+  final String? photoRef;
+
+  final PhotoLoader? loadPhoto;
 
   /// Called with whether the visit closes with gaps.
   final ValueChanged<bool>? onFinish;
@@ -36,15 +45,20 @@ class ClosingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final spacing = context.spacing;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.closingTitle)),
       body: SafeArea(
+        bottom: false,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // All four segments filled: this is the last step, and the band
+            // is where the visit says so.
+            Padding(
+              padding: EdgeInsets.only(top: spacing.s8),
+              child: const VisitBand(current: VisitStep.closing),
+            ),
             Expanded(
               child: ListView(
                 padding: EdgeInsets.fromLTRB(
@@ -56,7 +70,11 @@ class ClosingScreen extends StatelessWidget {
                 children: [
                   _Anchor(summary: summary),
                   SizedBox(height: spacing.s24),
-                  _PhotoLine(summary: summary),
+                  _WhatTravels(
+                    summary: summary,
+                    photoRef: photoRef,
+                    loadPhoto: loadPhoto,
+                  ),
                   if (!summary.tissueAddsUp) ...[
                     SizedBox(height: spacing.s12),
                     _TissueLine(remainder: summary.tissueRemainder),
@@ -110,30 +128,42 @@ class _Anchor extends StatelessWidget {
                 complete
                     ? l10n.closingComplete
                     : l10n.closingGaps(summary.gapSlots.length),
-                style: theme.textTheme.headlineSmall,
+                style: theme.textTheme.headlineMedium,
               ),
             ),
           ],
         ),
-        SizedBox(height: spacing.s8),
-        Text(
-          complete
-              ? l10n.closingRecorded(summary.recordedSlots.length)
-              : l10n.closingGapsHint,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+        // Only the sentence that is not already on the card below: how many
+        // values were recorded is stated there, and twice is once too often.
+        if (!complete) ...[
+          SizedBox(height: spacing.s8),
+          Text(
+            l10n.closingGapsHint,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
 }
 
-/// How many photos travel with the visit.
-class _PhotoLine extends StatelessWidget {
-  const _PhotoLine({required this.summary});
+/// What actually travels with the visit, on one card.
+///
+/// The photo is shown, not described: before leaving the flat the question is
+/// whether the picture is really in the record, and a sentence saying "one
+/// photo" is a claim while a thumbnail is the thing itself.
+class _WhatTravels extends StatelessWidget {
+  const _WhatTravels({
+    required this.summary,
+    required this.photoRef,
+    required this.loadPhoto,
+  });
 
   final ClosingSummary summary;
+  final String? photoRef;
+  final PhotoLoader? loadPhoto;
 
   @override
   Widget build(BuildContext context) {
@@ -142,38 +172,62 @@ class _PhotoLine extends StatelessWidget {
     final spacing = context.spacing;
 
     final marked = summary.markedPhotoCount;
-    final text = [
+    final photoText = [
       l10n.closingPhoto(summary.photoCount),
       if (marked > 0) l10n.closingPhotoMarked(marked),
     ].join(' · ');
+    final loader = loadPhoto;
 
     return MergeSemantics(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(
-            summary.hasPhoto
-                ? Icons.photo_camera_outlined
-                : Icons.no_photography_outlined,
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-          SizedBox(width: spacing.s12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(text, style: theme.textTheme.bodyLarge),
-                if (!summary.hasPhoto)
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: BorderRadius.circular(spacing.r12),
+        ),
+        padding: EdgeInsets.all(spacing.s16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (loader != null)
+              PhotoThumbnail(
+                ref: photoRef,
+                loadPhoto: loader,
+                size: spacing.s64,
+                noPhotoLabel: l10n.woundNoPhoto,
+                missingLabel: l10n.woundPhotoMissing,
+              )
+            else
+              Icon(
+                summary.hasPhoto
+                    ? Icons.photo_camera_outlined
+                    : Icons.no_photography_outlined,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            SizedBox(width: spacing.s12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(photoText, style: theme.textTheme.bodyLarge),
+                  SizedBox(height: spacing.s4),
                   Text(
-                    l10n.closingNoPhotoHint,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
+                    l10n.closingRecorded(summary.recordedSlots.length),
+                    style: theme.textTheme.bodyLarge,
                   ),
-              ],
+                  if (!summary.hasPhoto) ...[
+                    SizedBox(height: spacing.s4),
+                    Text(
+                      l10n.closingNoPhotoHint,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -295,50 +349,59 @@ class _FinishBar extends StatelessWidget {
     final spacing = context.spacing;
     final withGaps = summary.closesWithGaps;
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        spacing.s16,
-        spacing.s8,
-        spacing.s16,
-        spacing.s16,
+    // The same ground and hairline as the thumb zone on every other screen
+    // of the visit.
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        border: Border(top: BorderSide(color: theme.colorScheme.outline)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (onBack != null) ...[
-            TextButton(onPressed: onBack, child: Text(l10n.closingBack)),
-            SizedBox(height: spacing.s8),
-          ],
-          SizedBox(
-            height: spacing.s96,
-            child: FilledButton(
-              onPressed: onFinish == null
-                  ? null
-                  : () {
-                      // Announced rather than only shown: the nurse is packing
-                      // up and may not be looking at the screen when this
-                      // lands (`23-a11y.md`).
-                      SemanticsService.sendAnnouncement(
-                        View.of(context),
-                        l10n.closingDone,
-                        Directionality.of(context),
-                      );
-                      onFinish!(withGaps);
-                    },
-              style: FilledButton.styleFrom(
-                // Through the button's own style: a text style taken from the
-                // theme carries onSurface and would undo the contrast against
-                // the filled background.
-                textStyle: theme.textTheme.titleLarge,
-              ),
-              // Deliberately different wording, not just a different state:
-              // closing with gaps is a decision, and it should read like one.
-              child: Text(
-                withGaps ? l10n.closingFinishWithGaps : l10n.closingFinish,
+      child: SafeArea(
+        top: false,
+        minimum: EdgeInsets.fromLTRB(
+          spacing.s16,
+          spacing.s8,
+          spacing.s16,
+          spacing.s16,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (onBack != null) ...[
+              TextButton(onPressed: onBack, child: Text(l10n.closingBack)),
+              SizedBox(height: spacing.s8),
+            ],
+            SizedBox(
+              height: spacing.s96,
+              child: FilledButton(
+                onPressed: onFinish == null
+                    ? null
+                    : () {
+                        // Announced rather than only shown: the nurse is packing
+                        // up and may not be looking at the screen when this
+                        // lands (`23-a11y.md`).
+                        SemanticsService.sendAnnouncement(
+                          View.of(context),
+                          l10n.closingDone,
+                          Directionality.of(context),
+                        );
+                        onFinish!(withGaps);
+                      },
+                style: FilledButton.styleFrom(
+                  // Through the button's own style: a text style taken from the
+                  // theme carries onSurface and would undo the contrast against
+                  // the filled background.
+                  textStyle: theme.textTheme.titleLarge,
+                ),
+                // Deliberately different wording, not just a different state:
+                // closing with gaps is a decision, and it should read like one.
+                child: Text(
+                  withGaps ? l10n.closingFinishWithGaps : l10n.closingFinish,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
