@@ -351,7 +351,12 @@ void main() {
       await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
-          child: HistoryScreen(history: shrinking(), loadPhoto: loadPhoto),
+          child: HistoryScreen(
+            history: shrinking(),
+            loadPhoto: loadPhoto,
+            woundLocation: 'linker Unterschenkel, distal',
+            onCreateReport: () {},
+          ),
         ),
       );
       await settleThumbnails(tester);
@@ -367,7 +372,12 @@ void main() {
       await tester.pumpWidget(
         TestApp(
           brightness: Brightness.dark,
-          child: HistoryScreen(history: shrinking(), loadPhoto: loadPhoto),
+          child: HistoryScreen(
+            history: shrinking(),
+            loadPhoto: loadPhoto,
+            woundLocation: 'linker Unterschenkel, distal',
+            onCreateReport: () {},
+          ),
         ),
       );
       await settleThumbnails(tester);

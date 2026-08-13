@@ -35,6 +35,7 @@ class WoundHistoryPage extends StatefulWidget {
 
 class _WoundHistoryPageState extends State<WoundHistoryPage> {
   WoundHistory? _history;
+  String? _location;
 
   @override
   void initState() {
@@ -44,8 +45,14 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
 
   Future<void> _load() async {
     final history = await widget.dependencies.visits.historyOf(widget.wound);
+    final owner = await widget.dependencies.patients.contextOfWound(
+      widget.wound,
+    );
     if (!mounted) return;
-    setState(() => _history = history);
+    setState(() {
+      _history = history;
+      _location = owner?.location;
+    });
   }
 
   /// The bytes behind [ref], or null when the file no longer reads.
@@ -110,6 +117,7 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
 
     return HistoryScreen(
       history: history,
+      woundLocation: _location,
       loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
       onCreateReport: () => _createReport(history),
     );

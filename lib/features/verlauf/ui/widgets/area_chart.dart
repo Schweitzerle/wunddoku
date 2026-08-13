@@ -39,6 +39,7 @@ class AreaChart extends StatelessWidget {
               line: theme.colorScheme.primary,
               dot: theme.colorScheme.primary,
               baseline: theme.colorScheme.outlineVariant,
+              gap: context.statusColors.luecke,
             ),
           ),
         ),
@@ -53,12 +54,14 @@ class _AreaChartPainter extends CustomPainter {
     required this.line,
     required this.dot,
     required this.baseline,
+    required this.gap,
   });
 
   final List<double?> series;
   final Color line;
   final Color dot;
   final Color baseline;
+  final Color gap;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -110,11 +113,30 @@ class _AreaChartPainter extends CustomPainter {
       if (value == null) continue;
       canvas.drawCircle(positionOf(i, value), 5, Paint()..color = dot);
     }
+
+    // A visit where nobody measured gets a hollow ring on the baseline. Two
+    // lone dots with nothing between them read as a broken drawing; this
+    // says a visit happened there and carried no measurement, which is the
+    // truth and is not the same as zero.
+    final gapMark = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..color = gap;
+    for (var i = 0; i < series.length; i++) {
+      if (series[i] != null) continue;
+      canvas.drawCircle(
+        Offset(series.length == 1 ? size.width / 2 : i * step, size.height),
+        4,
+        gapMark,
+      );
+    }
   }
 
   @override
   bool shouldRepaint(_AreaChartPainter oldDelegate) =>
       oldDelegate.series != series ||
       oldDelegate.line != line ||
+      oldDelegate.dot != dot ||
+      oldDelegate.gap != gap ||
       oldDelegate.baseline != baseline;
 }

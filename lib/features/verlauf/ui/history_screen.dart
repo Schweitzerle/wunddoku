@@ -17,6 +17,7 @@ class HistoryScreen extends StatelessWidget {
   const HistoryScreen({
     required this.history,
     required this.loadPhoto,
+    this.woundLocation,
     this.onStartVisit,
     this.onCreateReport,
     super.key,
@@ -24,6 +25,12 @@ class HistoryScreen extends StatelessWidget {
 
   final WoundHistory history;
   final PhotoLoader loadPhoto;
+
+  /// Which wound this course belongs to, for the line under the title.
+  ///
+  /// A course without its wound is a chart about nothing — a patient with a
+  /// heel and a lower leg has two of them.
+  final String? woundLocation;
 
   /// Called from the empty state.
   final VoidCallback? onStartVisit;
@@ -38,21 +45,51 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
+    final spacing = context.spacing;
+
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          if (onCreateReport != null && !history.isEmpty)
-            IconButton(
-              onPressed: onCreateReport,
-              icon: const Icon(Icons.description_outlined),
-              tooltip: l10n.reportShare,
-            ),
-        ],
-      ),
       body: SafeArea(
-        child: history.isEmpty
-            ? _EmptyState(onStartVisit: onStartVisit)
-            : _Course(history: history, loadPhoto: loadPhoto),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // The report carries its word rather than a sheet-of-paper icon:
+            // this hands health data to whatever the nurse picks next, and
+            // that is not a thing to guess at from a glyph.
+            ConstrainedBox(
+              constraints: BoxConstraints(minHeight: spacing.minTouch),
+              child: Padding(
+                padding: EdgeInsets.only(top: spacing.s8),
+                child: Row(
+                  children: [
+                    if (Navigator.of(context).canPop())
+                      const BackButton()
+                    else
+                      SizedBox(width: spacing.s16),
+                    const Spacer(),
+                    if (onCreateReport != null && !history.isEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(right: spacing.s16),
+                        child: OutlinedButton.icon(
+                          onPressed: onCreateReport,
+                          icon: const Icon(Icons.description_outlined),
+                          label: Text(l10n.reportShare),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: history.isEmpty
+                  ? _EmptyState(onStartVisit: onStartVisit)
+                  : _Course(
+                      history: history,
+                      loadPhoto: loadPhoto,
+                      woundLocation: woundLocation,
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -97,10 +134,15 @@ class _EmptyState extends StatelessWidget {
 
 /// Chart and visits.
 class _Course extends StatelessWidget {
-  const _Course({required this.history, required this.loadPhoto});
+  const _Course({
+    required this.history,
+    required this.loadPhoto,
+    required this.woundLocation,
+  });
 
   final WoundHistory history;
   final PhotoLoader loadPhoto;
+  final String? woundLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -121,6 +163,15 @@ class _Course extends StatelessWidget {
       ),
       children: [
         Text(l10n.historyTitle, style: theme.textTheme.headlineMedium),
+        if (woundLocation != null) ...[
+          SizedBox(height: spacing.s4),
+          Text(
+            '$woundLocation · ${l10n.woundVisitCount(history.entries.length)}',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
         SizedBox(height: spacing.s24),
         if (history.isComparable) ...[
           _ChartBlock(history: history),
