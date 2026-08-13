@@ -708,6 +708,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Für den gewählten Zeitraum liegt kein Besuch vor.';
 
   @override
+  String get reportCreating => 'Bericht wird erzeugt …';
+
+  @override
+  String get reportFailed =>
+      'Der Bericht konnte nicht erzeugt werden. Bitte noch einmal versuchen.';
+
+  @override
   String get reportShare => 'Bericht erzeugen';
 
   @override

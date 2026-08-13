@@ -37,6 +37,7 @@ class WoundHistoryPage extends StatefulWidget {
 class _WoundHistoryPageState extends State<WoundHistoryPage> {
   WoundHistory? _history;
   String? _location;
+  bool _creatingReport = false;
 
   @override
   void initState() {
@@ -73,6 +74,25 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
   /// formulation of the finding — that duplicated evening in the office is
   /// what the app exists to remove (`docs/ux/nachprozess.md`).
   Future<void> _createReport(WoundHistory history) async {
+    if (_creatingReport) return;
+    setState(() => _creatingReport = true);
+    try {
+      await _buildAndShare(history);
+    } on Exception {
+      // What went wrong belongs in the log, not on the screen
+      // (`30-sicherheit.md`). What the nurse needs is that it did not
+      // happen and that trying again is allowed.
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.reportFailed)));
+    } finally {
+      if (mounted) setState(() => _creatingReport = false);
+    }
+  }
+
+  Future<void> _buildAndShare(WoundHistory history) async {
     final l10n = AppLocalizations.of(context)!;
     final wound = await widget.dependencies.patients.contextOfWound(
       widget.wound,
@@ -121,6 +141,7 @@ class _WoundHistoryPageState extends State<WoundHistoryPage> {
       woundLocation: _location,
       loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
       onCreateReport: () => _createReport(history),
+      creatingReport: _creatingReport,
       onOpenVisit: (entry) => Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => VisitDetailScreen(

@@ -346,6 +346,33 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  testWidgets('the report says it is working, and cannot be started twice', (
+    tester,
+  ) async {
+    await useScreen(tester);
+    var started = 0;
+    await tester.pumpWidget(
+      TestApp(
+        child: HistoryScreen(
+          history: shrinking(),
+          loadPhoto: loadPhoto,
+          onCreateReport: () => started++,
+          creatingReport: true,
+        ),
+      ),
+    );
+    // Fixed pumps, not pumpAndSettle: the progress indicator never stops
+    // turning, and settling waits for it forever.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Every photo of the course is decrypted for the document; on a wound
+    // with a few visits that is seconds of nothing happening.
+    expect(find.text('Bericht wird erzeugt …'), findsOneWidget);
+    await tester.tap(find.text('Bericht wird erzeugt …'));
+    expect(started, 0);
+  });
+
   group('goldens', () {
     testWidgets('a shrinking wound, light theme', (tester) async {
       await useScreen(tester);

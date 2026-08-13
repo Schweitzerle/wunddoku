@@ -20,6 +20,7 @@ class HistoryScreen extends StatelessWidget {
     this.woundLocation,
     this.onStartVisit,
     this.onOpenVisit,
+    this.creatingReport = false,
     this.onCreateReport,
     super.key,
   });
@@ -38,6 +39,13 @@ class HistoryScreen extends StatelessWidget {
 
   /// Called with the visit whose full record the nurse wants to see.
   final void Function(HistoryEntry entry)? onOpenVisit;
+
+  /// Whether the report is being produced right now.
+  ///
+  /// Every photo of the course is decrypted for it, so on a wound with a few
+  /// visits this takes seconds. Without the state the action looked like a
+  /// button that does nothing.
+  final bool creatingReport;
 
   /// Called to produce the wound report for the office.
   ///
@@ -73,10 +81,26 @@ class HistoryScreen extends StatelessWidget {
                     if (onCreateReport != null && !history.isEmpty)
                       Padding(
                         padding: EdgeInsets.only(right: spacing.s16),
-                        child: OutlinedButton.icon(
-                          onPressed: onCreateReport,
-                          icon: const Icon(Icons.description_outlined),
-                          label: Text(l10n.reportShare),
+                        child: Semantics(
+                          // The label changes while the document is being
+                          // built, and the nurse may have looked away.
+                          liveRegion: true,
+                          child: OutlinedButton.icon(
+                            onPressed: creatingReport ? null : onCreateReport,
+                            icon: creatingReport
+                                ? SizedBox.square(
+                                    dimension: spacing.s16,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.description_outlined),
+                            label: Text(
+                              creatingReport
+                                  ? l10n.reportCreating
+                                  : l10n.reportShare,
+                            ),
+                          ),
                         ),
                       ),
                   ],

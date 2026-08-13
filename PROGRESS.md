@@ -41,10 +41,11 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Offene Punkte, der Reihe nach: Rückmeldung während der Berichterzeugung,
-   und der mitlaufende Zwischenstand während der Aufnahme („Bisher
-   verstanden", braucht eine Runde `/eps:technikwahl` für einen Erkenner mit
-   Strom).
+1. Offen bleibt der mitlaufende Zwischenstand während der Aufnahme („Bisher
+   verstanden"). Er braucht einen Erkenner, der einen Strom liefert statt eines
+   Ergebnisses — eine Runde `/eps:technikwahl`. Ebenfalls offen: der Wortlaut
+   der Aufnahme in der Besuchsdetailansicht (Lesemethode im
+   `VisitRepository`).
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
@@ -105,6 +106,22 @@ der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
 Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
+
+## Erledigt (Rückmeldung bei der Berichterzeugung, 2026-08-13)
+
+Die Bericht-Aktion sah aus wie ein Knopf, der nichts tut. Für das Dokument wird
+**jedes Foto des Verlaufs einzeln entschlüsselt**; auf einer Wunde mit ein paar
+Besuchen sind das Sekunden ohne jedes Zeichen. Jetzt trägt die Aktion während
+des Laufs einen Spinner und die Beschriftung „Bericht wird erzeugt …", ist
+gesperrt (zweimal Tippen erzeugte zwei Dokumente), und die Beschriftung sitzt in
+einer Live-Region — die Pflegekraft hat womöglich weggesehen.
+
+Schlägt die Erzeugung fehl, sagt eine Meldung das und lässt einen zweiten
+Versuch zu. **Warum** es fehlschlug, steht nicht auf dem Bildschirm
+(`30-sicherheit.md`).
+
+**Stolperstein:** Ein `CircularProgressIndicator` dreht sich endlos, und
+`pumpAndSettle` wartet darauf. Tests für diesen Zustand pumpen feste Dauern.
 
 ## Erledigt (Detailansicht eines Besuchs, 2026-08-13)
 

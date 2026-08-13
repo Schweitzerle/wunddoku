@@ -839,6 +839,14 @@
   "@reportNoVisits": {
     "description": "Text, wenn der Bericht keinen Besuch enthält."
   },
+  "reportCreating": "Bericht wird erzeugt …",
+  "@reportCreating": {
+    "description": "Zustand der Bericht-Aktion, während das PDF entsteht. Auf einer Wunde mit vielen Besuchen dauert das mehrere Sekunden, weil jedes Foto einzeln entschlüsselt wird."
+  },
+  "reportFailed": "Der Bericht konnte nicht erzeugt werden. Bitte noch einmal versuchen.",
+  "@reportFailed": {
+    "description": "Meldung, wenn die Berichterzeugung fehlschlägt. Nennt keinen technischen Grund — der gehört ins Protokoll, nicht auf den Bildschirm."
+  },
   "reportShare": "Bericht erzeugen",
   "@reportShare": {
     "description": "Aktion im Verlauf: den Wundbericht als PDF erzeugen und weitergeben."

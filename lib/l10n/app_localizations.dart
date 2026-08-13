@@ -1060,6 +1060,18 @@ abstract class AppLocalizations {
   /// **'Für den gewählten Zeitraum liegt kein Besuch vor.'**
   String get reportNoVisits;
 
+  /// Zustand der Bericht-Aktion, während das PDF entsteht. Auf einer Wunde mit vielen Besuchen dauert das mehrere Sekunden, weil jedes Foto einzeln entschlüsselt wird.
+  ///
+  /// In de, this message translates to:
+  /// **'Bericht wird erzeugt …'**
+  String get reportCreating;
+
+  /// Meldung, wenn die Berichterzeugung fehlschlägt. Nennt keinen technischen Grund — der gehört ins Protokoll, nicht auf den Bildschirm.
+  ///
+  /// In de, this message translates to:
+  /// **'Der Bericht konnte nicht erzeugt werden. Bitte noch einmal versuchen.'**
+  String get reportFailed;
+
   /// Aktion im Verlauf: den Wundbericht als PDF erzeugen und weitergeben.
   ///
   /// In de, this message translates to:
