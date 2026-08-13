@@ -106,10 +106,53 @@ Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
 
-**Offen an diesem Screen:** der Aufnahmezustand (Entwurf 1d) ist unverändert —
-Timer und Pegel kleben oben, darunter steht das halbe Display leer. Der Entwurf
-schaltet diesen Zustand bewusst dunkel und zeigt „Bisher verstanden" als Chips;
-beides ist noch nicht entschieden.
+## Erledigt (Gestaltungsreview am fertigen Screen, 2026-08-13)
+
+`gestaltungs-reviewer` in frischem Kontext gegen die sechs Goldens. Acht
+Befunde, sechs übernommen, einer zur Hälfte, einer abgelehnt.
+
+- **Dockkante war 1,09:1** gegen den Untergrund — drinnen sichtbar, in der Sonne
+  nicht — und trug dieselbe Füllung wie die Bilanzkarte darüber, sodass beide bei
+  200 % ineinander liefen. Jetzt eine Linie (`outline`, 3,4:1), Füllung eine
+  Stufe dunkler, runde Oberkante weg: eine feste Leiste schwebt nicht.
+- **Betonte Kennzahl 34 → 30.** Die größere Zahl saß auf einer tieferen Grundlinie,
+  ihr Label hing 4 dp unter den anderen beiden, und die Unterkante der Karte
+  franste aus. Betonung tragen Farbe und Icon. Nebenbei: fünf Schriftgrößen
+  zurück auf die vier, die die Regel erlaubt.
+- **Der Überschuss sammelte sich am Ende des Scrollbereichs** — 98 dp im
+  laufenden Besuch, 240 dp im leeren. Er ist jetzt der Abstand zwischen zwei
+  Gruppen; die Beispiele stehen konstant 24 dp über der Daumenzone.
+- **Aufnahmezustand war zu 63 % leer** und behielt nichts von der Richtung: kein
+  Band, kein Patient, kein Weg hinaus. Er trägt jetzt die Besuchsleiste, „Mikrofon
+  offen" ist ein umrandetes Band auf 22 statt eines Punkts mit Bildunterschrift,
+  und die vier Themen stehen unter dem Pegel.
+- **Der Pegel füllte von links** und las sich neben einer Uhr auf 00:00 wie eine
+  ablaufende Aufnahme fester Länge. Er wächst jetzt aus der Mitte heraus.
+- **Leere Kopfzeile** reservierte 48 dp Nichts; sie fällt weg. Bei 200 % wuchs die
+  Abschluss-Aktion über die obere Bildschirmkante — 8 dp Abstand.
+- **Zur Hälfte übernommen:** die Zitatlinien geben den Akzent ab, der Pegel behält
+  ihn. Er ist der einzige Beleg, dass das Mikrofon überhaupt etwas hört; grau
+  liest sich dort als „geht nicht".
+
+Die vom Review angemahnte **Nachweislücke** ist geschlossen — und beide neuen
+Goldens haben je einen echten Fehler gezeigt:
+
+- Fokus auf einer Wege-Kachel war Materials getönte Überlagerung, in dieser
+  Palette etwa 1,1:1. Der Fokus bewegt jetzt die Kante der Kachel selbst.
+- **Der Druck auf das 96-dp-Ziel war unsichtbar.** Gefüllte Knöpfe werden unter
+  dem Daumen jetzt dunkler statt heller — sichtbar, ohne dass die weiße
+  Beschriftung ihren Kontrast verliert. Aufhellen hätte beides gleichzeitig
+  gemacht.
+
+**301 Tests grün**, Analyzer sauber, Goldens erneuert, Bilddiffs angesehen.
+
+**Offen an diesem Screen:** Der Entwurf schaltet den Aufnahmezustand bewusst
+**dunkel, unabhängig vom Theme** („kein Blendlicht in der Wohnung", „Mikrofon
+offen" von der Türschwelle lesbar) und zeigt den Zwischenstand als Chips
+(„Bisher verstanden"). Das dunkle Umschalten widerspricht der Regel „Light und
+Dark sind gleichwertig" und ist eine Entscheidung für Julian, keine stille
+Umsetzung. Die Chips brauchen eine mitlaufende Erkennung, die es noch nicht
+gibt — der Erkenner läuft erst nach dem Stoppen.
 
 ## Erledigt (der Weg in den Besuch, 2026-08-12)
 

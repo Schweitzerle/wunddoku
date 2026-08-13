@@ -329,7 +329,10 @@ class _PrimaryCaptureAction extends StatelessWidget {
       onPressed: onPressed,
       style: FilledButton.styleFrom(
         minimumSize: Size.fromHeight(spacing.s96),
-        textStyle: theme.textTheme.titleMedium,
+        // 22 rather than 20, which keeps the recording state to the four
+        // type sizes the rules allow and gives the one target a label to
+        // match its size.
+        textStyle: theme.textTheme.headlineSmall,
       ),
       icon: Icon(icon, size: 28),
       label: Text(label),
@@ -981,6 +984,10 @@ class _OpenMicrophone extends StatelessWidget {
               color: status.entscheiden,
             ),
             SizedBox(width: spacing.s12),
+            // One statement, not two. A second badge reading "Mikrofon
+            // offen" said the same thing again and pushed the sentence that
+            // matters into two lines on a phone whose font is a notch above
+            // the default — which is most of them.
             Expanded(
               child: Text(
                 l10n.captureRecording,
@@ -988,13 +995,6 @@ class _OpenMicrophone extends StatelessWidget {
                   color: status.entscheiden,
                 ),
               ),
-            ),
-            Text(
-              l10n.captureMicrophoneOpen,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: status.entscheiden,
-              ),
-              textAlign: TextAlign.end,
             ),
           ],
         ),

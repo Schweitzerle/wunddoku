@@ -851,9 +851,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get captureTopicsHeading => 'Sprich der Reihe nach oder durcheinander';
 
   @override
-  String get captureMicrophoneOpen => 'Mikrofon offen';
-
-  @override
   String get captureWayCards => 'Karten';
 
   @override

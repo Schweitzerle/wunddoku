@@ -1282,12 +1282,6 @@ abstract class AppLocalizations {
   /// **'Sprich der Reihe nach oder durcheinander'**
   String get captureTopicsHeading;
 
-  /// Zusatz neben „Aufnahme läuft“. Der Patient sitzt daneben und muss von der Türschwelle aus sehen können, dass aufgenommen wird.
-  ///
-  /// In de, this message translates to:
-  /// **'Mikrofon offen'**
-  String get captureMicrophoneOpen;
-
   /// Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label.
   ///
   /// In de, this message translates to:
