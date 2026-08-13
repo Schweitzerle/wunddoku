@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/bootstrap.dart';
+import '../../../data/media/media_store.dart';
 import '../../../domain/model/ids.dart';
 import '../../../domain/model/patient.dart';
 import '../../../domain/model/wound.dart';
@@ -20,6 +21,7 @@ class PatientsFlow extends StatefulWidget {
   const PatientsFlow({
     required this.dependencies,
     required this.openVisit,
+    required this.openHistory,
     super.key,
   });
 
@@ -30,6 +32,12 @@ class PatientsFlow extends StatefulWidget {
   /// Passed in rather than imported so this feature does not reach into the
   /// visit feature (`21-flutter-architektur.md`).
   final Widget Function(WoundId wound) openVisit;
+
+  /// Opens the course of a wound without starting a visit.
+  ///
+  /// Passed in for the same reason as [openVisit]: the course lives in
+  /// another feature, and features do not import each other.
+  final Widget Function(WoundId wound) openHistory;
 
   @override
   State<PatientsFlow> createState() => _PatientsFlowState();
@@ -92,6 +100,7 @@ class _PatientsFlowState extends State<PatientsFlow> {
           dependencies: widget.dependencies,
           patient: patient,
           openVisit: widget.openVisit,
+          openHistory: widget.openHistory,
         ),
       ),
     );
@@ -118,11 +127,13 @@ class _PatientHome extends StatefulWidget {
     required this.dependencies,
     required this.patient,
     required this.openVisit,
+    required this.openHistory,
   });
 
   final AppDependencies dependencies;
   final Patient patient;
   final Widget Function(WoundId wound) openVisit;
+  final Widget Function(WoundId wound) openHistory;
 
   @override
   State<_PatientHome> createState() => _PatientHomeState();
@@ -130,7 +141,7 @@ class _PatientHome extends StatefulWidget {
 
 class _PatientHomeState extends State<_PatientHome> {
   List<Wound> _wounds = const [];
-  Map<WoundId, int> _visitCounts = const {};
+  Map<WoundId, WoundStanding> _standings = const {};
   bool _loading = true;
 
   @override
@@ -143,15 +154,42 @@ class _PatientHomeState extends State<_PatientHome> {
     final wounds = await widget.dependencies.wounds.ofPatient(
       widget.patient.id,
     );
-    final counts = await widget.dependencies.visits.countsOfWounds([
-      for (final wound in wounds) wound.id,
-    ]);
+    // One course per wound, and a patient has one or two of them. The card
+    // is the only place the state of a wound is visible before opening it,
+    // and a card without it is a label on a folder.
+    final standings = <WoundId, WoundStanding>{};
+    for (final wound in wounds) {
+      standings[wound.id] = await _standingOf(wound.id);
+    }
     if (!mounted) return;
     setState(() {
       _wounds = wounds;
-      _visitCounts = counts;
+      _standings = standings;
       _loading = false;
     });
+  }
+
+  /// Reads the last visit of [wound] into what its card shows.
+  Future<WoundStanding> _standingOf(WoundId wound) async {
+    final history = await widget.dependencies.visits.historyOf(wound);
+    if (history.isEmpty) return const WoundStanding.none();
+
+    final last = history.entries.last;
+    return WoundStanding(
+      visitCount: history.entries.length,
+      areaCm2: last.areaCm2,
+      areaChangeCm2: history.areaChangeBefore(last),
+      // The marked copy where there is one: the outline is what makes two
+      // photos of the same wound comparable at a glance.
+      photoRef: last.markedPhotoRef ?? last.photoRef,
+    );
+  }
+
+  Future<void> _showHistory(WoundId wound) async {
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute<void>(builder: (_) => widget.openHistory(wound)));
+    await _load();
   }
 
   Future<void> _addWound() async {
@@ -192,8 +230,11 @@ class _PatientHomeState extends State<_PatientHome> {
     return PatientScreen(
       patient: widget.patient,
       wounds: _wounds,
-      visitCount: (wound) => _visitCounts[wound.id] ?? 0,
+      standingOf: (wound) =>
+          _standings[wound.id] ?? const WoundStanding.none(),
+      loadPhoto: (ref) => widget.dependencies.visits.photoBytes(MediaRef(ref)),
       onOpenWound: (wound) => _openWound(wound.id),
+      onShowHistory: (wound) => _showHistory(wound.id),
       onAddWound: _addWound,
     );
   }

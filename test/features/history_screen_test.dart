@@ -278,7 +278,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Foto nicht lesbar'), findsOneWidget);
+      // The mark in the box is an icon; the sentence lives in its semantics
+      // label, where a screen reader gets it whole.
+      expect(find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
       expect(find.text('12 cm²'), findsOneWidget);
     });
 

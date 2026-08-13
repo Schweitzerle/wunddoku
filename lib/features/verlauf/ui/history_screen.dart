@@ -1,14 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import '../../../domain/model/wound_history.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/photo_thumbnail.dart';
 import 'widgets/area_chart.dart';
-
-/// Reads the photo behind a handle, or null when it cannot be read.
-typedef PhotoLoader = Future<Uint8List?> Function(String ref);
 
 /// The visits of one wound in their order.
 ///
@@ -250,11 +246,13 @@ class _VisitRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _Thumbnail(
+            PhotoThumbnail(
               // The marked copy where there is one: the outline is what makes
               // two photos comparable at a glance.
               ref: entry.markedPhotoRef ?? entry.photoRef,
               loadPhoto: loadPhoto,
+              noPhotoLabel: l10n.historyNoPhoto,
+              missingLabel: l10n.historyPhotoMissing,
             ),
             SizedBox(width: spacing.s12),
             Expanded(
@@ -363,85 +361,6 @@ class _Tag extends StatelessWidget {
       child: Text(
         text,
         style: theme.textTheme.labelSmall?.copyWith(color: colour),
-      ),
-    );
-  }
-}
-
-/// The photo of a visit, small.
-class _Thumbnail extends StatelessWidget {
-  const _Thumbnail({required this.ref, required this.loadPhoto});
-
-  final String? ref;
-  final PhotoLoader loadPhoto;
-
-  /// Edge length of the thumbnail in logical pixels.
-  static const _size = 72.0;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final spacing = context.spacing;
-    final status = context.statusColors;
-    final handle = ref;
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(spacing.r8),
-      child: SizedBox.square(
-        dimension: _size,
-        child: ColoredBox(
-          color: status.mediaGround,
-          child: handle == null
-              ? _Placeholder(text: l10n.historyNoPhoto)
-              : FutureBuilder<Uint8List?>(
-                  future: loadPhoto(handle),
-                  builder: (context, snapshot) => switch (snapshot) {
-                    AsyncSnapshot(hasError: true) ||
-                    AsyncSnapshot(
-                      connectionState: ConnectionState.done,
-                      data: null,
-                    ) => _Placeholder(text: l10n.historyPhotoMissing),
-                    AsyncSnapshot(:final data?) => Image.memory(
-                      data,
-                      fit: BoxFit.cover,
-                      // A wound photo is several times the size of this box;
-                      // decoding it at full resolution for a thumbnail is
-                      // memory a field phone does not have to spare.
-                      cacheWidth:
-                          (_size * MediaQuery.devicePixelRatioOf(context))
-                              .round(),
-                    ),
-                    _ => const SizedBox.shrink(),
-                  },
-                ),
-        ),
-      ),
-    );
-  }
-}
-
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-
-    return Padding(
-      padding: EdgeInsets.all(spacing.s4),
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: theme.textTheme.labelSmall?.copyWith(
-            // The ground behind this label does not follow the theme, so the
-            // label must not take its colour from the theme either.
-            color: context.statusColors.onMediaGround,
-          ),
-        ),
       ),
     );
   }

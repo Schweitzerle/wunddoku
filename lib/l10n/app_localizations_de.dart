@@ -767,6 +767,23 @@ class AppLocalizationsDe extends AppLocalizations {
       'Für diesen Patienten ist noch keine Wunde angelegt.';
 
   @override
+  String patientAddress(String street, String postalCode, String city) {
+    return '$street, $postalCode $city';
+  }
+
+  @override
+  String get woundsHeading => 'Wunden';
+
+  @override
+  String get woundNoPhoto => 'kein Foto';
+
+  @override
+  String get woundPhotoMissing => 'Foto fehlt';
+
+  @override
+  String get woundShowHistory => 'Verlauf ansehen';
+
+  @override
   String get woundsAdd => 'Wunde anlegen';
 
   @override

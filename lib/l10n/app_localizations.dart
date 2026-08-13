@@ -1150,6 +1150,36 @@ abstract class AppLocalizations {
   /// **'Für diesen Patienten ist noch keine Wunde angelegt.'**
   String get woundsEmpty;
 
+  /// Anschrift unter dem Namen im Patientenschirm. Sie ist zugleich der Besuchsort, deshalb steht sie dort und nicht nur im Formular.
+  ///
+  /// In de, this message translates to:
+  /// **'{street}, {postalCode} {city}'**
+  String patientAddress(String street, String postalCode, String city);
+
+  /// Überschrift über der Wundenliste eines Patienten.
+  ///
+  /// In de, this message translates to:
+  /// **'Wunden'**
+  String get woundsHeading;
+
+  /// Steht im Miniaturbild einer Wunde, zu der noch kein Foto aufgenommen wurde.
+  ///
+  /// In de, this message translates to:
+  /// **'kein Foto'**
+  String get woundNoPhoto;
+
+  /// Steht im Miniaturbild, wenn die Datei zum Foto nicht mehr lesbar ist. Der Rest der Wunde bleibt benutzbar.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto fehlt'**
+  String get woundPhotoMissing;
+
+  /// Aktion auf der Wundkarte, die den Verlauf dieser Wunde öffnet, ohne einen Besuch zu beginnen.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf ansehen'**
+  String get woundShowHistory;
+
   /// Aktion, die das Formular für eine neue Wunde öffnet.
   ///
   /// In de, this message translates to:

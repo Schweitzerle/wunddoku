@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:printing/printing.dart';
 
 import 'app/bootstrap.dart';
 import 'data/capture/audio_recorder.dart';
@@ -12,14 +11,11 @@ import 'data/capture/example_dictations.dart';
 import 'data/capture/speech_recognizer.dart';
 import 'data/media/marking_burner.dart';
 import 'data/media/media_store.dart';
-import 'data/report/wound_report_document.dart';
 import 'data/visit_repository.dart';
 import 'domain/model/ids.dart';
 import 'domain/model/image_marking.dart';
 import 'domain/model/visit_draft.dart';
 import 'domain/model/visit_standing.dart';
-import 'domain/model/wound_history.dart';
-import 'domain/report/report_content.dart';
 import 'features/besuch/ui/capture_screen.dart';
 import 'features/besuch/ui/capture_view_model.dart';
 import 'features/besuch/ui/card_entry_screen.dart';
@@ -32,7 +28,7 @@ import 'features/patienten/ui/patients_flow.dart';
 import 'shared/text/field_presentation.dart';
 import 'features/besuch/ui/marking_screen.dart';
 import 'features/besuch/ui/photo_screen.dart';
-import 'features/verlauf/ui/history_screen.dart';
+import 'features/verlauf/ui/wound_history_page.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -69,7 +65,10 @@ class WunddokuApp extends StatelessWidget {
         ),
         AsyncSnapshot(:final data?) => PatientsFlow(
           dependencies: data,
-          openVisit: (wound) => VisitCorridor(dependencies: data, wound: wound),
+            openVisit: (wound) =>
+              VisitCorridor(dependencies: data, wound: wound),
+          openHistory: (wound) =>
+              WoundHistoryPage(dependencies: data, wound: wound),
         ),
         _ => const Scaffold(body: Center(child: CircularProgressIndicator())),
       },
@@ -328,60 +327,14 @@ class _VisitCorridorState extends State<VisitCorridor> {
   /// Read before the dressing comes off: the course is what says whether the
   /// treatment works, and a single finding cannot.
   Future<void> _showHistory() async {
-    final history = await _visits.historyOf(widget.wound);
-    if (!mounted) return;
-
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => HistoryScreen(
-          history: history,
-          loadPhoto: (ref) => _readQuietly(MediaRef(ref)),
-          onCreateReport: () => _createReport(history),
+        builder: (_) => WoundHistoryPage(
+          dependencies: widget.dependencies,
+          wound: widget.wound,
         ),
       ),
     );
-  }
-
-  /// Produces the wound report and hands it to the system.
-  ///
-  /// Everything in it comes from the record. The report must not be a second
-  /// formulation of the finding — that duplicated evening in the office is
-  /// what the app exists to remove (`docs/ux/nachprozess.md`).
-  Future<void> _createReport(WoundHistory history) async {
-    final l10n = AppLocalizations.of(context)!;
-    final wound = await widget.dependencies.patients.contextOfWound(
-      widget.wound,
-    );
-    if (wound == null || !mounted) return;
-
-    final photos = <String, Uint8List>{};
-    for (final entry in history.entries) {
-      final ref = entry.markedPhotoRef ?? entry.photoRef;
-      if (ref == null) continue;
-      final bytes = await _readQuietly(MediaRef(ref));
-      if (bytes != null) photos[ref] = bytes;
-    }
-
-    final content = ReportContent.fromHistory(
-      history: history,
-      expectedSlots: FieldPresentation.woundBedSlots,
-      patientName: '${wound.patient.givenName} ${wound.patient.familyName}',
-      birthDate: wound.patient.birthDate,
-      woundLocation: wound.location,
-      icd10Code: wound.icd10Code,
-      createdAt: DateTime.now(),
-    );
-
-    final bytes = await WoundReportDocument.build(
-      content: content,
-      l10n: l10n,
-      photos: photos,
-    );
-    if (!mounted) return;
-
-    // Handing the file to the system is where the health data leaves the app.
-    // The nurse decides who receives it; nothing is sent automatically.
-    await Printing.sharePdf(bytes: bytes, filename: 'wundbericht.pdf');
   }
 
   /// Closes the visit, after showing what travels with it.

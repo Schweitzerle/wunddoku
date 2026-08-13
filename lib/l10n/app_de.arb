@@ -920,6 +920,37 @@
   "@woundsEmpty": {
     "description": "Leerzustand der Wundliste."
   },
+  "patientAddress": "{street}, {postalCode} {city}",
+  "@patientAddress": {
+    "description": "Anschrift unter dem Namen im Patientenschirm. Sie ist zugleich der Besuchsort, deshalb steht sie dort und nicht nur im Formular.",
+    "placeholders": {
+      "street": {
+        "type": "String"
+      },
+      "postalCode": {
+        "type": "String"
+      },
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "woundsHeading": "Wunden",
+  "@woundsHeading": {
+    "description": "Überschrift über der Wundenliste eines Patienten."
+  },
+  "woundNoPhoto": "kein Foto",
+  "@woundNoPhoto": {
+    "description": "Steht im Miniaturbild einer Wunde, zu der noch kein Foto aufgenommen wurde."
+  },
+  "woundPhotoMissing": "Foto fehlt",
+  "@woundPhotoMissing": {
+    "description": "Steht im Miniaturbild, wenn die Datei zum Foto nicht mehr lesbar ist. Der Rest der Wunde bleibt benutzbar."
+  },
+  "woundShowHistory": "Verlauf ansehen",
+  "@woundShowHistory": {
+    "description": "Aktion auf der Wundkarte, die den Verlauf dieser Wunde öffnet, ohne einen Besuch zu beginnen."
+  },
   "woundsAdd": "Wunde anlegen",
   "@woundsAdd": {
     "description": "Aktion, die das Formular für eine neue Wunde öffnet."

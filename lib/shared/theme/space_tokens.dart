@@ -39,9 +39,10 @@ class AppSpacing extends ThemeExtension<AppSpacing> {
   /// Row height in the confirmation view — glove-sized.
   double get confirmationRow => 64;
 
-  /// The one text field on a screen. 48 is the floor for a target; a field
-  /// that has to be hit with a glove while standing up gets more.
-  double get fieldRow => 56;
+  /// The comfortable target: a search field, a button standing on its own,
+  /// the quiet action beside a loud one. 48 is the floor a platform sets;
+  /// 56 is what a gloved hand gets when there is room for it.
+  double get comfortTouch => 56;
 
   /// A person or a wound in a list. The whole card is the target, and it
   /// carries two lines plus a mark, so it is deeper than a plain row.

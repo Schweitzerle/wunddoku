@@ -112,7 +112,7 @@ class _SearchField extends StatelessWidget {
         prefixIcon: const Icon(Icons.search),
         filled: true,
         fillColor: theme.colorScheme.surfaceContainer,
-        constraints: BoxConstraints(minHeight: spacing.fieldRow),
+        constraints: BoxConstraints(minHeight: spacing.comfortTouch),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(spacing.r12),
           borderSide: BorderSide.none,
