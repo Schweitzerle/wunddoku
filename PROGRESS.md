@@ -95,7 +95,16 @@ am nächsten Morgen fortgesetzter Entwurf nicht wie der heutige Besuch aussieht.
 `OutlinedButton` bekommt projektweit 48 dp Mindesthöhe statt Materials 40.
 
 **298 Tests grün**, Analyzer sauber, Goldens in Telefonmaß erneuert und die
-Bilddiffs angesehen. Noch nicht auf dem Gerät gelaufen.
+Bilddiffs angesehen.
+
+### Beleg auf dem Gerät (motorola edge 30 ultra, dunkles Theme)
+
+`doc/screenshots/besuchsband-geraet.png`. Der fortgesetzte Entwurf trägt
+„Besuch · 12.08." — genau der Fall, für den das Datum in der Kopfzeile steht:
+der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
+Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
+auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
+Bildschirm.
 
 **Offen an diesem Screen:** der Aufnahmezustand (Entwurf 1d) ist unverändert —
 Timer und Pegel kleben oben, darunter steht das halbe Display leer. Der Entwurf
