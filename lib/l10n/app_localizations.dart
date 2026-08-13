@@ -724,10 +724,10 @@ abstract class AppLocalizations {
   /// **'Lücken dürfen mitgehen. Der Befund wird als unvollständig geführt.'**
   String get closingGapsHint;
 
-  /// Zählt die erfassten Angaben in der Zusammenfassung.
+  /// Zählt die erfassten Angaben auf der Karte, die zeigt was mit dem Besuch mitgeht. Mit Substantiv, weil eine nackte Zahl neben der Fotozeile nicht sagt, wovon sie handelt.
   ///
   /// In de, this message translates to:
-  /// **'{count} erfasst'**
+  /// **'{count, plural, =1{1 Angabe erfasst} other{{count} Angaben erfasst}}'**
   String closingRecorded(int count);
 
   /// Überschrift über der Liste der fehlenden Angaben. Jede Zeile führt zurück in die Erfassung.

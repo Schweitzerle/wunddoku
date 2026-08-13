@@ -512,9 +512,9 @@
   "@closingGapsHint": {
     "description": "Erklärung unter der Ankerzeile, wenn Angaben fehlen. Die zentrale Regel des Projekts: eine Lücke darf mitgehen, ein unklarer Wert nicht."
   },
-  "closingRecorded": "{count} erfasst",
+  "closingRecorded": "{count, plural, =1{1 Angabe erfasst} other{{count} Angaben erfasst}}",
   "@closingRecorded": {
-    "description": "Zählt die erfassten Angaben in der Zusammenfassung.",
+    "description": "Zählt die erfassten Angaben auf der Karte, die zeigt was mit dem Besuch mitgeht. Mit Substantiv, weil eine nackte Zahl neben der Fotozeile nicht sagt, wovon sie handelt.",
     "placeholders": {
       "count": {
         "type": "int"

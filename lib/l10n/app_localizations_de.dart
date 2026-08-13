@@ -436,7 +436,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String closingRecorded(int count) {
-    return '$count erfasst';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Angaben erfasst',
+      one: '1 Angabe erfasst',
+    );
+    return '$_temp0';
   }
 
   @override

@@ -95,7 +95,7 @@ void main() {
       );
 
       expect(find.text('Befund vollständig'), findsOneWidget);
-      expect(find.text('9 erfasst'), findsOneWidget);
+      expect(find.text('9 Angaben erfasst'), findsOneWidget);
       expect(find.text('Fehlt noch'), findsNothing);
 
       await tester.tap(find.widgetWithText(FilledButton, 'Besuch abschließen'));
