@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics><meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#eceae5;font-family:Geist,system-ui,sans-serif}
+a{color:#0F6E7E}a:hover{color:#0b5560}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}
+.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 6px}
+.dv-tid{font:600 10px Geist Mono,ui-monospace,monospace;padding:3px 7px;background:#12181A;color:#fff;border-radius:4px;text-decoration:none}
+.dv-tname{font:600 13px/1.2 Geist,system-ui,sans-serif;color:#12181A}
+.dv-sub{margin:0 0 24px;font:400 13px/1.6 Geist,system-ui,sans-serif;color:rgba(0,0,0,.55);max-width:760px}
+.dv-opts{display:flex;flex-wrap:wrap;gap:34px;align-items:flex-start}
+.dv-opt{flex:none;display:flex;flex-direction:column;gap:10px;scroll-margin-top:16px;width:390px}
+.dv-oid{font:600 10.5px Geist Mono,ui-monospace,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#12181A;border-radius:5px;text-decoration:none}
+.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 11px/1.4 Geist,system-ui,sans-serif;color:rgba(0,0,0,.55)}
+.dv-opt:target .dv-oid{background:#0F6E7E;color:#fff}
+.dv-cap{font:400 11.5px/1.5 Geist,system-ui,sans-serif;color:rgba(0,0,0,.5);max-width:390px}
+.dv-next{margin:26px 0 0;font:12px/1.6 Geist,system-ui,sans-serif;color:rgba(0,0,0,.5)}
+</style></helmet>
+
+<section class="dv-turn" id="t1">
+<div class="dv-thd"><a class="dv-tid" href="#t1">1</a><span class="dv-tname">Neues UI — „Ruhiges Fachwerkzeug“, geschärft</span></div>
+<p class="dv-sub">Gleiche Flows, gleiche Fachbegriffe, gleiche Tokens (Blaugrün <b>#0F6E7E</b>, Bernstein <b>#7A4E00</b> = prüfen, Rot <b>#A32017</b> = entscheiden, Geist, Radius 12/20). Verändert wurde die <b>Hierarchie</b>: ein durchgehendes Besuchsband, Werte als Instrumentenanzeige statt Formularzeilen, Entscheidungen als handschuhgroße Flächen (min. 56 px) statt 24-px-Icons, und Zustand („offline“, „Aufnahme läuft“) als Band statt als Beiwerk. Der Ist-Zustand steht als <a class="dv-oid" href="#t0">t0</a> darunter.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="1a"><div class="dv-olabel"><a class="dv-oid" href="#1a">1a</a>Patienten — Startbildschirm</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;letter-spacing:.2px;color:#0F3B45;flex:none"><span>09:41</span><span style="display:flex;align-items:center;gap:6px"><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span><span style="width:22px;height:11px;border:1.5px solid #3E5C63;border-radius:3px;display:inline-block;position:relative"><span style="position:absolute;inset:1.5px;right:6px;background:#3E5C63;border-radius:1px;display:block"></span></span></span></div>
+  <div style="padding:8px 20px 0;flex:none">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px">Patienten</div>
+    <div style="margin-top:14px;height:56px;border-radius:12px;background:#EDF2F3;display:flex;align-items:center;gap:12px;padding:0 16px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="font:400 16px/1 Geist;color:#3E5C63">Name suchen</span>
+    </div>
+    <div style="margin-top:20px;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Heute auf Tour · 4</div>
+  </div>
+  <div style="flex:1;overflow:hidden;padding:12px 20px 0;display:flex;flex-direction:column;gap:10px">
+    <div style="background:#EDF2F3;border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;border-left:4px solid #7A4E00">
+      <div style="flex:1"><div style="font:600 20px/1.25 Geist">Brandt, Ilse</div><div style="margin-top:3px;font:400 13px/1.35 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 04.03.1948 · 2 Wunden</div><div style="margin-top:8px;display:inline-block;padding:3px 8px;border:1px solid #7A4E00;border-radius:8px;font:600 12px/1.2 Geist;color:#7A4E00">Besuch offen</div></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+    </div>
+    <div style="background:#EDF2F3;border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1"><div style="font:600 20px/1.25 Geist">Doleschal, Mira</div><div style="margin-top:3px;font:400 13px/1.35 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 22.11.1955 · 1 Wunde</div></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+    </div>
+    <div style="background:#EDF2F3;border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1"><div style="font:600 20px/1.25 Geist">Kowalski, Henryk</div><div style="margin-top:3px;font:400 13px/1.35 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 09.07.1939 · 3 Wunden</div></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+    </div>
+    <div style="background:#EDF2F3;border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px">
+      <div style="flex:1"><div style="font:600 20px/1.25 Geist">Sarközy, Anna</div><div style="margin-top:3px;font:400 13px/1.35 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 30.01.1961 · 1 Wunde</div></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+    </div>
+    <div style="margin-top:6px;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Alle übrigen · 18</div>
+    <div style="background:#EDF2F3;border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;opacity:.65">
+      <div style="flex:1"><div style="font:600 20px/1.25 Geist">Abadi, Nour</div><div style="margin-top:3px;font:400 13px/1.35 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 12.05.1970 · keine Wunde</div></div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:132px;background:linear-gradient(180deg,rgba(247,250,250,0) 0%,#F7FAFA 46%);pointer-events:none"></div>
+  <div style="position:absolute;right:20px;bottom:44px;height:60px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;gap:10px;padding:0 24px;font:600 16px/1 Geist">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Patient anlegen</div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Tour zuerst: wer heute dran ist, steht oben und trägt den Besuchsstatus. Suchfeld auf 56 px, Zeilen auf 88 px — mit Handschuhen treffbar.</div>
+</div>
+
+<div class="dv-opt" id="1b"><div class="dv-olabel"><a class="dv-oid" href="#1b">1b</a>Patient · Wunden</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:43</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span></div>
+  <div style="padding:4px 20px 0;flex:none">
+    <div style="display:flex;align-items:center;gap:12px;height:48px">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>
+      <span style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Patienten</span>
+    </div>
+    <div style="margin-top:8px;font:600 30px/1.15 Geist;letter-spacing:-.5px">Brandt, Ilse</div>
+    <div style="margin-top:4px;font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 04.03.1948 · Lindenweg 12, 34117 Kassel</div>
+    <div style="margin-top:22px;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Wunden</div>
+  </div>
+  <div style="flex:1;padding:12px 20px 0;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="width:64px;height:64px;border-radius:8px;background:#3A3D40;flex:none;display:flex;align-items:center;justify-content:center;font:500 9px/1.3 Geist Mono;color:#E6E8EA;text-align:center;padding:4px">letztes<br>Foto</div>
+        <div style="flex:1">
+          <div style="font:600 20px/1.25 Geist">Linker Unterschenkel, distal</div>
+          <div style="margin-top:4px;font:400 13px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">seit 02.06.2026 in Behandlung · 7 Besuche</div>
+          <div style="margin-top:6px;font:500 13px/1.3 Geist Mono;color:#3E5C63">L97.4</div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;align-items:baseline;gap:10px">
+        <span style="font:600 34px/1 Geist;font-variant-numeric:tabular-nums">7,0 cm²</span>
+        <span style="font:400 13px/1.3 Geist;color:#1C1A17">1,4 cm² kleiner</span>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <div style="flex:1;height:56px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 Geist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 4v8m0 0a3 3 0 0 0 3-3V7a3 3 0 0 0-6 0v2a3 3 0 0 0 3 3z"></path><path d="M6 11a6 6 0 0 0 12 0M12 17v3"></path></svg>Besuch beginnen</div>
+        <div style="width:56px;height:56px;border-radius:999px;border:1.5px solid #728E95;display:flex;align-items:center;justify-content:center">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 17l5-6 4 4 6-8"></path></svg>
+        </div>
+      </div>
+    </div>
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px;opacity:.72">
+      <div style="display:flex;align-items:flex-start;gap:14px">
+        <div style="width:64px;height:64px;border-radius:8px;background:#3A3D40;flex:none;display:flex;align-items:center;justify-content:center;font:500 9px/1.3 Geist Mono;color:#E6E8EA;text-align:center;padding:4px">letztes<br>Foto</div>
+        <div style="flex:1">
+          <div style="font:600 20px/1.25 Geist">Ferse rechts</div>
+          <div style="margin-top:4px;font:400 13px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">abgeheilt am 28.07.2026 · 12 Besuche</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(237,242,243,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(15,59,69,.10);box-shadow:0 -8px 24px rgba(15,59,69,.06);padding:16px 20px 30px">
+    <div style="height:56px;border-radius:999px;border:1.5px solid #728E95;display:flex;align-items:center;justify-content:center;gap:10px;font:600 16px/1 Geist;color:#0F3B45">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>Wunde anlegen</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Die Wunde führt ihren eigenen Stand mit: letztes Foto, Fläche, Richtung. „Besuch beginnen“ sitzt auf der Karte, nicht hinter einem zweiten Screen.</div>
+</div>
+
+<div class="dv-opt" id="1c"><div class="dv-olabel"><a class="dv-oid" href="#1c">1c</a>Befund sprechen — Ruhezustand</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:47</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span></div>
+  <div style="padding:2px 20px 0;flex:none;display:flex;align-items:center;justify-content:space-between;height:44px">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>
+    <div style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Besuch · 13.08.</div>
+    <div style="height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #728E95;display:flex;align-items:center;font:600 13px/1 Geist">Abschließen</div>
+  </div>
+  <div style="padding:10px 20px 0;flex:none;display:flex;gap:6px">
+    <div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div>
+    <div style="flex:1;height:6px;border-radius:3px;background:#C6D4D6"></div>
+    <div style="flex:1;height:6px;border-radius:3px;background:#C6D4D6"></div>
+    <div style="flex:1;height:6px;border-radius:3px;background:#C6D4D6"></div>
+  </div>
+  <div style="padding:8px 20px 0;flex:none;display:flex;justify-content:space-between;font:600 11px/1 Geist;letter-spacing:.6px;text-transform:uppercase;color:#3E5C63">
+    <span style="color:#0F6E7E">Sprechen</span><span>Prüfen</span><span>Foto</span><span>Abschluss</span>
+  </div>
+  <div style="padding:24px 20px 0;flex:1;overflow:hidden">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px">Befund sprechen</div>
+    <div style="margin-top:6px;font:400 16px/1.4 Geist;color:#3E5C63">Brandt, Ilse · Linker Unterschenkel, distal</div>
+    <div style="margin-top:22px;background:#EDF2F3;border-radius:20px;padding:20px;display:flex;gap:8px">
+      <div style="flex:1"><div style="font:600 30px/1 Geist;font-variant-numeric:tabular-nums">6</div><div style="margin-top:5px;font:600 13px/1 Geist;color:#3E5C63">Werte</div></div>
+      <div style="flex:1"><div style="font:600 30px/1 Geist;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:4px">1<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2.4"><path d="M4 12l5 5L20 6"></path></svg></div><div style="margin-top:5px;font:600 13px/1 Geist;color:#3E5C63">Fotos</div></div>
+      <div style="flex:1"><div style="font:600 34px/1 Geist;font-variant-numeric:tabular-nums;color:#7A4E00">3</div><div style="margin-top:5px;font:600 13px/1 Geist;color:#7A4E00">fehlen</div></div>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:10px;align-items:flex-start">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2" style="margin-top:2px;flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+      <div style="font:400 16px/1.5 Geist;color:#3E5C63">Sprich Maße, Wundgrund, Exsudat und Schmerz — in beliebiger Reihenfolge.</div>
+    </div>
+    <div style="margin-top:20px;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">So klingt das</div>
+    <div style="margin-top:10px;border-left:3px solid #0F6E7E;padding:6px 12px;font:italic 400 16px/1.45 Geist;color:#3E5C63">„Länge drei Komma fünf, Breite zwei, Tiefe null Komma fünf.“</div>
+    <div style="margin-top:8px;border-left:3px solid #0F6E7E;padding:6px 12px;font:italic 400 16px/1.45 Geist;color:#3E5C63">„Granulation sechzig Prozent, Fibrin vierzig Prozent.“</div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(237,242,243,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(15,59,69,.10);box-shadow:0 -8px 24px rgba(15,59,69,.06);padding:14px 20px 30px">
+    <div style="display:flex;gap:10px">
+      <div style="flex:1;height:64px;border-radius:16px;background:rgba(247,250,250,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg><span style="font:600 12px/1 Geist">Karten</span></div>
+      <div style="flex:1;height:64px;border-radius:16px;background:rgba(247,250,250,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M3 8h4l2-2h6l2 2h4v11H3z"></path><circle cx="12" cy="13" r="3.5"></circle></svg><span style="font:600 12px/1 Geist">Foto</span></div>
+      <div style="flex:1;height:64px;border-radius:16px;background:rgba(247,250,250,.75);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 17l5-6 4 4 6-8"></path></svg><span style="font:600 12px/1 Geist">Verlauf</span></div>
+    </div>
+    <div style="margin-top:12px;height:96px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;gap:14px;font:600 20px/1 Geist;box-shadow:0 6px 20px rgba(15,110,126,.28)">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>Aufnahme starten</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Besuchsband statt Screen-Titel-Raten: vier Schritte, immer sichtbar. Die drei gleichwertigen Wege werden zu drei gleich großen Kacheln über dem 96-px-Ziel — sie konkurrieren nicht mehr mit dem Daumenweg.</div>
+</div>
+
+<div class="dv-opt" id="1d"><div class="dv-olabel"><a class="dv-oid" href="#1d">1d</a>Aufnahme läuft</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#101617;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#E3EDEF">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none;color:#E3EDEF"><span>09:48</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#A9BFC4">OFFLINE</span></div>
+  <div style="margin:4px 20px 0;height:52px;border-radius:14px;background:#3A1614;display:flex;align-items:center;gap:12px;padding:0 18px;flex:none">
+    <span style="width:14px;height:14px;border-radius:50%;background:#F2B8B5;flex:none"></span>
+    <span style="font:600 20px/1 Geist;color:#F2B8B5;flex:1">Aufnahme läuft</span>
+    <span style="font:500 12px/1 Geist Mono;color:#F2B8B5;letter-spacing:.4px">MIKROFON OFFEN</span>
+  </div>
+  <div style="padding:0 20px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px">
+    <div style="font:700 96px/1 Geist;letter-spacing:-3px;font-variant-numeric:tabular-nums">00:37</div>
+    <div style="width:100%;height:96px;display:flex;align-items:center;justify-content:center;gap:5px">
+      <div style="width:6px;height:18px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:34px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:58px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:86px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:52px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:70px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:30px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:62px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:90px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:44px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:24px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:56px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:74px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:38px;border-radius:3px;background:#7FD1DE"></div><div style="width:6px;height:20px;border-radius:3px;background:#7FD1DE"></div>
+    </div>
+    <div style="width:100%;background:#1A2224;border-radius:20px;padding:20px">
+      <div style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#A9BFC4">Bisher verstanden</div>
+      <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+        <span style="padding:10px 14px;border-radius:12px;background:#202A2C;font:600 16px/1 Geist;font-variant-numeric:tabular-nums">Länge 3,5 cm</span>
+        <span style="padding:10px 14px;border-radius:12px;background:#202A2C;font:600 16px/1 Geist;font-variant-numeric:tabular-nums">Breite 2,0 cm</span>
+        <span style="padding:10px 14px;border-radius:12px;background:#202A2C;font:600 16px/1 Geist">Granulation 60 %</span>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(26,34,36,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(227,237,239,.10);padding:16px 20px 30px">
+    <div style="height:96px;border-radius:999px;background:#7FD1DE;color:#04262D;display:flex;align-items:center;justify-content:center;gap:14px;font:600 20px/1 Geist">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="#04262D"><rect x="6" y="6" width="12" height="12" rx="2"></rect></svg>Fertig</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#E3EDEF;opacity:.35"></div>
+</div>
+<div class="dv-cap">Der einzige Screen, der bewusst dunkel schaltet: kein Blendlicht in der Wohnung, und „Mikrofon offen“ ist von der Türschwelle aus lesbar — der Patient sitzt daneben. Zwischenstand als Chips, Blick optional.</div>
+</div>
+
+<div class="dv-opt" id="1e"><div class="dv-olabel"><a class="dv-oid" href="#1e">1e</a>Prüfen — Vorschläge entscheiden</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:50</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span></div>
+  <div style="padding:0 20px;flex:none;display:flex;gap:6px">
+    <div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div><div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div><div style="flex:1;height:6px;border-radius:3px;background:#C6D4D6"></div><div style="flex:1;height:6px;border-radius:3px;background:#C6D4D6"></div>
+  </div>
+  <div style="padding:18px 20px 0;flex:none">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px;color:#7A4E00">2 Werte brauchen dich</div>
+    <div style="margin-top:6px;font:600 13px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">6 übernommen · 2 prüfen · 3 fehlen</div>
+  </div>
+  <div style="flex:1;padding:16px 20px 0;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+    <div style="border-radius:20px;background:#EDF2F3;border:2px solid #A32017;overflow:hidden">
+      <div style="padding:16px 18px 0;display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A32017" stroke-width="2.4"><path d="M12 5v9M12 18h.01"></path></svg>
+        <span style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#A32017;flex:1">Tiefe</span>
+        <span style="font:500 12px/1 Geist Mono;color:#A32017">SPERRT</span>
+      </div>
+      <div style="padding:4px 18px 0;font:600 40px/1.1 Geist;letter-spacing:-.8px;color:#A32017">Entscheiden</div>
+      <div style="padding:2px 18px 0;font:italic 400 14px/1.4 Geist;color:#3E5C63">„… Tiefe null Komma [unklar] …“</div>
+      <div style="display:flex;gap:10px;padding:14px 18px 18px">
+        <div style="flex:1;height:56px;border-radius:999px;border:1.5px solid #728E95;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 Geist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg>Verwerfen</div>
+        <div style="flex:1;height:56px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 Geist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M4 12l5 5L20 6"></path></svg>Eingeben</div>
+      </div>
+    </div>
+    <div style="border-radius:20px;background:#EDF2F3;border:2px solid #7A4E00;overflow:hidden">
+      <div style="padding:16px 18px 0;display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4E00" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
+        <span style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#7A4E00;flex:1">Exsudat</span>
+        <span style="font:500 12px/1 Geist Mono;color:#7A4E00">PRÜFEN</span>
+      </div>
+      <div style="padding:4px 18px 0;font:600 40px/1.1 Geist;letter-spacing:-.8px">gering</div>
+      <div style="padding:2px 18px 0;font:italic 400 14px/1.4 Geist;color:#3E5C63">„… Exsudat gering, serös …“</div>
+      <div style="display:flex;gap:10px;padding:14px 18px 18px">
+        <div style="flex:1;height:56px;border-radius:999px;border:1.5px solid #728E95;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 Geist">Ändern</div>
+        <div style="flex:1;height:56px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font:600 16px/1 Geist">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M4 12l5 5L20 6"></path></svg>Stimmt</div>
+      </div>
+    </div>
+    <div style="border-radius:12px;background:#EDF2F3;padding:16px 18px;display:flex;align-items:center;gap:12px">
+      <span style="flex:1;font:600 16px/1.3 Geist;color:#635D56">3 Angaben fehlen</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+    </div>
+    <div style="border-radius:12px;background:#EDF2F3;padding:16px 18px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="flex:1;font:600 16px/1.3 Geist">6 Werte übernommen</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(237,242,243,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(15,59,69,.10);box-shadow:0 -8px 24px rgba(15,59,69,.06);padding:16px 20px 30px">
+    <div style="text-align:center;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#A32017">Ein Wert muss noch entschieden werden</div>
+    <div style="margin-top:10px;height:64px;border-radius:999px;background:#C6D4D6;color:#8FA0A3;display:flex;align-items:center;justify-content:center;font:600 20px/1 Geist">Übernehmen</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Kern der Überarbeitung: Entscheiden geht nicht mehr über 24-px-Icons in der Kartenecke, sondern über zwei 56-px-Flächen mit Wort. Der Wortlaut steht direkt unter dem Wert statt hinter einem Blatt — ein Griff weniger mit Handschuhen.</div>
+</div>
+
+<div class="dv-opt" id="1f"><div class="dv-olabel"><a class="dv-oid" href="#1f">1f</a>Karten — Erfassung ohne Sprache</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:52</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span></div>
+  <div style="padding:0 20px 14px;flex:none">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px">Befund erfassen</div>
+  </div>
+  <div style="flex:1;padding:0 20px;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between">
+        <span style="font:600 20px/1.3 Geist">Wundgrund</span>
+        <span style="font:600 13px/1 Geist;color:#7A4E00">20 % nicht vergeben</span>
+      </div>
+      <div style="margin-top:12px;height:14px;border-radius:7px;overflow:hidden;display:flex;background:#D6E0E1">
+        <div style="width:60%;background:#0F6E7E"></div><div style="width:20%;background:#63A6B0"></div>
+      </div>
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="flex:1;font:600 16px/1 Geist">Granulation</span>
+          <span style="width:74px;text-align:right;font:600 20px/1 Geist;font-variant-numeric:tabular-nums">60 %</span>
+          <span style="width:56px;height:56px;border-radius:14px;background:#E2EAEB;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2.4"><path d="M5 12h14"></path></svg></span>
+          <span style="width:56px;height:56px;border-radius:14px;background:#0F6E7E;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"></path></svg></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="flex:1;font:600 16px/1 Geist">Fibrin</span>
+          <span style="width:74px;text-align:right;font:600 20px/1 Geist;font-variant-numeric:tabular-nums">20 %</span>
+          <span style="width:56px;height:56px;border-radius:14px;background:#E2EAEB;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2.4"><path d="M5 12h14"></path></svg></span>
+          <span style="width:56px;height:56px;border-radius:14px;background:#0F6E7E;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"></path></svg></span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;opacity:.55">
+          <span style="flex:1;font:600 16px/1 Geist">Nekrose</span>
+          <span style="width:74px;text-align:right;font:600 20px/1 Geist;font-variant-numeric:tabular-nums">0 %</span>
+          <span style="width:56px;height:56px;border-radius:14px;background:#E2EAEB;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#728E95" stroke-width="2.4"><path d="M5 12h14"></path></svg></span>
+          <span style="width:56px;height:56px;border-radius:14px;background:#0F6E7E;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"></path></svg></span>
+        </div>
+      </div>
+    </div>
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="font:600 20px/1.3 Geist">Maße</div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <div style="flex:1;background:#E2EAEB;border-radius:14px;padding:14px;text-align:center">
+          <div style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Länge</div>
+          <div style="margin-top:8px;font:600 30px/1 Geist;font-variant-numeric:tabular-nums">3,5</div>
+          <div style="margin-top:2px;font:400 13px/1 Geist;color:#3E5C63">cm</div>
+        </div>
+        <div style="flex:1;background:#E2EAEB;border-radius:14px;padding:14px;text-align:center">
+          <div style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Breite</div>
+          <div style="margin-top:8px;font:600 30px/1 Geist;font-variant-numeric:tabular-nums">2,0</div>
+          <div style="margin-top:2px;font:400 13px/1 Geist;color:#3E5C63">cm</div>
+        </div>
+        <div style="flex:1;background:#E2EAEB;border-radius:14px;padding:14px;text-align:center;border:1.5px dashed #635D56">
+          <div style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#635D56">Tiefe</div>
+          <div style="margin-top:8px;font:600 30px/1 Geist;color:#635D56">—</div>
+          <div style="margin-top:2px;font:400 13px/1 Geist;color:#635D56">cm</div>
+        </div>
+      </div>
+    </div>
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="font:600 20px/1.3 Geist">Exsudation</div>
+      <div style="margin-top:12px;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Menge</div>
+      <div style="margin-top:10px;display:flex;gap:8px">
+        <span style="flex:1;height:52px;border-radius:12px;background:#E2EAEB;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">kein</span>
+        <span style="flex:1;height:52px;border-radius:12px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">gering</span>
+        <span style="flex:1;height:52px;border-radius:12px;background:#E2EAEB;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">mäßig</span>
+        <span style="flex:1;height:52px;border-radius:12px;background:#E2EAEB;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">stark</span>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(237,242,243,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(15,59,69,.10);box-shadow:0 -8px 24px rgba(15,59,69,.06);padding:16px 20px 30px">
+    <div style="height:64px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;font:600 20px/1 Geist;box-shadow:0 6px 20px rgba(15,110,126,.28)">Fertig</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Die 100-%-Regel wird sichtbar statt nur beschrieben: ein Balken zeigt, was noch zu verteilen ist. Maße als drei Instrumentenfelder — die Lücke bleibt gestrichelt und leer, nie geraten.</div>
+</div>
+
+<div class="dv-opt" id="1g"><div class="dv-olabel"><a class="dv-oid" href="#1g">1g</a>Wunde fotografieren</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#101617;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#E3EDEF">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:55</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#A9BFC4">OFFLINE</span></div>
+  <div style="padding:0 20px;flex:none;display:flex;align-items:center;justify-content:space-between;height:44px">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E3EDEF" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>
+    <span style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#A9BFC4">Foto · Besuch 8</span>
+    <span style="width:26px"></span>
+  </div>
+  <div style="flex:1;position:relative;margin:8px 0 0">
+    <div style="position:absolute;inset:0;background:#3A3D40;display:flex;align-items:center;justify-content:center">
+      <div style="width:100%;height:100%;background:repeating-linear-gradient(135deg,#43464A 0 14px,#3A3D40 14px 28px);display:flex;align-items:center;justify-content:center">
+        <span style="font:500 11px/1.4 Geist Mono;color:#E6E8EA;text-align:center;letter-spacing:.4px">SUCHER<br>Live-Vorschau</span>
+      </div>
+    </div>
+    <div style="position:absolute;left:78px;top:250px;width:230px;height:180px;border:3px dashed #FF66EE;border-radius:50%;opacity:.55"></div>
+    <div style="position:absolute;left:20px;top:16px;padding:8px 12px;border-radius:999px;background:rgba(16,22,23,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font:600 12px/1 Geist;color:#E3EDEF">Geisterbild vom 06.08.</div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(26,34,36,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(227,237,239,.10);padding:16px 20px 30px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <span style="flex:1;font:600 16px/1.3 Geist">Voriges Foto einblenden</span>
+      <span style="width:56px;height:32px;border-radius:999px;background:#7FD1DE;position:relative;flex:none"><span style="position:absolute;top:3px;right:3px;width:26px;height:26px;border-radius:50%;background:#04262D;display:block"></span></span>
+    </div>
+    <div style="margin-top:10px;font:400 13px/1.45 Geist;color:#A9BFC4">Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.</div>
+    <div style="margin-top:14px;height:96px;border-radius:999px;background:#7FD1DE;color:#04262D;display:flex;align-items:center;justify-content:center;gap:14px;font:600 20px/1 Geist">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#04262D" stroke-width="2"><path d="M3 8h4l2-2h6l2 2h4v11H3z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>Foto aufnehmen</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#E3EDEF;opacity:.35"></div>
+</div>
+<div class="dv-cap">Sucher randlos statt in einer Karte — der <b>mediaGround</b> bleibt der einzige Untergrund, damit die vier Gewebefarben gleich erscheinen. Die Glasleiste liegt über dem Bild, statt es zu beschneiden.</div>
+</div>
+
+<div class="dv-opt" id="1h"><div class="dv-olabel"><a class="dv-oid" href="#1h">1h</a>Wunde markieren</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#101617;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#E3EDEF">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:56</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#A9BFC4">OFFLINE</span></div>
+  <div style="padding:0 20px;flex:none;display:flex;align-items:center;justify-content:space-between;height:44px">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#E3EDEF" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>
+    <span style="font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#A9BFC4">Markieren</span>
+    <span style="font:600 13px/1 Geist;color:#7FD1DE">Zurück</span>
+  </div>
+  <div style="padding:6px 20px 0;flex:none">
+    <div style="font:400 13px/1.45 Geist;color:#A9BFC4">Umrande die Wunde. Das Original bleibt unverändert.</div>
+    <div style="margin-top:4px;font:600 13px/1.4 Geist;color:#FF66EE">Voriger Besuch ist mit eingeblendet</div>
+  </div>
+  <div style="flex:1;position:relative;margin-top:10px">
+    <div style="position:absolute;inset:0;background:repeating-linear-gradient(135deg,#43464A 0 14px,#3A3D40 14px 28px);display:flex;align-items:center;justify-content:center">
+      <span style="font:500 11px/1.4 Geist Mono;color:#E6E8EA;letter-spacing:.4px">WUNDFOTO 13.08.</span>
+    </div>
+    <div style="position:absolute;left:72px;top:200px;width:246px;height:196px;border:3px dashed #FF66EE;border-radius:50%;opacity:.5"></div>
+    <div style="position:absolute;left:88px;top:214px;width:214px;height:168px;border:3px solid #7FD1DE;border-radius:50%"></div>
+    <div style="position:absolute;left:84px;top:290px;width:14px;height:14px;border-radius:50%;background:#7FD1DE"></div>
+    <div style="position:absolute;left:290px;top:290px;width:14px;height:14px;border-radius:50%;background:#7FD1DE"></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(26,34,36,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(227,237,239,.10);padding:16px 20px 30px">
+    <div style="display:flex;gap:8px">
+      <span style="flex:1;height:56px;border-radius:14px;background:#7FD1DE;color:#04262D;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">Ellipse</span>
+      <span style="flex:1;height:56px;border-radius:14px;background:rgba(227,237,239,.12);display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">Punkte</span>
+      <span style="flex:1;height:56px;border-radius:14px;background:rgba(227,237,239,.12);display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">Freihand</span>
+    </div>
+    <div style="margin-top:10px;display:flex;gap:8px">
+      <span style="flex:1;height:52px;border-radius:14px;border:1.5px solid rgba(227,237,239,.28);display:flex;align-items:center;justify-content:center;gap:8px;font:600 15px/1 Geist">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E3EDEF" stroke-width="2"><path d="M9 14l-4-4 4-4"></path><path d="M5 10h9a5 5 0 0 1 0 10h-3"></path></svg>Punkt zurück</span>
+      <span style="flex:1;height:52px;border-radius:14px;border:1.5px solid rgba(227,237,239,.28);display:flex;align-items:center;justify-content:center;font:600 15px/1 Geist">Löschen</span>
+    </div>
+    <div style="margin-top:12px;height:64px;border-radius:999px;background:#7FD1DE;color:#04262D;display:flex;align-items:center;justify-content:center;font:600 20px/1 Geist">Markierung übernehmen</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#E3EDEF;opacity:.35"></div>
+</div>
+<div class="dv-cap">Werkzeugwahl auf 56 px, jedes mit Wort — Ziehen bleibt eine von drei Möglichkeiten (WCAG 2.5.7). Magenta gehört weiterhin allein dem vorigen Besuch, Blaugrün der neuen Kontur.</div>
+</div>
+
+<div class="dv-opt" id="1i"><div class="dv-olabel"><a class="dv-oid" href="#1i">1i</a>Besuch abschließen</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:58</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span></div>
+  <div style="padding:0 20px;flex:none;display:flex;gap:6px">
+    <div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div><div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div><div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div><div style="flex:1;height:6px;border-radius:3px;background:#0F6E7E"></div>
+  </div>
+  <div style="flex:1;padding:20px 20px 0;overflow:hidden">
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7A4E00" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg>
+      <div>
+        <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px">2 Angaben fehlen</div>
+        <div style="margin-top:6px;font:400 16px/1.45 Geist;color:#3E5C63">Lücken dürfen mitgehen. Der Befund wird als unvollständig geführt.</div>
+      </div>
+    </div>
+    <div style="margin-top:22px;background:#EDF2F3;border-radius:20px;padding:18px;display:flex;gap:14px;align-items:center">
+      <div style="width:60px;height:60px;border-radius:8px;background:#3A3D40;flex:none;display:flex;align-items:center;justify-content:center;font:500 9px/1.3 Geist Mono;color:#E6E8EA;text-align:center">Foto<br>13.08.</div>
+      <div style="flex:1">
+        <div style="font:600 16px/1.3 Geist">Ein Foto · mit Markierung</div>
+        <div style="margin-top:3px;font:600 16px/1.3 Geist;font-variant-numeric:tabular-nums">9 Angaben erfasst</div>
+      </div>
+    </div>
+    <div style="margin-top:14px;display:flex;align-items:center;gap:12px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7A4E00" stroke-width="2"><path d="M19 5L5 19"></path><circle cx="7.5" cy="7.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>
+      <span style="font:600 16px/1.3 Geist">Gewebeanteile ergeben 80 %, nicht 100 %.</span>
+    </div>
+    <div style="margin-top:24px;font:600 13px/1 Geist;letter-spacing:1px;text-transform:uppercase;color:#3E5C63">Fehlt noch</div>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+      <div style="height:64px;border-radius:12px;background:#EDF2F3;display:flex;align-items:center;padding:0 16px;gap:10px">
+        <span style="flex:1;font:600 16px/1 Geist">Tiefe</span><span style="font:400 16px/1 Geist;color:#635D56">fehlt</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+      </div>
+      <div style="height:64px;border-radius:12px;background:#EDF2F3;display:flex;align-items:center;padding:0 16px;gap:10px">
+        <span style="flex:1;font:600 16px/1 Geist">Schmerz</span><span style="font:400 16px/1 Geist;color:#635D56">fehlt</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+      </div>
+      <div style="height:64px;border-radius:12px;background:#EDF2F3;display:flex;align-items:center;padding:0 16px;gap:10px;opacity:.6">
+        <span style="flex:1;font:600 16px/1 Geist">Wundrand</span><span style="font:400 16px/1 Geist;color:#635D56">fehlt</span>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:0;border-radius:26px 26px 0 0;background:rgba(237,242,243,.72);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);border-top:1px solid rgba(15,59,69,.10);box-shadow:0 -8px 24px rgba(15,59,69,.06);padding:12px 20px 30px">
+    <div style="height:48px;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist;color:#0F6E7E">Zurück zur Erfassung</div>
+    <div style="margin-top:6px;height:96px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;font:600 22px/1 Geist;box-shadow:0 6px 20px rgba(15,110,126,.28)">Mit Lücken abschließen</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Die Projektregel bleibt sichtbar: Lücken werden benannt, gezählt und sind je ein 64-px-Weg zurück — abschließen dürfen sie trotzdem, nur unter anderem Namen.</div>
+</div>
+
+<div class="dv-opt" id="1j"><div class="dv-olabel"><a class="dv-oid" href="#1j">1j</a>Verlauf</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>10:02</span><span style="font:500 10px/1 Geist Mono;letter-spacing:.4px;color:#57514A">OFFLINE</span></div>
+  <div style="padding:0 20px;flex:none;display:flex;align-items:center;justify-content:space-between;height:44px">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>
+    <span style="height:40px;padding:0 14px;border-radius:999px;border:1.5px solid #728E95;display:flex;align-items:center;gap:8px;font:600 13px/1 Geist">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h7"></path></svg>Bericht</span>
+  </div>
+  <div style="flex:1;padding:8px 20px 0;overflow:hidden">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px">Verlauf</div>
+    <div style="margin-top:4px;font:400 16px/1.4 Geist;color:#3E5C63">Linker Unterschenkel, distal · 7 Besuche</div>
+    <div style="margin-top:18px;background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="display:flex;align-items:baseline;gap:10px">
+        <span style="font:600 34px/1 Geist;font-variant-numeric:tabular-nums">7,0 cm²</span>
+        <span style="padding:4px 10px;border-radius:8px;background:#DDE9E7;font:600 13px/1.2 Geist;color:#1C1A17">1,4 cm² kleiner</span>
+      </div>
+      <div style="margin-top:2px;font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">erster Besuch: 12,4 cm²</div>
+      <svg viewBox="0 0 300 96" style="margin-top:14px;width:100%;height:96px;display:block">
+        <polyline points="6,12 54,22 102,34 150,44 198,52 246,68 294,74" fill="none" stroke="#0F6E7E" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></polyline>
+        <circle cx="294" cy="74" r="6" fill="#0F6E7E"></circle>
+      </svg>
+      <div style="margin-top:6px;font:600 13px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">02.06.2026 bis 13.08.2026</div>
+      <div style="font:600 13px/1.4 Geist;color:#3E5C63">Fläche als Näherung: Länge × Breite.</div>
+    </div>
+    <div style="margin-top:22px;display:flex;flex-direction:column;gap:10px">
+      <div style="background:#E2EAEB;border-radius:12px;padding:12px;display:flex;gap:12px">
+        <div style="width:72px;height:72px;border-radius:8px;background:#3A3D40;flex:none;display:flex;align-items:center;justify-content:center;font:500 9px/1.3 Geist Mono;color:#E6E8EA">13.08.</div>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px"><span style="flex:1;font:600 20px/1.25 Geist;font-variant-numeric:tabular-nums">13.08.2026</span><span style="padding:3px 8px;border:1px solid #7A4E00;border-radius:8px;font:600 12px/1.2 Geist;color:#7A4E00">Besuch offen</span></div>
+          <div style="margin-top:4px;font:600 22px/1.2 Geist;font-variant-numeric:tabular-nums">7,0 cm²</div>
+          <div style="font:400 16px/1.35 Geist;color:#1C1A17">1,4 cm² kleiner als beim vorigen Besuch</div>
+        </div>
+      </div>
+      <div style="background:#E2EAEB;border-radius:12px;padding:12px;display:flex;gap:12px">
+        <div style="width:72px;height:72px;border-radius:8px;background:#3A3D40;flex:none;display:flex;align-items:center;justify-content:center;font:500 9px/1.3 Geist Mono;color:#E6E8EA">06.08.</div>
+        <div style="flex:1">
+          <div style="font:600 20px/1.25 Geist;font-variant-numeric:tabular-nums">06.08.2026</div>
+          <div style="margin-top:4px;font:600 22px/1.2 Geist;font-variant-numeric:tabular-nums">8,4 cm²</div>
+          <div style="font:400 16px/1.35 Geist;color:#7A4E00">0,6 cm² größer als beim vorigen Besuch</div>
+          <div style="margin-top:4px;font:600 13px/1.3 Geist;color:#3E5C63">Mit Lücken abgeschlossen</div>
+        </div>
+      </div>
+      <div style="background:#E2EAEB;border-radius:12px;padding:12px;display:flex;gap:12px">
+        <div style="width:72px;height:72px;border-radius:8px;background:#3A3D40;flex:none;display:flex;align-items:center;justify-content:center;font:500 9px/1.3 Geist Mono;color:#E6E8EA">30.07.</div>
+        <div style="flex:1">
+          <div style="font:600 20px/1.25 Geist;font-variant-numeric:tabular-nums">30.07.2026</div>
+          <div style="margin-top:4px;font:600 22px/1.2 Geist;font-variant-numeric:tabular-nums">7,8 cm²</div>
+          <div style="font:400 16px/1.35 Geist;color:#1C1A17">1,1 cm² kleiner als beim vorigen Besuch</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Kurve mit Anfangs- und Endwert statt Achsen; Richtung steht als Wort, nicht als Vorzeichen. Wachstum bleibt bernsteinfarben — dasselbe „hinsehen“ wie überall sonst.</div>
+</div>
+
+</div>
+<p class="dv-next">Weiter mit: „mach <a class="dv-oid" href="#1c">1c</a> als Dunkelmodus“ · „<a class="dv-oid" href="#1a">1a</a> ohne Tour-Gruppierung“ · „zeig den Aufnahme-Zustand interaktiv“</p>
+</section>
+
+
+<section class="dv-turn" id="t0">
+<div class="dv-thd"><a class="dv-tid" href="#t0">0</a><span class="dv-tname">Ist-Zustand — nachgebaut aus dem Flutter-Code</span></div>
+<p class="dv-sub">Nachbau aus <code>lib/features/**</code> und <code>lib/shared/theme/*</code>: Material-AppBar mit 22-px-Titel, <code>ListTile</code>-Zeilen, <code>FindingCard</code> (Radius 20, <code>surfaceContainer</code>), <code>ConfirmationRow</code> mit 24-px-Icon-Buttons, gestapelte Bereiche. Dient als Vergleichsgrundlage für <a class="dv-oid" href="#t1">1</a>.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="0a"><div class="dv-olabel"><a class="dv-oid" href="#0a">0a</a>PatientListScreen</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:41</span></div>
+  <div style="height:56px;display:flex;align-items:center;padding:0 16px;font:600 22px/1 Geist;flex:none">Patienten</div>
+  <div style="padding:8px 16px;flex:none">
+    <div style="height:56px;border:1px solid #728E95;border-radius:4px;display:flex;align-items:center;gap:12px;padding:0 12px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+      <span style="font:400 16px/1 Geist;color:#3E5C63">Name suchen</span>
+    </div>
+  </div>
+  <div style="flex:1;overflow:hidden">
+    <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 16px"><div style="flex:1"><div style="font:600 20px/1.3 Geist">Brandt, Ilse</div><div style="font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 04.03.1948 · 2 Wunden</div></div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+    <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 16px"><div style="flex:1"><div style="font:600 20px/1.3 Geist">Doleschal, Mira</div><div style="font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 22.11.1955 · 1 Wunde</div></div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+    <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 16px"><div style="flex:1"><div style="font:600 20px/1.3 Geist">Kowalski, Henryk</div><div style="font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 09.07.1939 · 3 Wunden</div></div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+    <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 16px"><div style="flex:1"><div style="font:600 20px/1.3 Geist">Sarközy, Anna</div><div style="font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 30.01.1961 · 1 Wunde</div></div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+    <div style="height:72px;display:flex;align-items:center;gap:16px;padding:0 16px"><div style="flex:1"><div style="font:600 20px/1.3 Geist">Abadi, Nour</div><div style="font:400 16px/1.4 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">geb. 12.05.1970 · keine Wunde</div></div><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+  </div>
+  <div style="position:absolute;right:16px;bottom:32px;height:56px;border-radius:16px;background:#0F6E7E;color:#fff;display:flex;align-items:center;gap:8px;padding:0 20px;font:600 16px/1 Geist">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="10" cy="8" r="3.5"></circle><path d="M3.5 19c0-3.3 2.9-5.5 6.5-5.5M17 11v6M14 14h6"></path></svg>Patient anlegen</div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">AppBar-Titel 22 px, danach 20-px-Zeilen: der Größenkontrast, den die gedämpfte Palette braucht, entsteht nie. Zeilenhöhe 72 px, Trefferfläche im Handschuh grenzwertig.</div>
+</div>
+
+<div class="dv-opt" id="0b"><div class="dv-olabel"><a class="dv-oid" href="#0b">0b</a>CaptureScreen — Ruhezustand</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:47</span></div>
+  <div style="height:56px;display:flex;align-items:center;justify-content:flex-end;padding:0 20px;flex:none">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+  </div>
+  <div style="flex:1;padding:16px;overflow:hidden">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px">Befund sprechen</div>
+    <div style="margin-top:4px;display:flex;gap:8px;align-items:flex-start">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2" style="margin-top:3px"><circle cx="12" cy="8" r="3.5"></circle><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"></path></svg>
+      <span style="font:600 16px/1.5 Geist;color:#3E5C63">Brandt, Ilse · Linker Unterschenkel, distal</span>
+    </div>
+    <div style="margin-top:24px;background:#EDF2F3;border-radius:12px;padding:16px;display:flex">
+      <div style="flex:1"><div style="font:600 30px/1.15 Geist;font-variant-numeric:tabular-nums">6</div><div style="margin-top:4px;font:600 13px/1.3 Geist;color:#3E5C63">Werte</div></div>
+      <div style="flex:1"><div style="font:600 30px/1.15 Geist;display:flex;align-items:center;gap:4px">1<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2.4"><path d="M4 12l5 5L20 6"></path></svg></div><div style="margin-top:4px;font:600 13px/1.3 Geist;color:#3E5C63">Fotos</div></div>
+      <div style="flex:1"><div style="font:600 34px/1.1 Geist;color:#7A4E00;font-variant-numeric:tabular-nums">3</div><div style="margin-top:4px;font:600 13px/1.3 Geist;color:#3E5C63">fehlen</div></div>
+    </div>
+    <div style="margin-top:24px;display:flex;gap:8px;align-items:flex-start">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2" style="margin-top:3px;flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path></svg>
+      <span style="font:400 16px/1.5 Geist;color:#3E5C63">Sprich Maße, Wundgrund, Exsudat und Schmerz — in beliebiger Reihenfolge.</span>
+    </div>
+  </div>
+  <div style="padding:0 16px 16px;flex:none">
+    <div style="background:#EDF2F3;border-radius:12px;overflow:hidden">
+      <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg><span style="flex:1;font:600 16px/1 Geist">Über Karten erfassen</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+      <div style="height:1px;background:#E2EAEB;margin-left:56px"></div>
+      <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M3 8h4l2-2h6l2 2h4v11H3z"></path><circle cx="12" cy="13" r="3.5"></circle></svg><span style="flex:1;font:600 16px/1 Geist">Wunde fotografieren</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+      <div style="height:1px;background:#E2EAEB;margin-left:56px"></div>
+      <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 17l5-6 4 4 6-8"></path></svg><span style="flex:1;font:600 16px/1 Geist">Verlauf</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div>
+    </div>
+  </div>
+  <div style="padding:0 24px 24px;flex:none">
+    <div style="height:96px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;font:600 20px/1 Geist">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"></path><path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path></svg>Aufnahme starten</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Der 96-px-Knopf und die Stand-Karte sind schon richtig. Fehlt: wo im Besuch man steht, und die drei „anderen Wege“ liegen als Listenzeilen direkt über dem Daumenziel.</div>
+</div>
+
+<div class="dv-opt" id="0c"><div class="dv-olabel"><a class="dv-oid" href="#0c">0c</a>ConfirmationScreen</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:50</span></div>
+  <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px;font:600 22px/1 Geist;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>Prüfen</div>
+  <div style="padding:8px 16px 20px;flex:none">
+    <div style="font:600 30px/1.15 Geist;letter-spacing:-.5px;color:#7A4E00">2 Werte brauchen dich</div>
+    <div style="margin-top:4px;font:600 13px/1.3 Geist;color:#3E5C63;font-variant-numeric:tabular-nums">6 übernommen · 2 prüfen · 3 fehlen</div>
+  </div>
+  <div style="flex:1;padding:0 16px;overflow:hidden;display:flex;flex-direction:column;gap:12px">
+    <div style="background:#EDF2F3;border:2px solid #A32017;border-radius:20px">
+      <div style="padding:16px 12px 0 20px;display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A32017" stroke-width="2.4"><path d="M12 5v9M12 18h.01"></path></svg>
+        <span style="flex:1;font:600 13px/1.2 Geist;letter-spacing:1px;text-transform:uppercase;color:#A32017">Tiefe</span>
+        <span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg></span>
+        <span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 12l5 5L20 6"></path></svg></span>
+      </div>
+      <div style="padding:4px 20px 16px;display:flex;align-items:center">
+        <span style="flex:1;font:600 40px/1.05 Geist;letter-spacing:-.8px;color:#A32017">Entscheiden</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>
+      </div>
+    </div>
+    <div style="background:#EDF2F3;border:2px solid #7A4E00;border-radius:20px">
+      <div style="padding:16px 12px 0 20px;display:flex;align-items:center;gap:8px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#7A4E00" stroke-width="2"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
+        <span style="flex:1;font:600 13px/1.2 Geist;letter-spacing:1px;text-transform:uppercase;color:#7A4E00">Exsudat</span>
+        <span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"></path></svg></span>
+        <span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M4 12l5 5L20 6"></path></svg></span>
+      </div>
+      <div style="padding:4px 20px 16px;display:flex;align-items:center">
+        <span style="flex:1;font:600 40px/1.05 Geist;letter-spacing:-.8px">gering</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>
+      </div>
+    </div>
+    <div style="height:56px;display:flex;align-items:center;gap:12px;padding:0 4px"><span style="flex:1;font:400 16px/1.3 Geist;color:#635D56">3 Angaben fehlen</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></div>
+    <div style="height:56px;display:flex;align-items:center;gap:12px;padding:0 4px"><span style="flex:1;font:400 16px/1.3 Geist;color:#3E5C63">6 Werte übernommen</span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3E5C63" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg></div>
+  </div>
+  <div style="padding:24px 16px 16px;flex:none">
+    <div style="text-align:center;font:600 13px/1.2 Geist;letter-spacing:1px;color:#A32017">Ein Wert muss noch entschieden werden.</div>
+    <div style="margin-top:8px;height:56px;border-radius:999px;background:#C6D4D6;color:#8FA0A3;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">Übernehmen</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Die Entscheidung hängt an zwei 24-px-Icons in der Kartenecke — mit Handschuhen die schwächste Stelle im ganzen Fluss. Der Wortlaut liegt hinter einem Bottom Sheet.</div>
+</div>
+
+<div class="dv-opt" id="0d"><div class="dv-olabel"><a class="dv-oid" href="#0d">0d</a>CardEntryScreen</div>
+<div style="width:390px;height:844px;border-radius:40px;background:#F7FAFA;overflow:hidden;position:relative;box-shadow:0 0 0 10px #12181A,0 18px 40px rgba(0,0,0,.22);display:flex;flex-direction:column;font-family:Geist,system-ui,sans-serif;color:#0F3B45">
+  <div style="height:46px;display:flex;align-items:center;padding:0 26px;font:600 13px/1 Geist;flex:none"><span>09:52</span></div>
+  <div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px;font:600 22px/1 Geist;flex:none"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M15 6l-6 6 6 6"></path></svg>Befund erfassen</div>
+  <div style="flex:1;padding:8px 16px 0;overflow:hidden;display:flex;flex-direction:column;gap:12px">
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="font:600 20px/1.3 Geist">Wundgrund</div>
+      <div style="margin-top:4px;font:600 13px/1.3 Geist;color:#7A4E00">20 % nicht vergeben</div>
+      <div style="margin-top:12px;display:flex;flex-direction:column">
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist">Nekrose</span><span style="font:600 16px/1 Geist;color:#635D56;font-variant-numeric:tabular-nums">0 %</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#728E95" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist">Fibrin</span><span style="font:600 16px/1 Geist;font-variant-numeric:tabular-nums">20 %</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist">Granulation</span><span style="font:600 16px/1 Geist;font-variant-numeric:tabular-nums">60 %</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist">Epithelisation</span><span style="font:600 16px/1 Geist;color:#635D56;font-variant-numeric:tabular-nums">0 %</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#728E95" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+      </div>
+    </div>
+    <div style="background:#EDF2F3;border-radius:20px;padding:20px">
+      <div style="font:600 20px/1.3 Geist">Maße</div>
+      <div style="margin-top:12px">
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist">Länge</span><span style="font:600 16px/1 Geist;font-variant-numeric:tabular-nums">3,5 cm</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist">Breite</span><span style="font:600 16px/1 Geist;font-variant-numeric:tabular-nums">2,0 cm</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+        <div style="height:56px;display:flex;align-items:center;gap:12px"><span style="flex:1;font:600 16px/1 Geist;color:#635D56">Tiefe</span><span style="font:600 16px/1 Geist;color:#635D56">—</span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#728E95" stroke-width="2"><path d="M5 12h14"></path></svg></span><span style="width:48px;height:48px;display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F3B45" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg></span></div>
+      </div>
+    </div>
+  </div>
+  <div style="padding:16px;flex:none">
+    <div style="height:56px;border-radius:999px;background:#0F6E7E;color:#fff;display:flex;align-items:center;justify-content:center;font:600 16px/1 Geist">Fertig</div>
+  </div>
+  <div style="position:absolute;left:50%;transform:translateX(-50%);bottom:9px;width:134px;height:5px;border-radius:3px;background:#0F3B45;opacity:.35"></div>
+</div>
+<div class="dv-cap">Elf gleich aussehende Stepper-Zeilen untereinander; die 100-%-Regel steht nur als Satz. Die Werte tragen dieselbe Größe wie ihre Bezeichnungen — kein Instrument, ein Formular.</div>
+</div>
+
+</div>
+<p class="dv-next">Weiter mit: „Ist-Zustand auch für Foto und Verlauf“ · „<a class="dv-oid" href="#0c">0c</a> und <a class="dv-oid" href="#1e">1e</a> nebeneinander stellen“</p>
+</section>
+</x-dc>
+</body>
+</html>
