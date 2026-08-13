@@ -6,6 +6,7 @@ import 'package:wunddoku/features/besuch/ui/confirmation_view_model.dart';
 import 'package:wunddoku/shared/text/field_presentation.dart';
 import 'package:wunddoku/features/besuch/ui/widgets/provenance_sheet.dart';
 
+import '../support/phone.dart';
 import '../support/test_app.dart';
 
 /// A dictation that exercises every state the row can be in: two values heard
@@ -74,8 +75,8 @@ void main() {
         ),
       );
 
-      // The blocking row sorts to the top, so its discard button is the first.
-      await tester.tap(find.byIcon(Icons.close).first);
+      // The blocking row sorts to the top, so its discard area is the first.
+      await tester.tap(find.text('Verwerfen').first);
       await tester.pumpAndSettle();
 
       expect(find.textContaining('entschieden werden'), findsNothing);
@@ -102,6 +103,9 @@ void main() {
       );
 
       // One collapsed row instead of four; the names appear on expanding.
+      // The decision cards fill the first screen now, so the gaps sit below
+      // the fold — which is the point: they are information, not work.
+      await tester.scrollUntilVisible(find.text('4 Angaben fehlen'), 200);
       expect(find.text('4 Angaben fehlen'), findsOneWidget);
       expect(find.text('Nekrose'), findsNothing);
 
@@ -174,6 +178,7 @@ void main() {
       );
       // The gaps are announced as one node that names every missing field,
       // so a screen reader hears them without four separate stops.
+      await tester.scrollUntilVisible(find.text('4 Angaben fehlen'), 200);
       expect(
         find.bySemanticsLabel(
           '4 Angaben fehlen: Nekrose · Fibrin · Epithelisation · Schmerz',
@@ -215,6 +220,7 @@ void main() {
 
   group('goldens', () {
     testWidgets('light theme', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(child: ConfirmationScreen(viewModel: _model())),
       );
@@ -226,6 +232,7 @@ void main() {
     });
 
     testWidgets('dark theme', (tester) async {
+      await useScreen(tester);
       await tester.pumpWidget(
         TestApp(
           brightness: Brightness.dark,
@@ -240,6 +247,8 @@ void main() {
     });
 
     testWidgets('200 percent text scaling', (tester) async {
+      // The narrow end and the largest text at once.
+      await useScreen(tester, size: narrowSize);
       await tester.pumpWidget(
         TestApp(textScale: 2, child: ConfirmationScreen(viewModel: _model())),
       );

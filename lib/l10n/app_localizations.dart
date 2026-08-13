@@ -322,6 +322,30 @@ abstract class AppLocalizations {
   /// **'Wert übernehmen'**
   String get actionAcceptValue;
 
+  /// Beschriftung der Verwerfen-Fläche auf einer Prüfkarte. Kurzform, weil sie neben einer zweiten Fläche steht; die volle Formulierung trägt actionDiscardValue als Semantik-Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Verwerfen'**
+  String get actionDiscardShort;
+
+  /// Beschriftung der Bestätigen-Fläche bei einem Wert mit mittlerer Sicherheit. Bewusst nicht „Übernehmen“ — so heißt die Primäraktion des Screens, und zwei gleiche Wörter auf einem Bildschirm meinen sonst dasselbe.
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmt'**
+  String get actionConfirmShort;
+
+  /// Beschriftung der Bestätigen-Fläche bei einem Wert mit niedriger Sicherheit. Sagt, dass hier bewusst gegen die Unsicherheit entschieden wird.
+  ///
+  /// In de, this message translates to:
+  /// **'Trotzdem übernehmen'**
+  String get actionAcceptAnyway;
+
+  /// Der Ausschnitt aus dem Wortlaut unter dem Wert. Die Auslassungspunkte sagen, dass es ein Fragment ist und kein ganzer Satz.
+  ///
+  /// In de, this message translates to:
+  /// **'„… {text} …“'**
+  String confirmationQuote(String text);
+
   /// Schließt einen Dialog oder ein Blatt.
   ///
   /// In de, this message translates to:

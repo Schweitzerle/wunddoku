@@ -310,6 +310,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
       MaterialPageRoute<void>(
         builder: (_) => ConfirmationScreen(
           viewModel: review,
+          visitDate: _visitDate,
           onAccept: () {
             unawaited(_acceptSettled(visit, review.settledEntries));
             Navigator.of(context).pop();

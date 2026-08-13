@@ -140,6 +140,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get actionAcceptValue => 'Wert übernehmen';
 
   @override
+  String get actionDiscardShort => 'Verwerfen';
+
+  @override
+  String get actionConfirmShort => 'Stimmt';
+
+  @override
+  String get actionAcceptAnyway => 'Trotzdem übernehmen';
+
+  @override
+  String confirmationQuote(String text) {
+    return '„… $text …“';
+  }
+
+  @override
   String get close => 'Schließen';
 
   @override

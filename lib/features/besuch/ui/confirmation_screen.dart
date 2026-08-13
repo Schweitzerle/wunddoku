@@ -6,6 +6,7 @@ import 'confirmation_view_model.dart';
 import 'widgets/confirmation_row.dart';
 import 'widgets/confirmation_zones.dart';
 import 'widgets/provenance_sheet.dart';
+import 'widgets/visit_chrome.dart';
 
 /// The screen where the nurse checks what the system understood.
 ///
@@ -16,12 +17,16 @@ import 'widgets/provenance_sheet.dart';
 class ConfirmationScreen extends StatelessWidget {
   const ConfirmationScreen({
     required this.viewModel,
+    this.visitDate,
     this.onAccept,
     this.onBackToCapture,
     super.key,
   });
 
   final ConfirmationViewModel viewModel;
+
+  /// When the open visit was started, for the visit header.
+  final DateTime? visitDate;
 
   /// Called when the checked values are taken into the record.
   final VoidCallback? onAccept;
@@ -31,15 +36,36 @@ class ConfirmationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    // The band rather than a title: "Prüfen" as a word in a bar said where
+    // the screen was, not where the visit was.
+    final header = VisitHeader(
+      step: VisitStep.check,
+      visitDate: visitDate,
+      onBack: Navigator.of(context).canPop()
+          ? () => Navigator.of(context).maybePop()
+          : null,
+    );
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.confirmationTitle)),
-      body: ListenableBuilder(
-        listenable: viewModel,
-        builder: (context, _) => viewModel.hasRecording
-            ? _ConfirmationBody(viewModel: viewModel, onAccept: onAccept)
-            : _EmptyState(onBackToCapture: onBackToCapture),
+      body: SafeArea(
+        bottom: false,
+        child: ListenableBuilder(
+          listenable: viewModel,
+          builder: (context, _) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              header,
+              Expanded(
+                child: viewModel.hasRecording
+                    ? _ConfirmationBody(
+                        viewModel: viewModel,
+                        onAccept: onAccept,
+                      )
+                    : _EmptyState(onBackToCapture: onBackToCapture),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -80,6 +106,7 @@ class _ConfirmationBody extends StatelessWidget {
                   // re-sorts after a decision.
                   key: ValueKey(entry.slotId),
                   entry: entry,
+                  quote: entry.proposal?.span.textIn(viewModel.transcript),
                   onShowProvenance: () => _showProvenance(context, entry),
                   onAccept: () => viewModel.accept(entry.slotId),
                   onDiscard: () => viewModel.discard(entry.slotId),
@@ -187,31 +214,41 @@ class _AcceptBar extends StatelessWidget {
     final status = context.statusColors;
     final blocked = !viewModel.canAccept;
 
-    return SafeArea(
-      minimum: EdgeInsets.fromLTRB(
-        spacing.s16,
-        spacing.s24,
-        spacing.s16,
-        spacing.s16,
+    // The same ground and the same line as the thumb zone on the capture
+    // screen: two surface tones in this palette are 1.09:1 apart, which is
+    // no boundary at all in daylight.
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        border: Border(top: BorderSide(color: theme.colorScheme.outline)),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (blocked) ...[
-            Text(
-              l10n.confirmationBlocked(viewModel.blockingCount),
-              textAlign: TextAlign.center,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: status.entscheiden,
+      child: SafeArea(
+        top: false,
+        minimum: EdgeInsets.fromLTRB(
+          spacing.s16,
+          spacing.s16,
+          spacing.s16,
+          spacing.s16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (blocked) ...[
+              Text(
+                l10n.confirmationBlocked(viewModel.blockingCount),
+                textAlign: TextAlign.center,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: status.entscheiden,
+                ),
               ),
+              SizedBox(height: spacing.s8),
+            ],
+            FilledButton(
+              onPressed: blocked ? null : onAccept,
+              child: Text(l10n.confirmationAccept),
             ),
-            SizedBox(height: spacing.s8),
           ],
-          FilledButton(
-            onPressed: blocked ? null : onAccept,
-            child: Text(l10n.confirmationAccept),
-          ),
-        ],
+        ),
       ),
     );
   }

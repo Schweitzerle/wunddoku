@@ -16,6 +16,7 @@ import '../../../../shared/text/field_presentation.dart';
 class ConfirmationRow extends StatelessWidget {
   const ConfirmationRow({
     required this.entry,
+    required this.quote,
     required this.onShowProvenance,
     required this.onAccept,
     required this.onDiscard,
@@ -23,6 +24,13 @@ class ConfirmationRow extends StatelessWidget {
   });
 
   final ConfirmationEntry entry;
+
+  /// The words this value was heard in, or null when there are none.
+  ///
+  /// Under the value rather than behind a sheet: with gloves on, every grab
+  /// costs, and the wording is what settles the decision this card is asking
+  /// for.
+  final String? quote;
 
   /// Called when the nurse wants to see where the value came from.
   final VoidCallback onShowProvenance;
@@ -48,7 +56,9 @@ class ConfirmationRow extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(spacing.r20),
+          // r12 like every other card in the app: one radius per level,
+          // project-wide (`22-design-tokens.md`).
+          borderRadius: BorderRadius.circular(spacing.r12),
           border: Border.all(color: state.accent, width: 2),
         ),
         child: Column(
@@ -61,59 +71,93 @@ class ConfirmationRow extends StatelessWidget {
                 spacing.s12,
                 0,
               ),
-              child: Row(
-                children: [
-                  ExcludeSemantics(
-                    child: Icon(state.icon, color: state.accent, size: 20),
-                  ),
-                  SizedBox(width: spacing.s8),
-                  Expanded(
-                    child: ExcludeSemantics(
-                      child: Text(
-                        label.toUpperCase(),
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: state.accent,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final legend = theme.textTheme.labelMedium?.copyWith(
+                    color: state.accent,
+                  );
+                  // The tier as a word beside the field name while both fit.
+                  // At twice the text size they were squeezed into each
+                  // other and both broke mid-word; the tier still reaches
+                  // the eye through the icon and the border, and the screen
+                  // reader through the row's label.
+                  final needed =
+                      _width(context, label.toUpperCase(), legend) +
+                      _width(context, state.stateWord.toUpperCase(), legend) +
+                      spacing.s16;
+                  final both = needed + 20 + spacing.s8 <= constraints.maxWidth;
+
+                  return Row(
+                    children: [
+                      ExcludeSemantics(
+                        child: Icon(state.icon, color: state.accent, size: 20),
+                      ),
+                      SizedBox(width: spacing.s8),
+                      Expanded(
+                        child: ExcludeSemantics(
+                          child: Text(label.toUpperCase(), style: legend),
                         ),
                       ),
-                    ),
-                  ),
-                  _RowActions(onAccept: onAccept, onDiscard: onDiscard),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: onShowProvenance,
-              borderRadius: BorderRadius.circular(spacing.r20),
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(
-                  spacing.s20,
-                  spacing.s4,
-                  spacing.s20,
-                  spacing.s16,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ExcludeSemantics(
-                        child: Text(
-                          state.valueText,
-                          style: theme.textTheme.displayMedium?.copyWith(
-                            color: state.valueColour(theme.colorScheme),
+                      if (both)
+                        ExcludeSemantics(
+                          child: Text(
+                            state.stateWord.toUpperCase(),
+                            style: legend,
                           ),
                         ),
-                      ),
-                    ),
-                    Semantics(
-                      label: l10n.actionShowProvenance,
-                      button: true,
-                      child: Icon(
-                        Icons.subject,
-                        size: 20,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+                    ],
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                spacing.s20,
+                spacing.s4,
+                spacing.s20,
+                0,
+              ),
+              child: ExcludeSemantics(
+                child: Text(
+                  state.valueText,
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    color: state.valueColour(theme.colorScheme),
+                  ),
                 ),
+              ),
+            ),
+            if (quote != null)
+              Semantics(
+                label: l10n.actionShowProvenance,
+                button: true,
+                excludeSemantics: true,
+                child: InkWell(
+                  onTap: onShowProvenance,
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      spacing.s20,
+                      spacing.s4,
+                      spacing.s20,
+                      0,
+                    ),
+                    child: Text(
+                      l10n.confirmationQuote(quote!),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: EdgeInsets.all(spacing.s16),
+              child: _RowActions(
+                acceptLabel: state.isBlocking
+                    ? l10n.actionAcceptAnyway
+                    : l10n.actionConfirmShort,
+                onAccept: onAccept,
+                onDiscard: onDiscard,
               ),
             ),
           ],
@@ -123,32 +167,91 @@ class ConfirmationRow extends StatelessWidget {
   }
 }
 
-/// The accept/discard pair shown on rows that still need a decision.
+/// The decision, as two areas a glove can hit.
+///
+/// The pair used to be two 24 dp icon buttons in the corner of the card. A
+/// decision that changes what reaches the record may not sit on the smallest
+/// target on the screen, and a tick without a word is a guess about what it
+/// does.
 class _RowActions extends StatelessWidget {
-  const _RowActions({required this.onAccept, required this.onDiscard});
+  const _RowActions({
+    required this.acceptLabel,
+    required this.onAccept,
+    required this.onDiscard,
+  });
 
+  final String acceptLabel;
   final VoidCallback onAccept;
   final VoidCallback onDiscard;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          onPressed: onDiscard,
-          icon: const Icon(Icons.close),
-          tooltip: l10n.actionDiscardValue,
-        ),
-        IconButton(
-          onPressed: onAccept,
-          icon: const Icon(Icons.check),
-          tooltip: l10n.actionAcceptValue,
-        ),
-      ],
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    final discard = OutlinedButton(
+      onPressed: onDiscard,
+      style: OutlinedButton.styleFrom(
+        minimumSize: Size.fromHeight(spacing.comfortTouch),
+      ),
+      child: Text(l10n.actionDiscardShort),
+    );
+    final accept = FilledButton(
+      onPressed: onAccept,
+      style: FilledButton.styleFrom(
+        minimumSize: Size.fromHeight(spacing.comfortTouch),
+      ),
+      child: Text(acceptLabel),
+    );
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Side by side while both words fit; stacked when they do not.
+        // "Trotzdem übernehmen" at twice the text size is wider than half a
+        // narrow phone, and a decision may not be read as a stump.
+        final side = (constraints.maxWidth - spacing.s8) / 2;
+        final fits = [l10n.actionDiscardShort, acceptLabel].every(
+          (label) => _width(context, label, theme.textTheme.labelLarge) +
+                  2 * spacing.s16 <=
+              side,
+        );
+
+        if (!fits) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            // Discard on top, keeping the reading order of the row it
+            // replaces; the affirmative sits nearer the thumb.
+            children: [discard, SizedBox(height: spacing.s8), accept],
+          );
+        }
+
+        return Row(
+          children: [
+            Expanded(child: discard),
+            SizedBox(width: spacing.s8),
+            Expanded(child: accept),
+          ],
+        );
+      },
     );
   }
+
+}
+
+/// Width of [text] as it will be laid out here.
+///
+/// Measured rather than derived from the text scale: the answer depends on
+/// the width as much as on the size.
+double _width(BuildContext context, String text, TextStyle? style) {
+  final painter = TextPainter(
+    text: TextSpan(text: text, style: style),
+    textDirection: Directionality.of(context),
+    textScaler: MediaQuery.textScalerOf(context),
+  )..layout();
+  final width = painter.width;
+  painter.dispose();
+  return width;
 }
 
 /// Everything the row needs to draw itself, derived once per build.

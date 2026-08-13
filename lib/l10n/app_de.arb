@@ -183,6 +183,27 @@
   "@actionAcceptValue": {
     "description": "Aktion in der Feldzeile: einen unsicheren Wert bewusst bestätigen."
   },
+  "actionDiscardShort": "Verwerfen",
+  "@actionDiscardShort": {
+    "description": "Beschriftung der Verwerfen-Fläche auf einer Prüfkarte. Kurzform, weil sie neben einer zweiten Fläche steht; die volle Formulierung trägt actionDiscardValue als Semantik-Label."
+  },
+  "actionConfirmShort": "Stimmt",
+  "@actionConfirmShort": {
+    "description": "Beschriftung der Bestätigen-Fläche bei einem Wert mit mittlerer Sicherheit. Bewusst nicht „Übernehmen“ — so heißt die Primäraktion des Screens, und zwei gleiche Wörter auf einem Bildschirm meinen sonst dasselbe."
+  },
+  "actionAcceptAnyway": "Trotzdem übernehmen",
+  "@actionAcceptAnyway": {
+    "description": "Beschriftung der Bestätigen-Fläche bei einem Wert mit niedriger Sicherheit. Sagt, dass hier bewusst gegen die Unsicherheit entschieden wird."
+  },
+  "confirmationQuote": "„… {text} …“",
+  "@confirmationQuote": {
+    "description": "Der Ausschnitt aus dem Wortlaut unter dem Wert. Die Auslassungspunkte sagen, dass es ein Fragment ist und kein ganzer Satz.",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
   "close": "Schließen",
   "@close": {
     "description": "Schließt einen Dialog oder ein Blatt."

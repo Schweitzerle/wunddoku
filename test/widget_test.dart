@@ -239,7 +239,7 @@ void main() {
     // The example recording says "Tiefe fünfzig" — half a metre of wound
     // depth. The interpreter flags it, and the nurse throws it away.
     // The blocking row sorts to the top, so its discard button is the first.
-    await tester.tap(find.byIcon(Icons.close).first);
+    await tester.tap(find.text('Verwerfen').first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Übernehmen'));
     await tester.pumpAndSettle();
