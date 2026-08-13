@@ -18,13 +18,17 @@ class AppMotion extends ThemeExtension<AppMotion> {
   SpringDescription get spatialFast =>
       const SpringDescription(mass: 1, stiffness: 700, damping: 34);
 
-  /// Colour and opacity state changes.
-  Duration get effectsDefault => const Duration(milliseconds: 200);
+  /// Colour and opacity state changes: fading in and out.
+  Duration get effectsDefault => const Duration(milliseconds: 250);
   Curve get effectsCurve => Easing.standard;
 
-  /// Tap acknowledgement.
-  Duration get kurz => const Duration(milliseconds: 120);
+  /// Tap acknowledgement and other control feedback.
+  Duration get kurz => const Duration(milliseconds: 150);
   Curve get kurzCurve => Easing.standardAccelerate;
+
+  /// A change of screen.
+  Duration get uebergang => const Duration(milliseconds: 400);
+  Curve get uebergangCurve => Easing.emphasizedDecelerate;
 
   @override
   AppMotion copyWith() => this;

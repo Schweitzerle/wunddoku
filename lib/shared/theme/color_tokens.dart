@@ -60,11 +60,11 @@ class StatusColors extends ThemeExtension<StatusColors> {
   );
 
   static const dark = StatusColors(
-    entscheiden: Color(0xFFF0B4AC),
+    entscheiden: Color(0xFFF2B8B5),
     pruefen: Color(0xFFEFC069),
-    sicher: Color(0xFFEDE7DF),
-    luecke: Color(0xFF938C82),
-    offline: Color(0xFFB7AFA4),
+    sicher: Color(0xFFE3EDEF),
+    luecke: Color(0xFF8FA7AD),
+    offline: Color(0xFFA9BFC4),
     mediaGround: Color(0xFF3A3D40),
     onMediaGround: Color(0xFFE6E8EA),
   );

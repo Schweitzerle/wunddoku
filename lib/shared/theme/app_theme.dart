@@ -12,12 +12,15 @@ abstract final class AppTheme {
   /// Seed: muted blue-green, far from every tissue colour so the chrome
   /// never tints the perception of a wound photo.
   ///
-  /// Everything around it is warm and near-neutral. A wound assessment
-  /// distinguishes four colour impressions — black, yellow, red, pink — and a
-  /// cool grey interface makes reddened skin read colder than it is. The
-  /// screen is also held next to the patient, whose own wound is on it: it
-  /// should look like care, not like a diagnostic instrument.
-  static const seed = Color(0xFF0F5F66);
+  /// The palette is the checked one for "Ruhiges Fachwerkzeug"
+  /// (`/eps:ui-gestaltung`, `zahlen-und-paletten.md`): muted, cool, calm, for
+  /// a context where the user is under pressure and the screen is held next
+  /// to the patient whose wound is on it.
+  ///
+  /// The warmth a tissue colour needs is not the interface's job — wound
+  /// photos sit on `mediaGround`, which is its own token and follows neither
+  /// theme.
+  static const seed = Color(0xFF0F6E7E);
 
   /// The family both themes are built with.
   static const font = AppFontFamily.geist;
@@ -25,30 +28,30 @@ abstract final class AppTheme {
   /// The normal case: daylight, a stranger's flat, often a window.
   static ThemeData light() => _build(
     brightness: Brightness.light,
-    surface: const Color(0xFFFCFAF7),
-    surfaceContainer: const Color(0xFFF4F0EA),
-    surfaceContainerHighest: const Color(0xFFEAE4DC),
-    onSurface: const Color(0xFF1C1A17),
-    onSurfaceVariant: const Color(0xFF57514A),
-    outline: const Color(0xFF8E877F),
-    primary: const Color(0xFF0F5F66),
+    surface: const Color(0xFFF7FAFA),
+    surfaceContainer: const Color(0xFFEDF2F3),
+    surfaceContainerHighest: const Color(0xFFE2EAEB),
+    onSurface: const Color(0xFF0F3B45),
+    onSurfaceVariant: const Color(0xFF3E5C63),
+    outline: const Color(0xFF728E95),
+    primary: const Color(0xFF0F6E7E),
     onPrimary: const Color(0xFFFFFFFF),
-    error: const Color(0xFFA32017),
+    error: const Color(0xFFB3261E),
     status: StatusColors.light,
   );
 
   /// For the night shift, and for a bedroom with the blinds down.
   static ThemeData dark() => _build(
     brightness: Brightness.dark,
-    surface: const Color(0xFF16140F),
-    surfaceContainer: const Color(0xFF201D18),
-    surfaceContainerHighest: const Color(0xFF2B2721),
-    onSurface: const Color(0xFFEDE7DF),
-    onSurfaceVariant: const Color(0xFFB7AFA4),
-    outline: const Color(0xFF8A837A),
-    primary: const Color(0xFF6FC5C9),
-    onPrimary: const Color(0xFF08302F),
-    error: const Color(0xFFF0B4AC),
+    surface: const Color(0xFF101617),
+    surfaceContainer: const Color(0xFF1A2224),
+    surfaceContainerHighest: const Color(0xFF202A2C),
+    onSurface: const Color(0xFFE3EDEF),
+    onSurfaceVariant: const Color(0xFFA9BFC4),
+    outline: const Color(0xFF778F95),
+    primary: const Color(0xFF7FD1DE),
+    onPrimary: const Color(0xFF04262D),
+    error: const Color(0xFFF2B8B5),
     status: StatusColors.dark,
   );
 

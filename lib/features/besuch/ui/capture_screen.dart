@@ -291,29 +291,32 @@ class _Idle extends StatelessWidget {
         // there collides with the title and the action.
         if (address != null) ...[
           _Address(text: address!),
-          SizedBox(height: spacing.s16),
+          SizedBox(height: spacing.s24),
         ],
         // On a visit under way the standing leads: the first thing a nurse
         // coming back from an interruption needs is where she left off.
         if (!standing.isEmpty) ...[
           _StandingCard(standing: standing),
-          SizedBox(height: spacing.s16),
+          SizedBox(height: spacing.s24),
         ],
         _Hint(text: l10n.captureIdleHint),
         if (standing.isEmpty) ...[
-          SizedBox(height: spacing.s16),
+          SizedBox(height: spacing.s24),
           Text(
             l10n.captureExamplesHeading,
             style: theme.textTheme.labelMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
+          // Inside the group half of what separates the groups: spacing is
+          // the cheapest grouping there is, and equal padding everywhere is
+          // a surface without structure (`22-design-tokens.md`).
           SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleOne),
           SizedBox(height: spacing.s8),
           _Example(text: l10n.captureExampleTwo),
         ],
-        SizedBox(height: spacing.s16),
+        SizedBox(height: spacing.s32),
         _WayGroup(
           ways: [
             (Icons.checklist, l10n.captureUseCards, onUseCards),

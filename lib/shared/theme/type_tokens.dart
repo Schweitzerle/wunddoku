@@ -57,13 +57,23 @@ TextStyle _style({
 ///
 /// | Token | Slot | Use |
 /// |---|---|---|
-/// | display 40/700 | displayMedium | the measured value in a row |
-/// | headline 28/600 | headlineMedium | screen title |
+/// Four sizes carry a screen — 40 / 30 / 20 / 16 / 13 exist, but no single
+/// surface uses more than four of them (`22-design-tokens.md`). The ratio
+/// between screen title and running text is 30 : 16 = 1,875, above the 1,75
+/// the rules ask for: with a muted palette the size contrast has to do the
+/// work colour is not doing here.
+///
+/// | Token | Slot | Use |
+/// |---|---|---|
+/// | display 40/700 | displayMedium | a figure that has to be read across the room |
+/// | headline 30/700 | headlineMedium | screen title |
+/// | headline 30/700 | headlineLarge | same size, for a figure beside a title |
+/// | section 22/600 | headlineSmall, titleLarge | section heading |
 /// | title 20/600 | titleMedium | card heading |
-/// | body 17/400 | bodyMedium | running text, transcript |
-/// | bodyStrong 17/600 | bodyLarge | value in a compact row |
+/// | body 16/400 | bodyMedium | running text, transcript |
+/// | bodyStrong 16/600 | bodyLarge | value in a compact row |
 /// | label 13/600 caps | labelMedium | field name above a value |
-/// | labelPlain 13/500 | labelSmall | secondary annotations |
+/// | labelPlain 13/500 | labelSmall, bodySmall | secondary annotations |
 TextTheme buildTextTheme(AppFontFamily font) {
   final family = font.family;
   return TextTheme(
@@ -77,38 +87,38 @@ TextTheme buildTextTheme(AppFontFamily font) {
     ),
     headlineMedium: _style(
       family: family,
-      size: 28,
+      size: 30,
       height: 1.15,
-      weight: 600,
-      letterSpacing: -0.4,
+      weight: 700,
+      letterSpacing: -0.5,
     ),
     // Roles Material widgets and screens reach for that the scale did not
     // fill. An unfilled role falls back to the framework default in another
     // family — invisible on a device with a system font, obvious in a golden.
     headlineLarge: _style(
       family: family,
-      size: 34,
-      height: 1.10,
+      size: 30,
+      height: 1.15,
       weight: 700,
-      letterSpacing: -0.6,
+      letterSpacing: -0.5,
       tabular: true,
     ),
     headlineSmall: _style(
       family: family,
-      size: 23,
-      height: 1.20,
+      size: 22,
+      height: 1.25,
       weight: 600,
       letterSpacing: -0.2,
     ),
     titleLarge: _style(family: family, size: 22, height: 1.25, weight: 600),
-    labelLarge: _style(family: family, size: 15, height: 1.25, weight: 600),
+    labelLarge: _style(family: family, size: 16, height: 1.25, weight: 600),
     titleMedium: _style(family: family, size: 20, height: 1.30, weight: 600),
-    bodySmall: _style(family: family, size: 14, height: 1.40, weight: 400),
-    bodyMedium: _style(family: family, size: 17, height: 1.45, weight: 400),
+    bodySmall: _style(family: family, size: 13, height: 1.40, weight: 500),
+    bodyMedium: _style(family: family, size: 16, height: 1.50, weight: 400),
     bodyLarge: _style(
       family: family,
-      size: 17,
-      height: 1.45,
+      size: 16,
+      height: 1.50,
       weight: 600,
       tabular: true,
     ),
