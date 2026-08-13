@@ -3,7 +3,7 @@
 > Wird nach jedem Arbeitspaket nachgezogen. Repo plus diese Datei müssen reichen,
 > damit eine frische Session weitermacht.
 
-**Zuletzt aktualisiert:** 2026-08-12
+**Zuletzt aktualisiert:** 2026-08-13
 
 ## Wo wir stehen
 
@@ -41,12 +41,66 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. UI-Überarbeitung mit Julians Gestaltungsideen — der Stand ist funktional
-   vollständig, aber optisch generisch. Dabei mit erledigen: der Titel „Befund
-   sprechen" wird abgeschnitten, seit der Korridor einen Zurück-Pfeil hat.
+1. Weiter durch den Entwurf, in der festgelegten Reihenfolge: 1a/1b Patienten
+   und Wunden, 1e Prüfen, 1i Abschluss, 1j Verlauf, zuletzt 1f/1g/1h Karten,
+   Foto, Markierung. Das Besuchsband (`VisitStep`, `VisitHeader`) steht bereit
+   und muss auf 1e, 1g/1h und 1i mit dem jeweiligen Schritt gesetzt werden.
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
+
+## Erledigt (Befund sprechen gegen den Entwurf, 2026-08-13)
+
+Screen 1c aus `docs/design/screens/` übernommen, aber nicht nachgebaut: der
+Entwurf ist in HTML entstanden und nie gegen 200 % Textskalierung oder 320 dp
+gelaufen. Drei Stellen tragen dort nicht und sind anders gelöst.
+
+- **Besuchsband** (`VisitStep`, `VisitBand`, `VisitHeader` in
+  `features/besuch/ui/widgets/visit_chrome.dart`): vier Segmente, gefüllt bis
+  zum aktuellen Schritt — der Fortschritt hängt damit an der **Position**, nicht
+  allein an der Farbe. Ein Semantik-Knoten für das ganze Band.
+- **Kopfzeile aus der AppBar in den Body.** 56 dp fest tragen keine beschriftete
+  Aktion bei großer Schrift. „Abschließen" steht jetzt als Wort da; ein Haken
+  ist für „Besuch beenden" eine Ratesache.
+- **Drei gleichwertige Wege als drei Kacheln** über dem 96-dp-Ziel, in einer
+  abgesetzten Zone am unteren Rand.
+- **Beispielsätze bleiben stehen**, auch wenn der Besuch läuft. Vorher wichen
+  sie dem Stand und hinterließen ein halbes leeres Telefondisplay zwischen Akte
+  und Daumenzone — genau der Leerraum, den Julian am Gerät bemängelt hat.
+
+### Wo der Entwurf nicht trägt, und was stattdessen gilt
+
+- **Vier Bandbeschriftungen passen bei 200 % nicht auf eine Zeile.** Gemessen
+  statt geschätzt (`TextPainter` im `LayoutBuilder`); jenseits der Passung steht
+  nur noch der aktuelle Schritt da. Die Segmente tragen die Position weiter.
+- **Drei Kacheln nebeneinander brechen bei 200 % auf 320 dp mitten im Wort**
+  („Verla / uf"). Jenseits der Passung werden sie zur Liste und wandern aus der
+  Daumenzone in den Lesebereich: bei doppelter Schrift gewinnt das eine Ziel,
+  das sich nicht verschieben darf.
+- **Das Datum in der Kopfzeile steht ganz da oder gar nicht.** „Besu…" liest
+  sich wie ein abgeschnittener Wert; die Aktion daneben braucht den Platz mehr.
+- **Kacheln mit Umriss statt mit Füllung.** In dieser Palette liegen zwei
+  Flächentöne nie weiter als 1,2:1 auseinander — eine getönte Fläche sagt drinnen
+  „Ziel" und in der Sonne nichts. Der Umriss (`outline`, 1,5 px) liegt bei
+  3,06:1 auf `surface`.
+- **Radius 20 auf Karten nicht übernommen.** Die Richtung in `CLAUDE.md` legt
+  12 auf Karten und 8 auf Feldern fest; r20 bleibt der oberen Kante der
+  Daumenzone vorbehalten.
+- **Offline-Anzeige bewusst nicht übernommen** (Vorgabe von Julian): Die App ist
+  offline-first, kein Netz ist der Normalzustand, und Normalzustände werden
+  nicht dauerhaft angezeigt.
+
+Nebenbei: `VisitRepository.startedAt` liest das Besuchsdatum zurück, damit ein
+am nächsten Morgen fortgesetzter Entwurf nicht wie der heutige Besuch aussieht.
+`OutlinedButton` bekommt projektweit 48 dp Mindesthöhe statt Materials 40.
+
+**298 Tests grün**, Analyzer sauber, Goldens in Telefonmaß erneuert und die
+Bilddiffs angesehen. Noch nicht auf dem Gerät gelaufen.
+
+**Offen an diesem Screen:** der Aufnahmezustand (Entwurf 1d) ist unverändert —
+Timer und Pegel kleben oben, darunter steht das halbe Display leer. Der Entwurf
+schaltet diesen Zustand bewusst dunkel und zeigt „Bisher verstanden" als Chips;
+beides ist noch nicht entschieden.
 
 ## Erledigt (der Weg in den Besuch, 2026-08-12)
 
