@@ -106,6 +106,41 @@ Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
 
+## Erledigt (Prüfen gegen den Entwurf, 2026-08-13)
+
+Screen 1e, der Kern der Überarbeitung: Übernehmen und Verwerfen waren zwei
+24-dp-Icons in der Kartenecke. Eine Entscheidung, die ändert, was in die Akte
+geht, darf nicht auf der kleinsten Fläche des Bildschirms liegen, und ein Haken
+ohne Wort ist eine Vermutung darüber, was er tut. Jetzt zwei 56-dp-Flächen mit
+Wort — „Verwerfen" gegen „Stimmt", bei einem sperrenden Wert „Trotzdem
+übernehmen". Bewusst nicht „Übernehmen": so heißt die Primäraktion des Screens.
+
+- **Der Wortlaut steht unter dem Wert**, nicht mehr hinter einem Blatt. Mit
+  Handschuhen kostet jeder Griff, und das Zitat ist das, was die Entscheidung
+  entscheidet. Antippen öffnet weiterhin das volle Transkript.
+- Besuchsband statt Bildschirmtitel; die Übernehmen-Leiste bekommt denselben
+  Untergrund und dieselbe Haarlinie wie die Daumenzone auf 1c.
+- Kartenradius 20 → 12, ein Radiusmaß je Ebene.
+- **Goldens laufen jetzt in Telefonmaß** statt auf 800×600.
+
+**Nicht übernommen:** Der Entwurf beschriftet die zweite Fläche mit „Eingeben"
+beziehungsweise „Ändern". Dafür gibt es keinen Weg — Werte werden im
+Kartenmodus erfasst. Aus einem verworfenen Vorschlag direkt in die Karte
+dieses Feldes zu springen ist die richtige Funktion und ist **offen**.
+
+**Grenze bei 200 % auf 320 dp:** Das Tier-Wort gibt seinen Platz neben dem
+Feldnamen auf (Icon, Rahmen und Semantik-Label tragen es weiter). Der sperrende
+Wert „Entscheiden" bricht mitten im Wort — ein einzelnes langes Wort lässt sich
+nicht anders brechen, ohne einen Teil zu verlieren, und das wäre schlimmer.
+
+### Beleg auf dem Gerät
+
+`doc/screenshots/pruefen-geraet.png`, echter Durchlauf mit einer der
+Beispielaufnahmen. Der Erkenner gab „Excusat gering" und „seriös" zurück; der
+Katalogabgleich hat beides gefangen, und das Zitat unter dem Wert **zeigt die
+verstümmelten Wörter**. Genau dafür steht es dort: die Pflegekraft sieht, dass
+das Modell sich verhört hat, und bestätigt trotzdem — oder eben nicht.
+
 ## Erledigt (Patienten und Wunden gegen den Entwurf, 2026-08-13)
 
 Screens 1a und 1b. Titel in den Body, Suchfeld 56 dp gefüllt, Zeilen als
