@@ -1003,6 +1003,30 @@
   "@captureExamplesHeading": {
     "description": "Überschrift über den Beispielsätzen, die zeigen, wie ein gesprochener Befund klingt."
   },
+  "captureTopicMeasurements": "Maße",
+  "@captureTopicMeasurements": {
+    "description": "Eines der vier Themen, die während der Aufnahme als Gedächtnisstütze dastehen. Fachbegriff des Kunden, wird nicht umformuliert."
+  },
+  "captureTopicWoundBed": "Wundgrund",
+  "@captureTopicWoundBed": {
+    "description": "Thema während der Aufnahme, siehe captureTopicMeasurements."
+  },
+  "captureTopicExudate": "Exsudat",
+  "@captureTopicExudate": {
+    "description": "Thema während der Aufnahme, siehe captureTopicMeasurements."
+  },
+  "captureTopicPain": "Schmerz",
+  "@captureTopicPain": {
+    "description": "Thema während der Aufnahme, siehe captureTopicMeasurements."
+  },
+  "captureTopicsHeading": "Sprich der Reihe nach oder durcheinander",
+  "@captureTopicsHeading": {
+    "description": "Überschrift über den vier Themen im Aufnahmezustand. Sagt zugleich, dass die Reihenfolge frei ist."
+  },
+  "captureMicrophoneOpen": "Mikrofon offen",
+  "@captureMicrophoneOpen": {
+    "description": "Zusatz neben „Aufnahme läuft“. Der Patient sitzt daneben und muss von der Türschwelle aus sehen können, dass aufgenommen wird."
+  },
   "captureWayCards": "Karten",
   "@captureWayCards": {
     "description": "Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label."

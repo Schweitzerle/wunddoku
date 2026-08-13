@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:wunddoku/data/capture/audio_recorder.dart';
 import 'package:wunddoku/domain/model/visit_draft.dart';
@@ -531,6 +532,64 @@ void main() {
       await expectLater(
         find.byType(CaptureScreen),
         matchesGoldenFile('goldens/capture_standing_text200.png'),
+      );
+    });
+
+    testWidgets('the one target under the thumb, pressed', (tester) async {
+      // The state a glove spends the most time in and the only feedback that
+      // the press registered — and it was in no golden until now.
+      await useScreen(tester);
+      await tester.pumpWidget(
+        TestApp(child: CaptureScreen(viewModel: model())),
+      );
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Aufnahme starten')),
+      );
+      // A fixed number of ticks: the ink is still travelling, and a settled
+      // splash would be a different picture every run.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
+
+      await expectLater(
+        find.byType(CaptureScreen),
+        matchesGoldenFile('goldens/capture_pressed.png'),
+      );
+
+      // Cancelled rather than released: lifting the finger would start a
+      // recording, and its timer would outlive the test.
+      await gesture.cancel();
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('the ways, keyboard focus on the first tile', (tester) async {
+      // Focus is drawn by Material by default; whether the default survives
+      // this palette is exactly what nobody had looked at.
+      FocusManager.instance.highlightStrategy =
+          FocusHighlightStrategy.alwaysTraditional;
+      addTearDown(
+        () => FocusManager.instance.highlightStrategy =
+            FocusHighlightStrategy.automatic,
+      );
+
+      await useScreen(tester);
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            onUseCards: () {},
+            onTakePhoto: () {},
+            onShowHistory: () {},
+          ),
+        ),
+      );
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byType(CaptureScreen),
+        matchesGoldenFile('goldens/capture_focused.png'),
       );
     });
 

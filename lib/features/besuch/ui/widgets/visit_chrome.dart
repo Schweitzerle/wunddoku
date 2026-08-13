@@ -188,35 +188,44 @@ class VisitHeader extends StatelessWidget {
     final spacing = context.spacing;
     final date = visitDate;
 
+    // With nothing in it the row was 48 dp of empty screen above the band.
+    final hasRow = onBack != null || onFinish != null || date != null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ConstrainedBox(
-          constraints: BoxConstraints(minHeight: spacing.minTouch),
-          child: Row(
-            children: [
-              if (onBack != null)
-                BackButton(onPressed: onBack)
-              else
-                SizedBox(width: spacing.s16),
-              Expanded(
-                child: date == null
-                    ? const SizedBox.shrink()
-                    : _WhichVisit(date: date),
-              ),
-              if (onFinish != null)
-                Padding(
-                  padding: EdgeInsets.only(right: spacing.s16),
-                  child: OutlinedButton(
-                    onPressed: onFinish,
-                    child: Text(l10n.captureFinishShort),
+        if (hasRow)
+          ConstrainedBox(
+            constraints: BoxConstraints(minHeight: spacing.minTouch),
+            child: Padding(
+              // At 200 % the outlined action grows past the top edge of the
+              // screen and loses the arc of its stadium shape.
+              padding: EdgeInsets.only(top: spacing.s8),
+              child: Row(
+                children: [
+                  if (onBack != null)
+                    BackButton(onPressed: onBack)
+                  else
+                    SizedBox(width: spacing.s16),
+                  Expanded(
+                    child: date == null
+                        ? const SizedBox.shrink()
+                        : _WhichVisit(date: date),
                   ),
-                )
-              else
-                SizedBox(width: spacing.s16),
-            ],
+                  if (onFinish != null)
+                    Padding(
+                      padding: EdgeInsets.only(right: spacing.s16),
+                      child: OutlinedButton(
+                        onPressed: onFinish,
+                        child: Text(l10n.captureFinishShort),
+                      ),
+                    )
+                  else
+                    SizedBox(width: spacing.s16),
+                ],
+              ),
+            ),
           ),
-        ),
         SizedBox(height: spacing.s8),
         VisitBand(current: step),
       ],

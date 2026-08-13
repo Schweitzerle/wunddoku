@@ -138,6 +138,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           ),
           CaptureInterpreting() => const _Interpreting(),
           final CaptureRecording state => _Recording(
+            header: header,
             state: state,
             onStop: _toggleRecording,
           ),
@@ -207,23 +208,42 @@ class _CaptureLayout extends StatelessWidget {
               // than at the end of the screen. On a real phone that
               // end-of-screen hole was the largest thing on it.
               Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    spacing.s16,
-                    spacing.s24,
-                    spacing.s16,
-                    spacing.s24,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      ...children,
-                      if (ways.isNotEmpty && !across) ...[
-                        SizedBox(height: spacing.s24),
-                        _WayTiles(ways: ways, across: false),
-                      ],
-                    ],
-                  ),
+                child: LayoutBuilder(
+                  builder: (context, viewport) {
+                    final padding = EdgeInsets.fromLTRB(
+                      spacing.s16,
+                      spacing.s24,
+                      spacing.s16,
+                      spacing.s24,
+                    );
+
+                    return SingleChildScrollView(
+                      padding: padding,
+                      child: ConstrainedBox(
+                        // The content fills the viewport even when it is
+                        // shorter, so a [Spacer] among the children turns
+                        // what used to be dead space at the bottom into the
+                        // gap between two groups. Costs one intrinsic pass
+                        // over a handful of leaves; this is a screen, not a
+                        // list (`25-performance.md`).
+                        constraints: BoxConstraints(
+                          minHeight: viewport.maxHeight - padding.vertical,
+                        ),
+                        child: IntrinsicHeight(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              ...children,
+                              if (ways.isNotEmpty && !across) ...[
+                                SizedBox(height: spacing.s24),
+                                _WayTiles(ways: ways, across: false),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
               // What is touched sits low and does not scroll away: the one
@@ -257,9 +277,15 @@ class _Dock extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(spacing.r20),
+        color: theme.colorScheme.surfaceContainerHighest,
+        // A line, not a tone: the two surfaces are 1.09:1 apart, which is
+        // present indoors and absent in sunlight — and the standing card
+        // above carries the same fill, so without the line the two ran into
+        // each other at 200 % text. The outline is 3.4:1 on the surface.
+        // Square, because this is a fixed bar and a rounded top edge claims
+        // a sheet that floats over something. Nothing floats here.
+        border: Border(
+          top: BorderSide(color: theme.colorScheme.outline),
         ),
       ),
       padding: EdgeInsets.all(spacing.s16),
@@ -397,6 +423,12 @@ class _Idle extends StatelessWidget {
           SizedBox(height: spacing.s24),
         ],
         _Hint(text: l10n.captureIdleHint),
+        // Whatever room is left over lands here rather than at the bottom of
+        // the screen: the examples then stand a constant 24 dp above the
+        // thumb zone, next to the button they describe, at every fill level.
+        // When the content is taller than the viewport this collapses to
+        // nothing and the screen simply scrolls.
+        const Spacer(),
         SizedBox(height: spacing.s24),
         Text(
           l10n.captureExamplesHeading,
@@ -573,7 +605,7 @@ class _WayTiles extends StatelessWidget {
 /// Speech is the shortcut, never the only way (`23-a11y.md`). The word on the
 /// tile is short because three of them share a phone width; the sentence a
 /// screen reader reads out is the full one.
-class _WayTile extends StatelessWidget {
+class _WayTile extends StatefulWidget {
   const _WayTile({
     required this.icon,
     required this.label,
@@ -591,9 +623,19 @@ class _WayTile extends StatelessWidget {
   final bool across;
 
   @override
+  State<_WayTile> createState() => _WayTileState();
+}
+
+class _WayTileState extends State<_WayTile> {
+  bool _focused = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
+    final icon = widget.icon;
+    final across = widget.across;
+    final onTap = widget.onTap;
     final enabled = onTap != null;
     final foreground = enabled
         ? theme.colorScheme.onSurface
@@ -602,27 +644,37 @@ class _WayTile extends StatelessWidget {
     final glyph = Icon(icon, size: 22, color: foreground);
     final text = ExcludeSemantics(
       child: Text(
-        label,
+        widget.label,
         textAlign: across ? TextAlign.center : TextAlign.start,
         style: theme.textTheme.labelSmall?.copyWith(color: foreground),
       ),
     );
 
     return Semantics(
-      label: semanticsLabel,
+      label: widget.semanticsLabel,
       child: Material(
         color: theme.colorScheme.surface,
         // An outline, not a lighter fill: in this palette no two surface
         // tones are more than 1.2:1 apart, so a tinted panel says "target"
         // indoors and nothing at all in sunlight. The outline clears the 3:1
         // that a control boundary owes (`23-a11y.md`).
+        //
+        // Focus moves the same edge rather than adding Material's tinted
+        // overlay — for the same reason: the default overlay changes the
+        // fill by about 1.1:1 here and is not an indicator anyone can see.
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(spacing.r12),
-          side: BorderSide(color: theme.colorScheme.outline, width: 1.5),
+          side: BorderSide(
+            color: _focused
+                ? theme.colorScheme.primary
+                : theme.colorScheme.outline,
+            width: _focused ? 3 : 1.5,
+          ),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
+          onFocusChange: (focused) => setState(() => _focused = focused),
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: spacing.s64),
             child: Padding(
@@ -750,13 +802,14 @@ class _Metric extends StatelessWidget {
               if (value.isNotEmpty)
                 Text(
                   value,
-                  style:
-                      (emphasised
-                              ? theme.textTheme.headlineLarge
-                              : theme.textTheme.headlineMedium)
-                          ?.copyWith(
-                            color: colour ?? theme.colorScheme.onSurface,
-                          ),
+                  // All three figures are the same size. A larger one sat on
+                  // a lower baseline, so its label hung 4 dp below the other
+                  // two and the card's bottom edge frayed — and it was a
+                  // fifth type size on a screen the rules allow four on.
+                  // The emphasis is carried by colour and by the icon.
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: colour ?? theme.colorScheme.onSurface,
+                  ),
                 ),
               if (badge != null) ...[
                 if (value.isNotEmpty) SizedBox(width: spacing.s4),
@@ -793,7 +846,9 @@ class _Example extends StatelessWidget {
 
     // A spoken sentence, set as one: the border on the speaking side rather
     // than a box all around, so it reads as a quotation and not as another
-    // card to press.
+    // card to press. In the outline colour, not the accent — the rule is one
+    // accent per screen, and these two rules carry neither an action nor a
+    // state.
     return Container(
       padding: EdgeInsets.fromLTRB(
         spacing.s12,
@@ -803,7 +858,7 @@ class _Example extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         border: Border(
-          left: BorderSide(color: theme.colorScheme.primary, width: 3),
+          left: BorderSide(color: theme.colorScheme.outline, width: 3),
         ),
       ),
       child: Text(
@@ -817,9 +872,20 @@ class _Example extends StatelessWidget {
   }
 }
 
+/// The microphone is open.
+///
+/// The state the nurse is actually in, and the one the patient sitting beside
+/// her can see. It keeps the visit chrome rather than clearing the screen:
+/// without it the step, the patient and the way out all disappear at the one
+/// moment when a recording is running.
 class _Recording extends StatelessWidget {
-  const _Recording({required this.state, required this.onStop});
+  const _Recording({
+    required this.header,
+    required this.state,
+    required this.onStop,
+  });
 
+  final Widget header;
   final CaptureRecording state;
   final VoidCallback onStop;
 
@@ -828,43 +894,111 @@ class _Recording extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final spacing = context.spacing;
-    final status = context.statusColors;
 
     final minutes = state.elapsed.inMinutes.toString().padLeft(2, '0');
     final seconds = (state.elapsed.inSeconds % 60).toString().padLeft(2, '0');
 
     return _CaptureLayout(
+      header: header,
       action: _PrimaryCaptureAction(
         icon: Icons.stop,
         label: l10n.captureStop,
         onPressed: onStop,
       ),
       children: [
-        Semantics(
-          liveRegion: true,
-          label: l10n.captureRecording,
-          excludeSemantics: true,
-          child: Row(
-            children: [
-              Icon(Icons.fiber_manual_record, color: status.entscheiden),
-              SizedBox(width: spacing.s8),
-              Text(
-                l10n.captureRecording,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: status.entscheiden,
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: spacing.s24),
+        const _OpenMicrophone(),
+        // The clock and the level float in the middle of what is left, the
+        // topics stay above the thumb zone. One [Spacer] would have parked
+        // the whole block under the band and left a single hole where the
+        // eye goes first.
+        const Spacer(),
         Text(
           l10n.captureElapsed(minutes, seconds),
           style: theme.textTheme.displayMedium,
         ),
         SizedBox(height: spacing.s24),
         LevelMeter(level: state.level),
+        const Spacer(),
+        SizedBox(height: spacing.s24),
+        // What there is to say, while it is being said. The screen is not
+        // looked at during a recording — but when it is, the answer wanted is
+        // "what have I forgotten", and these four are the answer.
+        Text(
+          l10n.captureTopicsHeading,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        SizedBox(height: spacing.s8),
+        for (final topic in [
+          l10n.captureTopicMeasurements,
+          l10n.captureTopicWoundBed,
+          l10n.captureTopicExudate,
+          l10n.captureTopicPain,
+        ]) ...[
+          SizedBox(height: spacing.s8),
+          Text(topic, style: theme.textTheme.bodyLarge),
+        ],
       ],
+    );
+  }
+}
+
+/// The one thing on this screen that has to be legible from the doorway.
+///
+/// A band rather than a dot with a caption: the patient is in the room and
+/// entitled to see that a recording is running, and the previous version put
+/// the fact on the smallest element of the screen while the clock beside it
+/// was twice as loud.
+class _OpenMicrophone extends StatelessWidget {
+  const _OpenMicrophone();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final status = context.statusColors;
+
+    return Semantics(
+      liveRegion: true,
+      label: l10n.captureRecording,
+      excludeSemantics: true,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: spacing.s16,
+          vertical: spacing.s12,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(spacing.r12),
+          border: Border.all(color: status.entscheiden, width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.fiber_manual_record,
+              size: 24,
+              color: status.entscheiden,
+            ),
+            SizedBox(width: spacing.s12),
+            Expanded(
+              child: Text(
+                l10n.captureRecording,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  color: status.entscheiden,
+                ),
+              ),
+            ),
+            Text(
+              l10n.captureMicrophoneOpen,
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: status.entscheiden,
+              ),
+              textAlign: TextAlign.end,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

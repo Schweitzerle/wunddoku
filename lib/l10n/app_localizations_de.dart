@@ -836,6 +836,24 @@ class AppLocalizationsDe extends AppLocalizations {
   String get captureExamplesHeading => 'So kann das klingen';
 
   @override
+  String get captureTopicMeasurements => 'Maße';
+
+  @override
+  String get captureTopicWoundBed => 'Wundgrund';
+
+  @override
+  String get captureTopicExudate => 'Exsudat';
+
+  @override
+  String get captureTopicPain => 'Schmerz';
+
+  @override
+  String get captureTopicsHeading => 'Sprich der Reihe nach oder durcheinander';
+
+  @override
+  String get captureMicrophoneOpen => 'Mikrofon offen';
+
+  @override
   String get captureWayCards => 'Karten';
 
   @override

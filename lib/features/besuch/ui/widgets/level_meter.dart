@@ -20,7 +20,12 @@ class LevelMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final spacing = context.spacing;
-    final lit = (level.clamp(0.0, 1.0) * barCount).round();
+
+    // Grows from the middle outwards, not from the left. Filled left to
+    // right beside a clock reading 00:00, it looked like a recording of
+    // fixed length running down — the one thing this meter must not say.
+    final centre = (barCount - 1) / 2;
+    final reach = level.clamp(0.0, 1.0) * (centre + 1);
 
     return ExcludeSemantics(
       child: SizedBox(
@@ -35,14 +40,21 @@ class LevelMeter extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: context.motion.kurz,
                     curve: context.motion.kurzCurve,
-                    height: i < lit ? spacing.s48 : spacing.s8,
+                    // Tallest in the middle and tapering out, so the
+                    // silhouette reads as a level rather than as a bar
+                    // that fills.
+                    height: (i - centre).abs() < reach
+                        ? spacing.s8 +
+                              (spacing.s48 - spacing.s8) *
+                                  (1 - (i - centre).abs() / (centre + 1))
+                        : spacing.s8,
                     decoration: BoxDecoration(
                       // The accent, not the "decide" red: a running
                       // recording is the normal case, and the palette
                       // reserves red for a value that blocks saving. A red
                       // bar across the screen while the patient watches
                       // reads as an alarm that is not happening.
-                      color: i < lit
+                      color: (i - centre).abs() < reach
                           ? theme.colorScheme.primary
                           : theme.colorScheme.outlineVariant,
                       borderRadius: BorderRadius.circular(spacing.r4),

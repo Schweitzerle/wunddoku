@@ -107,6 +107,31 @@ abstract final class AppTheme {
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(56),
           shape: const StadiumBorder(),
+        ).copyWith(
+          // Material's 10 % overlay is invisible on this teal, and the
+          // 96 dp target is pressed with gloves on while the eyes are on
+          // the wound. Touch confirms it too, but a device without a
+          // vibrator has to show it.
+          //
+          // The tint moves the fill *away* from the label colour rather
+          // than towards it: lightening a teal button that carries white
+          // text makes the press visible and the label unreadable at the
+          // same moment.
+          overlayColor: WidgetStateProperty.resolveWith((states) {
+            final tint = brightness == Brightness.light
+                ? Colors.black
+                : Colors.white;
+            if (states.contains(WidgetState.pressed)) {
+              return tint.withValues(alpha: 0.16);
+            }
+            if (states.contains(WidgetState.focused)) {
+              return tint.withValues(alpha: 0.12);
+            }
+            if (states.contains(WidgetState.hovered)) {
+              return tint.withValues(alpha: 0.06);
+            }
+            return null;
+          }),
         ),
       ),
       // The quiet counterpart, and the one place a width is *not* forced:

@@ -1252,6 +1252,42 @@ abstract class AppLocalizations {
   /// **'So kann das klingen'**
   String get captureExamplesHeading;
 
+  /// Eines der vier Themen, die während der Aufnahme als Gedächtnisstütze dastehen. Fachbegriff des Kunden, wird nicht umformuliert.
+  ///
+  /// In de, this message translates to:
+  /// **'Maße'**
+  String get captureTopicMeasurements;
+
+  /// Thema während der Aufnahme, siehe captureTopicMeasurements.
+  ///
+  /// In de, this message translates to:
+  /// **'Wundgrund'**
+  String get captureTopicWoundBed;
+
+  /// Thema während der Aufnahme, siehe captureTopicMeasurements.
+  ///
+  /// In de, this message translates to:
+  /// **'Exsudat'**
+  String get captureTopicExudate;
+
+  /// Thema während der Aufnahme, siehe captureTopicMeasurements.
+  ///
+  /// In de, this message translates to:
+  /// **'Schmerz'**
+  String get captureTopicPain;
+
+  /// Überschrift über den vier Themen im Aufnahmezustand. Sagt zugleich, dass die Reihenfolge frei ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprich der Reihe nach oder durcheinander'**
+  String get captureTopicsHeading;
+
+  /// Zusatz neben „Aufnahme läuft“. Der Patient sitzt daneben und muss von der Türschwelle aus sehen können, dass aufgenommen wird.
+  ///
+  /// In de, this message translates to:
+  /// **'Mikrofon offen'**
+  String get captureMicrophoneOpen;
+
   /// Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label.
   ///
   /// In de, this message translates to:
