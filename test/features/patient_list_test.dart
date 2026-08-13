@@ -155,6 +155,30 @@ void main() {
     expect(find.text('Besuch offen'), findsOneWidget);
   });
 
+  testWidgets('with every visit open there is no heading over nothing', (
+    tester,
+  ) async {
+    // Found on the device: "Alle übrigen · 0" described an empty space.
+    final patient = await patients.create(
+      givenName: 'Hans',
+      familyName: 'Beispiel',
+      birthDate: DateTime(1950, 1, 1),
+      street: 'Musterweg 2',
+      postalCode: '12345',
+      city: 'Musterstadt',
+    );
+    final wound = await wounds.create(
+      patient: patient.id,
+      location: 'linker Unterschenkel',
+    );
+    await visits.startVisit(wound.id);
+
+    await pumpList(tester);
+
+    expect(find.text('Besuch offen · 1'), findsOneWidget);
+    expect(find.textContaining('Alle übrigen'), findsNothing);
+  });
+
   testWidgets('a closed visit leaves no mark on the list', (tester) async {
     final patient = await patients.create(
       givenName: 'Hans',

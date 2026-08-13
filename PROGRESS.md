@@ -41,10 +41,10 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Weiter durch den Entwurf, in der festgelegten Reihenfolge: 1a/1b Patienten
-   und Wunden, 1e Prüfen, 1i Abschluss, 1j Verlauf, zuletzt 1f/1g/1h Karten,
-   Foto, Markierung. Das Besuchsband (`VisitStep`, `VisitHeader`) steht bereit
-   und muss auf 1e, 1g/1h und 1i mit dem jeweiligen Schritt gesetzt werden.
+1. Weiter durch den Entwurf: 1e Prüfen, 1i Abschluss, 1j Verlauf, zuletzt
+   1f/1g/1h Karten, Foto, Markierung. Das Besuchsband (`VisitStep`,
+   `VisitHeader`) steht bereit und muss auf 1e, 1g/1h und 1i mit dem
+   jeweiligen Schritt gesetzt werden.
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
@@ -105,6 +105,52 @@ der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
 Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
+
+## Erledigt (Patienten und Wunden gegen den Entwurf, 2026-08-13)
+
+Screens 1a und 1b. Titel in den Body, Suchfeld 56 dp gefüllt, Zeilen als
+Karten ab 88 dp, Wundkarte mit Foto, Fläche und den zwei Aktionen.
+
+**Wo der Entwurf Daten erfindet, und was stattdessen gilt:** er gruppiert die
+Liste unter „Heute auf Tour · 4". Eine Tour gibt es in der Akte nicht, und sie
+zu erfinden hieße Daten zu erfinden. Gruppiert wird nach dem, was die Akte
+weiß: ein Besuch, der begonnen und nie abgeschlossen wurde. Diese Patienten
+stehen oben unter „Besuch offen · n". Das Merkzeichen ist eine bernsteinfarbene
+Kante **und** das Wort auf der Zeile — eine Kante allein ist keine Aussage, die
+ein Screenreader vorlesen kann. Bei laufender Suche fallen die Überschriften
+weg.
+
+- `VisitRepository.patientsWithOpenVisit` beantwortet das in **einer**
+  gruppierten Abfrage statt einer je Zeile.
+- Rückkehr von einem Patienten lädt die Liste neu, nicht nur die Zählungen:
+  ein Merkzeichen, das seinen Besuch überlebt, schickt die Pflegekraft in eine
+  Wohnung zurück, mit der sie fertig ist.
+- **Abgeheilte Wunde nicht abgeblendet**, anders als im Entwurf (0,72). Eine
+  ganze Karte im Kontrast zu senken kostet die Kontrastgrenze; sie sagt es in
+  Worten und dadurch, dass sie ihren Besuchsknopf verliert. Der Verlauf bleibt —
+  genau danach wird gefragt, wenn die Wunde wieder aufbricht.
+- **Fläche ist eine Lücke, kein Wert**, wenn der letzte Besuch ein Maß
+  ausgelassen hat. 0 cm² wäre ein Befund, den niemand erhoben hat. Wachstum
+  trägt dasselbe Bernstein wie „prüfen".
+- `PhotoThumbnail` liegt jetzt in `shared/widgets/` — das Patienten-Feature
+  braucht es, und Features importieren einander nicht. Der Platzhalter ist ein
+  Zeichen statt einer Beschriftung: die Box ist 64 dp und wächst nicht mit der
+  Schrift, bei 200 % war der Text mitten im Wort abgeschnitten. Der Satz
+  überlebt als Semantik-Label.
+- `WoundHistoryPage` hält Laden und Bericht, die vorher im Korridor lagen —
+  damit ist der Verlauf von der Wunde aus erreichbar, nicht nur aus dem Besuch.
+
+**312 Tests grün**, Analyzer sauber, Goldens in Telefonmaß und bei 200 % auf
+320 dp.
+
+### Auf dem Gerät gefunden
+
+`doc/screenshots/patienten-geraet.png` und `wunden-geraet.png`.
+
+- **„Alle übrigen · 0"** stand als Überschrift über einer leeren Fläche, wenn
+  jeder Besuch noch offen ist. Behoben, mit Test.
+- Der Rest trägt: das entschlüsselte Foto steht in der Miniatur, die Fläche
+  (11,76 cm²) und das Wachstum (7,26 cm² größer) stehen auf der Karte.
 
 ## Erledigt (Gestaltungsreview am fertigen Screen, 2026-08-13)
 

@@ -173,8 +173,13 @@ class _Body extends StatelessWidget {
         ? <Object>[
             _Heading(l10n.patientsUnfinishedHeading(model.unfinished.length)),
             ...model.unfinished,
-            _Heading(l10n.patientsRestHeading(model.rest.length)),
-            ...model.rest,
+            // No heading over nothing: on a day where every visit is still
+            // open, "Alle übrigen · 0" is a line that describes an empty
+            // space.
+            if (model.rest.isNotEmpty) ...[
+              _Heading(l10n.patientsRestHeading(model.rest.length)),
+              ...model.rest,
+            ],
           ]
         : <Object>[...model.visible];
 
