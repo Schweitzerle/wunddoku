@@ -146,6 +146,21 @@ Goldens haben je einen echten Fehler gezeigt:
 
 **301 Tests grün**, Analyzer sauber, Goldens erneuert, Bilddiffs angesehen.
 
+### Was erst das Gerät gezeigt hat
+
+`doc/screenshots/besuchsband-geraet.png` und `aufnahme-geraet.png`
+(motorola edge 30 ultra, dunkles Theme, Systemschrift eine Stufe über der
+Vorgabe — also der Normalfall, nicht der Randfall).
+
+- **„Aufnahme läuft" brach auf zwei Zeilen**, weil rechts daneben ein zweites
+  Abzeichen „Mikrofon offen" die halbe Zeile hielt. Es sagte dasselbe noch
+  einmal und ist weg statt passend gemacht.
+- Die Beschriftung der 96-dp-Fläche steht jetzt auf 22 statt 20. Damit bleibt
+  der Aufnahmezustand bei den vier Schriftgrößen, die die Regel erlaubt.
+
+Der Goldens-Lauf konnte beides nicht zeigen: er läuft auf Textskalierung 1,0,
+und niemand stellt sein Telefon so ein.
+
 **Offen an diesem Screen:** Der Entwurf schaltet den Aufnahmezustand bewusst
 **dunkel, unabhängig vom Theme** („kein Blendlicht in der Wohnung", „Mikrofon
 offen" von der Türschwelle lesbar) und zeigt den Zwischenstand als Chips
