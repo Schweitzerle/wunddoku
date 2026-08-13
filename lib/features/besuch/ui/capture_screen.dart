@@ -113,43 +113,20 @@ class _CaptureScreenState extends State<CaptureScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        // The title is the address, not the screen name: whose wound is open
-        // in front of me. The step itself is named by the big button below.
-        title: Text(l10n.captureTitle, style: theme.textTheme.titleMedium),
+        title: Text(
+          l10n.captureTitle,
+          style: theme.textTheme.titleMedium,
+          overflow: TextOverflow.ellipsis,
+        ),
         actions: [
           if (widget.onFinishVisit != null)
-            TextButton.icon(
+            IconButton(
               onPressed: widget.onFinishVisit,
-              icon: const Icon(Icons.check, size: 20),
-              label: Text(l10n.captureFinishShort),
+              icon: const Icon(Icons.check_circle_outline),
+              tooltip: l10n.captureFinishVisit,
             ),
           SizedBox(width: spacing.s4),
         ],
-        bottom: context_ == null
-            ? null
-            : PreferredSize(
-                preferredSize: Size.fromHeight(spacing.s24),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    spacing.s16,
-                    0,
-                    spacing.s16,
-                    spacing.s8,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    // Its own line, so the location is never cut off — a
-                    // truncated body site is the one thing here that must not
-                    // be guessed at.
-                    child: Text(
-                      context_,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
       ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
@@ -162,6 +139,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             onStop: _toggleRecording,
           ),
           _ => _Idle(
+            address: context_,
             standing: widget.standing,
             onStart: _toggleRecording,
             onUseCards: widget.onUseCards,
@@ -264,12 +242,16 @@ class _PrimaryCaptureAction extends StatelessWidget {
 
 class _Idle extends StatelessWidget {
   const _Idle({
+    required this.address,
     required this.standing,
     required this.onStart,
     required this.onUseCards,
     required this.onTakePhoto,
     required this.onShowHistory,
   });
+
+  /// Whose wound is open in front of the nurse.
+  final String? address;
 
   final VisitStanding standing;
 
@@ -304,6 +286,13 @@ class _Idle extends StatelessWidget {
         onPressed: onStart,
       ),
       children: [
+        // Whose wound this is, in the body rather than in the app bar: at the
+        // text sizes people actually run their phones at, a second line up
+        // there collides with the title and the action.
+        if (address != null) ...[
+          _Address(text: address!),
+          SizedBox(height: spacing.s16),
+        ],
         // On a visit under way the standing leads: the first thing a nurse
         // coming back from an interruption needs is where she left off.
         if (!standing.isEmpty) ...[
@@ -331,6 +320,39 @@ class _Idle extends StatelessWidget {
             (Icons.photo_camera_outlined, l10n.captureTakePhoto, onTakePhoto),
             (Icons.show_chart, l10n.captureShowHistory, onShowHistory),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Whose wound this visit documents.
+class _Address extends StatelessWidget {
+  const _Address({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.person_outline,
+          size: 20,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+        SizedBox(width: spacing.s8),
+        Expanded(
+          child: Text(
+            text,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
         ),
       ],
     );

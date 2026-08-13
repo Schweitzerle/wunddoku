@@ -357,6 +357,39 @@ void main() {
       );
     });
 
+    testWidgets('a visit under way at 200 percent text', (tester) async {
+      await tester.pumpWidget(
+        TestApp(
+          textScale: 2,
+          child: CaptureScreen(
+            viewModel: model(),
+            context: 'Mustermann · linker Unterschenkel, distal',
+            onUseCards: () {},
+            onTakePhoto: () {},
+            onShowHistory: () {},
+            onFinishVisit: () {},
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {'measurement.lengthCm': CentimetreValue(3.5)},
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 2,
+              markedPhotoCount: 1,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // People run their phones at more than 100 percent, and the header was
+      // the first thing to break when they do.
+      expect(tester.takeException(), isNull);
+      await expectLater(
+        find.byType(CaptureScreen),
+        matchesGoldenFile('goldens/capture_standing_text200.png'),
+      );
+    });
+
     testWidgets('idle', (tester) async {
       await tester.pumpWidget(
         TestApp(child: CaptureScreen(viewModel: model())),
