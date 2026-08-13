@@ -191,6 +191,14 @@
   "@actionConfirmShort": {
     "description": "Beschriftung der Bestätigen-Fläche bei einem Wert mit mittlerer Sicherheit. Bewusst nicht „Übernehmen“ — so heißt die Primäraktion des Screens, und zwei gleiche Wörter auf einem Bildschirm meinen sonst dasselbe."
   },
+  "actionEnterValue": "Eingeben",
+  "@actionEnterValue": {
+    "description": "Beschriftung der Fläche, die bei einem nicht verstandenen Wert in die Karten dieses Feldes führt. Der Wert wird dort selbst gesetzt, statt eine Vermutung zu bestätigen."
+  },
+  "actionChangeValue": "Ändern",
+  "@actionChangeValue": {
+    "description": "Beschriftung derselben Fläche bei einem Wert mit mittlerer Sicherheit: der Vorschlag steht da, ist aber falsch und wird selbst gesetzt."
+  },
   "actionAcceptAnyway": "Trotzdem übernehmen",
   "@actionAcceptAnyway": {
     "description": "Beschriftung der Bestätigen-Fläche bei einem Wert mit niedriger Sicherheit. Sagt, dass hier bewusst gegen die Unsicherheit entschieden wird."

@@ -41,12 +41,10 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Der Entwurfsdurchgang ist zu (1a–1j). Als Nächstes die offenen Punkte, die
-   dabei stehengeblieben sind — der Reihe nach: aus einem verworfenen Vorschlag
-   direkt in die Karte dieses Feldes springen (1e), Detailansicht eines Besuchs
-   aus dem Verlauf, Rückmeldung während der Berichterzeugung, und der
-   mitlaufende Zwischenstand während der Aufnahme („Bisher verstanden", braucht
-   eine Runde `/eps:technikwahl` für einen Erkenner mit Strom).
+1. Offene Punkte, der Reihe nach: Detailansicht eines Besuchs aus dem Verlauf,
+   Rückmeldung während der Berichterzeugung, und der mitlaufende Zwischenstand
+   während der Aufnahme („Bisher verstanden", braucht eine Runde
+   `/eps:technikwahl` für einen Erkenner mit Strom).
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
@@ -107,6 +105,23 @@ der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
 Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
+
+## Erledigt (Wert selbst eingeben statt Vermutung bestätigen, 2026-08-13)
+
+Der offene Punkt aus 1e. Die Prüfkarte hat jetzt **je Stufe** ihr eigenes Paar,
+und die Stufen fragen Verschiedenes:
+
+- **Verstanden, aber vielleicht falsch:** „Ändern" gegen „Stimmt".
+- **Nicht verstanden:** „Verwerfen" gegen „Eingeben". „Trotzdem übernehmen" ist
+  weg, wo es einen Weg zum Selbsteintragen gibt — eine Zahl zu bestätigen, die
+  der Screen absichtlich nicht zeigt, ist keine Entscheidung, sondern ein
+  Münzwurf. Ohne Karte für das Feld bleibt das alte Paar, damit nichts tot auf
+  dem Bildschirm steht.
+
+„Eingeben" öffnet die Karten **über** dem Prüfen-Screen und bringt die Karte des
+Feldes ins Bild. Die Vorschläge, die dort noch auf eine Entscheidung warten,
+gehen dabei nicht verloren; der behandelte Vorschlag hört auf zu fragen, sobald
+der Wert von Hand steht. In die Akte geht der gesetzte Wert, nie beide.
 
 ## Erledigt (Karten, Foto, Markierung — Entwurfsdurchgang zu, 2026-08-13)
 

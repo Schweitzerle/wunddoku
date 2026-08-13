@@ -11,16 +11,54 @@ import 'widgets/finding_cards.dart';
 /// Equal in standing to the spoken path. Everything here is entered by
 /// choosing or stepping, never by typing — the nurse wears gloves, and a
 /// keyboard is not an option at the bedside.
-class CardEntryScreen extends StatelessWidget {
-  const CardEntryScreen({required this.viewModel, this.onDone, super.key});
+class CardEntryScreen extends StatefulWidget {
+  const CardEntryScreen({
+    required this.viewModel,
+    this.focusSlot,
+    this.onDone,
+    super.key,
+  });
 
   final CardEntryViewModel viewModel;
+
+  /// The field this screen was opened for, if it was opened for one.
+  ///
+  /// Its card is brought into view: arriving at the top of three cards when
+  /// one of them is the reason for being here costs a scroll with gloves on.
+  final String? focusSlot;
 
   /// Called with the values entered when the nurse is finished.
   final void Function(VisitDraft draft)? onDone;
 
   @override
+  State<CardEntryScreen> createState() => _CardEntryScreenState();
+}
+
+class _CardEntryScreenState extends State<CardEntryScreen> {
+  final _woundBed = GlobalKey();
+  final _measurements = GlobalKey();
+  final _exudation = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    final slot = widget.focusSlot;
+    if (slot == null) return;
+    final key = switch (slot.split('.').first) {
+      'tissue' => _woundBed,
+      'measurement' => _measurements,
+      _ => _exudation,
+    };
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = key.currentContext;
+      if (context != null) Scrollable.ensureVisible(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final viewModel = widget.viewModel;
+    final onDone = widget.onDone;
     final l10n = AppLocalizations.of(context)!;
     final spacing = context.spacing;
 
@@ -62,11 +100,11 @@ class CardEntryScreen extends StatelessWidget {
                     spacing.s24,
                   ),
                   children: [
-                    WoundBedCard(viewModel: viewModel),
+                    WoundBedCard(key: _woundBed, viewModel: viewModel),
                     SizedBox(height: spacing.s12),
-                    MeasurementCard(viewModel: viewModel),
+                    MeasurementCard(key: _measurements, viewModel: viewModel),
                     SizedBox(height: spacing.s12),
-                    ExudationCard(viewModel: viewModel),
+                    ExudationCard(key: _exudation, viewModel: viewModel),
                   ],
                 ),
               ),

@@ -267,7 +267,12 @@ class _VisitCorridorState extends State<VisitCorridor> {
     });
   }
 
-  Future<void> _openCards() async {
+  /// Opens the card mode, optionally on the field it was called for.
+  ///
+  /// [resetCapture] is false when the cards were opened from the check
+  /// screen: the proposals still waiting there are not stale just because one
+  /// field was filled in by hand.
+  Future<void> _openCards({String? focusSlot, bool resetCapture = true}) async {
     final visit = _visit;
     if (visit == null) return;
 
@@ -280,6 +285,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
       MaterialPageRoute<VisitDraft>(
         builder: (_) => CardEntryScreen(
           viewModel: entry,
+          focusSlot: focusSlot,
           onDone: (draft) => Navigator.of(context).pop(draft),
         ),
       ),
@@ -288,7 +294,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
 
     if (result != null && mounted) {
       setState(() => _draft = result);
-      _capture.reset();
+      if (resetCapture) _capture.reset();
     }
   }
 
@@ -311,6 +317,13 @@ class _VisitCorridorState extends State<VisitCorridor> {
         builder: (_) => ConfirmationScreen(
           viewModel: review,
           visitDate: _visitDate,
+          // The card opens on top of the check screen, and the proposal it
+          // replaces stops asking for a decision — what reaches the record
+          // is the value the nurse set, never both.
+          onEnterValue: (slotId) async {
+            await _openCards(focusSlot: slotId, resetCapture: false);
+            review.discard(slotId);
+          },
           onAccept: () {
             unawaited(_acceptSettled(visit, review.settledEntries));
             Navigator.of(context).pop();

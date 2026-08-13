@@ -84,6 +84,67 @@ void main() {
       expect(accepted, isTrue);
     });
 
+    testWidgets('a value nobody understood is entered, not confirmed', (
+      tester,
+    ) async {
+      String? entered;
+      await tester.pumpWidget(
+        TestApp(
+          child: ConfirmationScreen(
+            viewModel: _model(),
+            onEnterValue: (slot) => entered = slot,
+          ),
+        ),
+      );
+
+      // Confirming a number the screen deliberately does not show is not a
+      // decision. The blocking row offers the two that are: drop it, or set
+      // it yourself.
+      expect(find.text('Trotzdem übernehmen'), findsNothing);
+      await tester.tap(find.text('Eingeben').first);
+
+      expect(entered, 'measurement.depthCm');
+    });
+
+    testWidgets('a value that was understood can be right or wrong', (
+      tester,
+    ) async {
+      String? entered;
+      await tester.pumpWidget(
+        TestApp(
+          child: ConfirmationScreen(
+            viewModel: _model(),
+            onEnterValue: (slot) => entered = slot,
+          ),
+        ),
+      );
+
+      // The middle tier shows a real value, so the pair is "it is right" and
+      // "it is wrong, here is the right one".
+      expect(find.text('Stimmt'), findsWidgets);
+      // scrollUntilVisible stops as soon as the widget touches the viewport;
+      // ensureVisible brings it fully in so the tap cannot miss.
+      await tester.scrollUntilVisible(find.text('Ändern').first, 200);
+      await tester.ensureVisible(find.text('Ändern').first);
+      await tester.pump();
+      await tester.tap(find.text('Ändern').first);
+
+      expect(entered, 'tissue.granulation');
+    });
+
+    testWidgets('without a card for it the row still offers a decision', (
+      tester,
+    ) async {
+      // No way to enter a value by hand means the old pair: the nurse can
+      // still take the value or drop it, and nothing on screen is dead.
+      await tester.pumpWidget(
+        TestApp(child: ConfirmationScreen(viewModel: _model())),
+      );
+
+      expect(find.text('Trotzdem übernehmen'), findsOneWidget);
+      expect(find.text('Eingeben'), findsNothing);
+    });
+
     testWidgets('a blocking value shows the word, never the guessed number', (
       tester,
     ) async {

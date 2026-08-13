@@ -20,6 +20,7 @@ class ConfirmationRow extends StatelessWidget {
     required this.onShowProvenance,
     required this.onAccept,
     required this.onDiscard,
+    this.onEnter,
     super.key,
   });
 
@@ -37,6 +38,13 @@ class ConfirmationRow extends StatelessWidget {
 
   final VoidCallback onAccept;
   final VoidCallback onDiscard;
+
+  /// Sets the value by hand instead of deciding about the proposal.
+  ///
+  /// The repair for a value the recogniser did not understand: confirming a
+  /// number the screen deliberately does not show is not a decision, it is a
+  /// coin flip. Null where there is no card for this field.
+  final VoidCallback? onEnter;
 
   @override
   Widget build(BuildContext context) {
@@ -153,11 +161,24 @@ class ConfirmationRow extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(spacing.s16),
               child: _RowActions(
-                acceptLabel: state.isBlocking
-                    ? l10n.actionAcceptAnyway
+                // Two decisions per tier, and they differ. A value that was
+                // understood can be right ("Stimmt") or wrong ("Ändern"). A
+                // value that was not understood is neither — it is discarded
+                // or entered by hand.
+                primaryLabel: state.isBlocking
+                    ? (onEnter == null
+                          ? l10n.actionAcceptAnyway
+                          : l10n.actionEnterValue)
                     : l10n.actionConfirmShort,
-                onAccept: onAccept,
-                onDiscard: onDiscard,
+                onPrimary: state.isBlocking
+                    ? (onEnter ?? onAccept)
+                    : onAccept,
+                secondaryLabel: state.isBlocking || onEnter == null
+                    ? l10n.actionDiscardShort
+                    : l10n.actionChangeValue,
+                onSecondary: state.isBlocking || onEnter == null
+                    ? onDiscard
+                    : onEnter!,
               ),
             ),
           ],
@@ -175,34 +196,36 @@ class ConfirmationRow extends StatelessWidget {
 /// does.
 class _RowActions extends StatelessWidget {
   const _RowActions({
-    required this.acceptLabel,
-    required this.onAccept,
-    required this.onDiscard,
+    required this.primaryLabel,
+    required this.onPrimary,
+    required this.secondaryLabel,
+    required this.onSecondary,
   });
 
-  final String acceptLabel;
-  final VoidCallback onAccept;
-  final VoidCallback onDiscard;
+  final String primaryLabel;
+  final VoidCallback onPrimary;
+  final String secondaryLabel;
+  final VoidCallback onSecondary;
+
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
     final discard = OutlinedButton(
-      onPressed: onDiscard,
+      onPressed: onSecondary,
       style: OutlinedButton.styleFrom(
         minimumSize: Size.fromHeight(spacing.comfortTouch),
       ),
-      child: Text(l10n.actionDiscardShort),
+      child: Text(secondaryLabel),
     );
     final accept = FilledButton(
-      onPressed: onAccept,
+      onPressed: onPrimary,
       style: FilledButton.styleFrom(
         minimumSize: Size.fromHeight(spacing.comfortTouch),
       ),
-      child: Text(acceptLabel),
+      child: Text(primaryLabel),
     );
 
     return LayoutBuilder(
@@ -211,7 +234,7 @@ class _RowActions extends StatelessWidget {
         // "Trotzdem übernehmen" at twice the text size is wider than half a
         // narrow phone, and a decision may not be read as a stump.
         final side = (constraints.maxWidth - spacing.s8) / 2;
-        final fits = [l10n.actionDiscardShort, acceptLabel].every(
+        final fits = [secondaryLabel, primaryLabel].every(
           (label) => _width(context, label, theme.textTheme.labelLarge) +
                   2 * spacing.s16 <=
               side,

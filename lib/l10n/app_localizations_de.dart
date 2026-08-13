@@ -146,6 +146,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get actionConfirmShort => 'Stimmt';
 
   @override
+  String get actionEnterValue => 'Eingeben';
+
+  @override
+  String get actionChangeValue => 'Ändern';
+
+  @override
   String get actionAcceptAnyway => 'Trotzdem übernehmen';
 
   @override

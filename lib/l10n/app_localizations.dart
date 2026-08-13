@@ -334,6 +334,18 @@ abstract class AppLocalizations {
   /// **'Stimmt'**
   String get actionConfirmShort;
 
+  /// Beschriftung der Fläche, die bei einem nicht verstandenen Wert in die Karten dieses Feldes führt. Der Wert wird dort selbst gesetzt, statt eine Vermutung zu bestätigen.
+  ///
+  /// In de, this message translates to:
+  /// **'Eingeben'**
+  String get actionEnterValue;
+
+  /// Beschriftung derselben Fläche bei einem Wert mit mittlerer Sicherheit: der Vorschlag steht da, ist aber falsch und wird selbst gesetzt.
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get actionChangeValue;
+
   /// Beschriftung der Bestätigen-Fläche bei einem Wert mit niedriger Sicherheit. Sagt, dass hier bewusst gegen die Unsicherheit entschieden wird.
   ///
   /// In de, this message translates to:

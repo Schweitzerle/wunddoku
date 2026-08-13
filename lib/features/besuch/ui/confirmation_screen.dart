@@ -20,6 +20,7 @@ class ConfirmationScreen extends StatelessWidget {
     this.visitDate,
     this.onAccept,
     this.onBackToCapture,
+    this.onEnterValue,
     super.key,
   });
 
@@ -33,6 +34,13 @@ class ConfirmationScreen extends StatelessWidget {
 
   /// Called from the empty state to return to the recording step.
   final VoidCallback? onBackToCapture;
+
+  /// Called with the slot the nurse wants to fill in by hand.
+  ///
+  /// The repair for a proposal that is wrong or was never understood: the
+  /// card for that field opens on top of this screen, so the decisions still
+  /// waiting here are not lost on the way.
+  final void Function(String slotId)? onEnterValue;
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +68,7 @@ class ConfirmationScreen extends StatelessWidget {
                     ? _ConfirmationBody(
                         viewModel: viewModel,
                         onAccept: onAccept,
+                        onEnterValue: onEnterValue,
                       )
                     : _EmptyState(onBackToCapture: onBackToCapture),
               ),
@@ -72,10 +81,15 @@ class ConfirmationScreen extends StatelessWidget {
 }
 
 class _ConfirmationBody extends StatelessWidget {
-  const _ConfirmationBody({required this.viewModel, required this.onAccept});
+  const _ConfirmationBody({
+    required this.viewModel,
+    required this.onAccept,
+    required this.onEnterValue,
+  });
 
   final ConfirmationViewModel viewModel;
   final VoidCallback? onAccept;
+  final void Function(String slotId)? onEnterValue;
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +124,9 @@ class _ConfirmationBody extends StatelessWidget {
                   onShowProvenance: () => _showProvenance(context, entry),
                   onAccept: () => viewModel.accept(entry.slotId),
                   onDiscard: () => viewModel.discard(entry.slotId),
+                  onEnter: onEnterValue == null
+                      ? null
+                      : () => onEnterValue!(entry.slotId),
                 ),
                 SizedBox(height: spacing.s12),
               ],
