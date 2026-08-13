@@ -1003,6 +1003,60 @@
   "@captureExamplesHeading": {
     "description": "Überschrift über den Beispielsätzen, die zeigen, wie ein gesprochener Befund klingt."
   },
+  "captureWayCards": "Karten",
+  "@captureWayCards": {
+    "description": "Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label."
+  },
+  "captureWayPhoto": "Foto",
+  "@captureWayPhoto": {
+    "description": "Beschriftung der Kachel, die in die Fotoaufnahme führt. Kurzform wie captureWayCards."
+  },
+  "captureWayHistory": "Verlauf",
+  "@captureWayHistory": {
+    "description": "Beschriftung der Kachel, die in den Verlauf führt. Kurzform wie captureWayCards."
+  },
+  "visitStepSpeak": "Sprechen",
+  "@visitStepSpeak": {
+    "description": "Erster Schritt im Besuchsband: der Befund wird am offenen Verband gesprochen."
+  },
+  "visitStepCheck": "Prüfen",
+  "@visitStepCheck": {
+    "description": "Zweiter Schritt im Besuchsband: die erkannten Werte werden bestätigt oder verworfen."
+  },
+  "visitStepPhoto": "Foto",
+  "@visitStepPhoto": {
+    "description": "Dritter Schritt im Besuchsband: Wunde fotografieren und markieren."
+  },
+  "visitStepClosing": "Abschluss",
+  "@visitStepClosing": {
+    "description": "Vierter Schritt im Besuchsband: der Besuch wird abgeschlossen."
+  },
+  "visitStepPosition": "Schritt {position} von {total}: {step}",
+  "@visitStepPosition": {
+    "description": "Semantik-Label des Besuchsbands. Der Screenreader liest einen Satz statt vier zusammenhangloser Wörter.",
+    "placeholders": {
+      "position": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      },
+      "step": {
+        "type": "String"
+      }
+    }
+  },
+  "visitHeaderDate": "Besuch · {date}",
+  "@visitHeaderDate": {
+    "description": "Mitte der Kopfzeile im Besuch: welcher Besuch gerade offen ist. Unterscheidet den heutigen Besuch von einem fortgesetzten Entwurf.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "dd.MM.",
+        "isCustomDateFormat": "true"
+      }
+    }
+  },
   "historyChartSpan": "{from} bis {to}",
   "@historyChartSpan": {
     "description": "Zeitraum unter der Verlaufskurve. Ohne ihn sagt die Kurve nicht, über welche Strecke sie verläuft.",

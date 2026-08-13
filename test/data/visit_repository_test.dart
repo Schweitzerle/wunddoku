@@ -159,6 +159,13 @@ void main() {
       expect(await repository.openDraft(wound), isNull);
     });
 
+    test('a resumed visit still knows which day it belongs to', () async {
+      // The header of every screen inside a visit shows this date, so a draft
+      // picked up the next morning is not mistaken for today's visit.
+      final visit = await repository.startVisit(wound);
+      expect(await repository.startedAt(visit), DateTime(2026, 8, 11));
+    });
+
     test('closing records whether gaps were left on purpose', () async {
       final visit = await repository.startVisit(wound);
       await repository.completeVisit(visit, withGaps: true);

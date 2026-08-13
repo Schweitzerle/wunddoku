@@ -8,6 +8,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/theme/app_theme.dart';
 import 'capture_view_model.dart';
 import 'widgets/level_meter.dart';
+import 'widgets/visit_chrome.dart';
 
 /// Phase A of the visit: the finding is spoken while the dressing is open.
 ///
@@ -19,6 +20,7 @@ class CaptureScreen extends StatefulWidget {
   const CaptureScreen({
     required this.viewModel,
     this.context,
+    this.visitDate,
     this.standing = const VisitStanding.empty(),
     this.onInterpreted,
     this.onUseCards,
@@ -32,6 +34,9 @@ class CaptureScreen extends StatefulWidget {
 
   /// Whose wound is being documented, for the second line of the header.
   final String? context;
+
+  /// When the open visit was started, for the visit header.
+  final DateTime? visitDate;
 
   /// What the visit already holds.
   ///
@@ -105,37 +110,39 @@ class _CaptureScreenState extends State<CaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    final spacing = context.spacing;
     final context_ = widget.context;
 
+    // The chrome of the visit, not of this screen: the band answers "where am
+    // I" on every step, so it is handed to each state rather than drawn once
+    // around them — the recording is the one state that drops it.
+    final header = VisitHeader(
+      step: VisitStep.speak,
+      visitDate: widget.visitDate,
+      onBack: Navigator.of(context).canPop()
+          ? () => Navigator.of(context).maybePop()
+          : null,
+      onFinish: widget.onFinishVisit,
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        // No title here: a bar that spends 56 dp on one word is wasted
-        // surface, and at 20 sp it cannot carry the size contrast the muted
-        // palette depends on. The title sits in the body, at 30.
-        actions: [
-          if (widget.onFinishVisit != null)
-            IconButton(
-              onPressed: widget.onFinishVisit,
-              icon: const Icon(Icons.check_circle_outline),
-              tooltip: l10n.captureFinishVisit,
-            ),
-          SizedBox(width: spacing.s4),
-        ],
-      ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (context, _) => switch (widget.viewModel.state) {
-          CaptureUnavailable() => _NoMicrophone(onUseCards: widget.onUseCards),
-          CaptureQueued() => _Queued(onUseCards: widget.onUseCards),
+          CaptureUnavailable() => _NoMicrophone(
+            header: header,
+            onUseCards: widget.onUseCards,
+          ),
+          CaptureQueued() => _Queued(
+            header: header,
+            onUseCards: widget.onUseCards,
+          ),
           CaptureInterpreting() => const _Interpreting(),
           final CaptureRecording state => _Recording(
             state: state,
             onStop: _toggleRecording,
           ),
           _ => _Idle(
+            header: header,
             address: context_,
             standing: widget.standing,
             onStart: _toggleRecording,
@@ -159,58 +166,109 @@ class _CaptureLayout extends StatelessWidget {
   const _CaptureLayout({
     required this.children,
     required this.action,
-    this.footer,
+    this.header,
+    this.ways = const [],
   });
 
   final List<Widget> children;
   final Widget action;
 
-  /// Sits between the scrolling content and the primary action.
-  final Widget? footer;
+  /// The visit header and band, where this state carries them.
+  final Widget? header;
+
+  /// The equal paths: icon, the word on the tile, the sentence a screen
+  /// reader gets, and what to do.
+  final List<(IconData, String, String, VoidCallback?)> ways;
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
 
     return SafeArea(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Three across is the layout while three labels fit across. Beyond
+          // that they break mid-word ("Verla / uf"), so the paths become a
+          // list and move out of the thumb zone into the reading matter: at
+          // twice the text size the surface is scarce, and what must not move
+          // is the one target the nurse hits without looking.
+          final across = _WayTiles.fitAcross(
+            context: context,
+            ways: ways,
+            available: constraints.maxWidth - 2 * spacing.s16,
+          );
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ?header,
+              // Reading fills from the top, the paths sit low where the thumb
+              // is, and the gap between them lands between two groups rather
+              // than at the end of the screen. On a real phone that
+              // end-of-screen hole was the largest thing on it.
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    spacing.s16,
+                    spacing.s24,
+                    spacing.s16,
+                    spacing.s24,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      ...children,
+                      if (ways.isNotEmpty && !across) ...[
+                        SizedBox(height: spacing.s24),
+                        _WayTiles(ways: ways, across: false),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              // What is touched sits low and does not scroll away: the one
+              // large target keeps the same place at every text size, so the
+              // thumb finds it without looking.
+              _Dock(
+                ways: ways.isNotEmpty && across
+                    ? _WayTiles(ways: ways, across: true)
+                    : null,
+                action: action,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// The area the thumb owns: the equal paths, then the one large action.
+class _Dock extends StatelessWidget {
+  const _Dock({required this.ways, required this.action});
+
+  final Widget? ways;
+  final Widget action;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(spacing.r20),
+        ),
+      ),
+      padding: EdgeInsets.all(spacing.s16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Reading fills from the top, the paths sit low where the thumb is,
-          // and the gap between them lands between two groups rather than at
-          // the end of the screen. On a real phone that end-of-screen hole
-          // was the largest thing on it.
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(spacing.s16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: children,
-              ),
-            ),
-          ),
-          // What is touched sits low and does not scroll away: the paths and
-          // the one large target keep the same place at every text size, so
-          // the thumb finds them without looking.
-          if (footer != null)
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                spacing.s16,
-                0,
-                spacing.s16,
-                spacing.s16,
-              ),
-              child: footer,
-            ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              spacing.s24,
-              0,
-              spacing.s24,
-              spacing.s24,
-            ),
-            child: action,
-          ),
+          if (ways != null) ...[ways!, SizedBox(height: spacing.s12)],
+          action,
         ],
       ),
     );
@@ -255,6 +313,7 @@ class _PrimaryCaptureAction extends StatelessWidget {
 
 class _Idle extends StatelessWidget {
   const _Idle({
+    required this.header,
     required this.address,
     required this.standing,
     required this.onStart,
@@ -262,6 +321,8 @@ class _Idle extends StatelessWidget {
     required this.onTakePhoto,
     required this.onShowHistory,
   });
+
+  final Widget header;
 
   /// Whose wound is open in front of the nurse.
   final String? address;
@@ -293,18 +354,32 @@ class _Idle extends StatelessWidget {
     final spacing = context.spacing;
 
     return _CaptureLayout(
+      header: header,
       action: _PrimaryCaptureAction(
         icon: Icons.mic,
         label: l10n.captureStart,
         onPressed: onStart,
       ),
-      footer: _WayGroup(
-        ways: [
-          (Icons.checklist, l10n.captureUseCards, onUseCards),
-          (Icons.photo_camera_outlined, l10n.captureTakePhoto, onTakePhoto),
-          (Icons.show_chart, l10n.captureShowHistory, onShowHistory),
-        ],
-      ),
+      ways: [
+        (
+          Icons.checklist,
+          l10n.captureWayCards,
+          l10n.captureUseCards,
+          onUseCards,
+        ),
+        (
+          Icons.photo_camera_outlined,
+          l10n.captureWayPhoto,
+          l10n.captureTakePhoto,
+          onTakePhoto,
+        ),
+        (
+          Icons.show_chart,
+          l10n.captureWayHistory,
+          l10n.captureShowHistory,
+          onShowHistory,
+        ),
+      ],
       children: [
         // Whose wound this is, in the body rather than in the app bar: at the
         // text sizes people actually run their phones at, a second line up
@@ -322,28 +397,31 @@ class _Idle extends StatelessWidget {
           SizedBox(height: spacing.s24),
         ],
         _Hint(text: l10n.captureIdleHint),
-        if (standing.isEmpty) ...[
-          SizedBox(height: spacing.s24),
-          Text(
-            l10n.captureExamplesHeading,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
+        SizedBox(height: spacing.s24),
+        Text(
+          l10n.captureExamplesHeading,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
           ),
-          // Inside the group half of what separates the groups: spacing is
-          // the cheapest grouping there is, and equal padding everywhere is
-          // a surface without structure (`22-design-tokens.md`).
-          SizedBox(height: spacing.s8),
-          _Example(text: l10n.captureExampleOne),
-          SizedBox(height: spacing.s8),
-          _Example(text: l10n.captureExampleTwo),
-        ],
+        ),
+        // Inside the group half of what separates the groups: spacing is
+        // the cheapest grouping there is, and equal padding everywhere is
+        // a surface without structure (`22-design-tokens.md`).
+        SizedBox(height: spacing.s8),
+        _Example(text: l10n.captureExampleOne),
+        SizedBox(height: spacing.s8),
+        _Example(text: l10n.captureExampleTwo),
       ],
     );
   }
 }
 
 /// Whose wound this visit documents.
+///
+/// The subtitle of the screen title, without an icon in front of it: the
+/// figure marked "who" and then truncated the location it was there to
+/// introduce. Wrapping onto a second line costs a line; losing the end of
+/// "linker Unterschenkel, distal" costs the half that says *which* wound.
 class _Address extends StatelessWidget {
   const _Address({required this.text});
 
@@ -352,26 +430,12 @@ class _Address extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final spacing = context.spacing;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          Icons.person_outline,
-          size: 20,
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-        SizedBox(width: spacing.s8),
-        Expanded(
-          child: Text(
-            text,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
-      ],
+    return Text(
+      text,
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: theme.colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }
@@ -412,38 +476,91 @@ class _Hint extends StatelessWidget {
   }
 }
 
-/// The equal paths as one block, not three floating cards.
-class _WayGroup extends StatelessWidget {
-  const _WayGroup({required this.ways});
+/// The three equal paths, side by side and the same size.
+///
+/// `standardfallen.md` names "three equal tiles in a row" as a model
+/// preference, and it is one — but cards, photo and course really are equal
+/// ways into the same record rather than a ranking, so the exception applies
+/// (`docs/design/README.md`). As a list under the microphone they read as
+/// footnotes to speech, which is exactly what they are not.
+class _WayTiles extends StatelessWidget {
+  const _WayTiles({required this.ways, required this.across});
 
-  final List<(IconData, String, VoidCallback?)> ways;
+  /// Icon, the word on the tile, the full sentence a screen reader gets, and
+  /// what to do.
+  final List<(IconData, String, String, VoidCallback?)> ways;
+
+  /// Whether the tiles stand side by side rather than under each other.
+  final bool across;
+
+  /// Whether the labels of [ways] fit side by side in [available].
+  ///
+  /// Measured rather than derived from the text scale: the answer depends on
+  /// the width as much as on the size, and a threshold picked from arithmetic
+  /// would be wrong on the first phone that is not the one it was picked on.
+  static bool fitAcross({
+    required BuildContext context,
+    required List<(IconData, String, String, VoidCallback?)> ways,
+    required double available,
+  }) {
+    if (ways.isEmpty) return true;
+
+    final spacing = context.spacing;
+    final style = Theme.of(context).textTheme.labelSmall;
+    final scaler = MediaQuery.textScalerOf(context);
+    final tileWidth =
+        (available - spacing.s8 * (ways.length - 1)) / ways.length;
+
+    for (final way in ways) {
+      final painter = TextPainter(
+        text: TextSpan(text: way.$2, style: style),
+        textDirection: Directionality.of(context),
+        textScaler: scaler,
+      )..layout();
+      final needed = painter.width + 2 * spacing.s8;
+      painter.dispose();
+      if (needed > tileWidth) return false;
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final spacing = context.spacing;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(spacing.r12),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
+    final tiles = [
+      for (final way in ways)
+        _WayTile(
+          icon: way.$1,
+          label: way.$2,
+          semanticsLabel: way.$3,
+          onTap: way.$4,
+          across: across,
+        ),
+    ];
+
+    if (!across) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (var i = 0; i < ways.length; i++) ...[
-            if (i > 0)
-              Divider(
-                height: 1,
-                thickness: 1,
-                indent: spacing.s48 + spacing.s8,
-                color: theme.colorScheme.surfaceContainerHighest,
-              ),
-            _Way(
-              icon: ways[i].$1,
-              label: ways[i].$2,
-              onTap: ways[i].$3,
-            ),
+          for (final (index, tile) in tiles.indexed) ...[
+            if (index > 0) SizedBox(height: spacing.s8),
+            tile,
+          ],
+        ],
+      );
+    }
+
+    // Equal height even when one label wraps and the others do not: three
+    // leaf tiles are cheap to measure, and tiles of different heights would
+    // undo the very thing the row is here to say.
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final (index, tile) in tiles.indexed) ...[
+            if (index > 0) SizedBox(width: spacing.s8),
+            Expanded(child: tile),
           ],
         ],
       ),
@@ -453,16 +570,25 @@ class _WayGroup extends StatelessWidget {
 
 /// An equal path, drawn as something you press.
 ///
-/// Speech is the shortcut, never the only way (`23-a11y.md`) — so these may
-/// not look like footnotes under the microphone button. A row with a surface
-/// behind it, an icon and a chevron reads as a target; a bare text button
-/// next to a 96-point button does not.
-class _Way extends StatelessWidget {
-  const _Way({required this.icon, required this.label, required this.onTap});
+/// Speech is the shortcut, never the only way (`23-a11y.md`). The word on the
+/// tile is short because three of them share a phone width; the sentence a
+/// screen reader reads out is the full one.
+class _WayTile extends StatelessWidget {
+  const _WayTile({
+    required this.icon,
+    required this.label,
+    required this.semanticsLabel,
+    required this.onTap,
+    required this.across,
+  });
 
   final IconData icon;
   final String label;
+  final String semanticsLabel;
   final VoidCallback? onTap;
+
+  /// Whether the label sits under the icon rather than beside it.
+  final bool across;
 
   @override
   Widget build(BuildContext context) {
@@ -473,32 +599,52 @@ class _Way extends StatelessWidget {
         ? theme.colorScheme.onSurface
         : theme.colorScheme.onSurfaceVariant;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: spacing.s16,
-            vertical: spacing.s16,
-          ),
-          child: Row(
-            children: [
-              Icon(icon, color: foreground),
-              SizedBox(width: spacing.s16),
-              Expanded(
-                child: Text(
-                  label,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: foreground,
-                  ),
-                ),
-              ),
-              Icon(
-                Icons.chevron_right,
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
-            ],
+    final glyph = Icon(icon, size: 22, color: foreground);
+    final text = ExcludeSemantics(
+      child: Text(
+        label,
+        textAlign: across ? TextAlign.center : TextAlign.start,
+        style: theme.textTheme.labelSmall?.copyWith(color: foreground),
+      ),
+    );
+
+    return Semantics(
+      label: semanticsLabel,
+      child: Material(
+        color: theme.colorScheme.surface,
+        // An outline, not a lighter fill: in this palette no two surface
+        // tones are more than 1.2:1 apart, so a tinted panel says "target"
+        // indoors and nothing at all in sunlight. The outline clears the 3:1
+        // that a control boundary owes (`23-a11y.md`).
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(spacing.r12),
+          side: BorderSide(color: theme.colorScheme.outline, width: 1.5),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: spacing.s64),
+            child: Padding(
+              padding: EdgeInsets.all(spacing.s8),
+              child: across
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [glyph, SizedBox(height: spacing.s4), text],
+                    )
+                  : Row(
+                      children: [
+                        SizedBox(width: spacing.s8),
+                        glyph,
+                        SizedBox(width: spacing.s16),
+                        Expanded(child: text),
+                        Icon(
+                          Icons.chevron_right,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),
@@ -541,6 +687,9 @@ class _StandingCard extends StatelessWidget {
               value: '${standing.valueCount}',
               label: l10n.captureMetricValues,
             ),
+            // At twice the text size the three labels grow into each other
+            // without it, and "Werte Fotos fehlen" reads as one line.
+            SizedBox(width: spacing.s8),
             _Metric(
               value: '${standing.photoCount}',
               label: l10n.captureMetricPhotos,
@@ -548,6 +697,7 @@ class _StandingCard extends StatelessWidget {
               // check mark and would print an empty box.
               badge: standing.markedPhotoCount > 0 ? Icons.check : null,
             ),
+            SizedBox(width: spacing.s8),
             _Metric(
               value: complete ? '' : '${standing.gapCount}',
               badge: complete ? Icons.check_circle : null,
@@ -745,8 +895,9 @@ class _Interpreting extends StatelessWidget {
 /// Framed as a queue, not as an error: the recording is safe and the visit
 /// goes on. The wording is the same one the office sync will use later.
 class _Queued extends StatelessWidget {
-  const _Queued({required this.onUseCards});
+  const _Queued({required this.header, required this.onUseCards});
 
+  final Widget header;
   final VoidCallback? onUseCards;
 
   @override
@@ -757,6 +908,7 @@ class _Queued extends StatelessWidget {
     final status = context.statusColors;
 
     return _CaptureLayout(
+      header: header,
       action: FilledButton(
         onPressed: onUseCards,
         child: Text(l10n.captureUseCards),
@@ -791,8 +943,9 @@ class _Queued extends StatelessWidget {
 /// Explains what the microphone would be for and offers the card mode as an
 /// equal path rather than as a consolation prize.
 class _NoMicrophone extends StatelessWidget {
-  const _NoMicrophone({required this.onUseCards});
+  const _NoMicrophone({required this.header, required this.onUseCards});
 
+  final Widget header;
   final VoidCallback? onUseCards;
 
   @override
@@ -802,6 +955,7 @@ class _NoMicrophone extends StatelessWidget {
     final spacing = context.spacing;
 
     return _CaptureLayout(
+      header: header,
       action: FilledButton(
         onPressed: onUseCards,
         child: Text(l10n.captureUseCards),

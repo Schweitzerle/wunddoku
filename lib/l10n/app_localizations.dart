@@ -1252,6 +1252,60 @@ abstract class AppLocalizations {
   /// **'So kann das klingen'**
   String get captureExamplesHeading;
 
+  /// Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label.
+  ///
+  /// In de, this message translates to:
+  /// **'Karten'**
+  String get captureWayCards;
+
+  /// Beschriftung der Kachel, die in die Fotoaufnahme führt. Kurzform wie captureWayCards.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto'**
+  String get captureWayPhoto;
+
+  /// Beschriftung der Kachel, die in den Verlauf führt. Kurzform wie captureWayCards.
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get captureWayHistory;
+
+  /// Erster Schritt im Besuchsband: der Befund wird am offenen Verband gesprochen.
+  ///
+  /// In de, this message translates to:
+  /// **'Sprechen'**
+  String get visitStepSpeak;
+
+  /// Zweiter Schritt im Besuchsband: die erkannten Werte werden bestätigt oder verworfen.
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfen'**
+  String get visitStepCheck;
+
+  /// Dritter Schritt im Besuchsband: Wunde fotografieren und markieren.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto'**
+  String get visitStepPhoto;
+
+  /// Vierter Schritt im Besuchsband: der Besuch wird abgeschlossen.
+  ///
+  /// In de, this message translates to:
+  /// **'Abschluss'**
+  String get visitStepClosing;
+
+  /// Semantik-Label des Besuchsbands. Der Screenreader liest einen Satz statt vier zusammenhangloser Wörter.
+  ///
+  /// In de, this message translates to:
+  /// **'Schritt {position} von {total}: {step}'**
+  String visitStepPosition(int position, int total, String step);
+
+  /// Mitte der Kopfzeile im Besuch: welcher Besuch gerade offen ist. Unterscheidet den heutigen Besuch von einem fortgesetzten Entwurf.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch · {date}'**
+  String visitHeaderDate(DateTime date);
+
   /// Zeitraum unter der Verlaufskurve. Ohne ihn sagt die Kurve nicht, über welche Strecke sie verläuft.
   ///
   /// In de, this message translates to:

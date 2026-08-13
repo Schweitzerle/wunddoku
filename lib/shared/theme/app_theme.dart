@@ -109,6 +109,17 @@ abstract final class AppTheme {
           shape: const StadiumBorder(),
         ),
       ),
+      // The quiet counterpart, and the one place a width is *not* forced:
+      // it sits beside other things in the visit header. 48 rather than
+      // Material's 40, because the platform floor is the measure here
+      // (`23-a11y.md`), and 1.5 so the outline survives sunlight.
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          minimumSize: const Size(64, 48),
+          shape: const StadiumBorder(),
+          side: BorderSide(color: scheme.outline, width: 1.5),
+        ),
+      ),
       extensions: const <ThemeExtension<dynamic>>[
         AppSpacing(),
         AppMotion(),

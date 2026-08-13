@@ -10,6 +10,7 @@ import 'package:wunddoku/data/capture/speech_recognizer.dart';
 import 'package:wunddoku/features/besuch/ui/capture_screen.dart';
 import 'package:wunddoku/features/besuch/ui/capture_view_model.dart';
 import 'package:wunddoku/features/besuch/ui/widgets/level_meter.dart';
+import 'package:wunddoku/features/besuch/ui/widgets/visit_chrome.dart';
 
 import '../support/phone.dart';
 import '../support/test_app.dart';
@@ -157,9 +158,90 @@ void main() {
       expect(find.text('1'), findsOneWidget);
       expect(find.text('Fotos'), findsOneWidget);
 
-      // The examples are worth their space on an empty visit and in the way
-      // on one that is half done.
-      expect(find.textContaining('Länge drei Komma fünf'), findsNothing);
+      // The examples stay once a visit is under way. They used to give way to
+      // the standing, which left half a phone screen empty between the record
+      // and the thumb zone — and they are also the only place that names what
+      // may be spoken, which is worth more than the line it costs.
+      expect(find.textContaining('Länge drei Komma fünf'), findsOneWidget);
+    });
+
+    testWidgets('the visit band says which step this is', (tester) async {
+      await useScreen(tester);
+      await tester.pumpWidget(
+        TestApp(child: CaptureScreen(viewModel: model())),
+      );
+
+      expect(find.byType(VisitBand), findsOneWidget);
+      for (final label in ['Sprechen', 'Prüfen', 'Foto', 'Abschluss']) {
+        expect(
+          find.descendant(
+            of: find.byType(VisitBand),
+            matching: find.text(label),
+          ),
+          findsOneWidget,
+        );
+      }
+      expect(find.bySemanticsLabel('Schritt 1 von 4: Sprechen'), findsOne);
+    });
+
+    testWidgets('at 200 percent text the band names only where it is', (
+      tester,
+    ) async {
+      // Four words cannot share a phone width at twice the size. The segments
+      // still carry the position; truncating them to stumps would not.
+      await useScreen(tester, size: narrowSize);
+      await tester.pumpWidget(
+        TestApp(textScale: 2, child: CaptureScreen(viewModel: model())),
+      );
+
+      expect(find.text('Sprechen'), findsOneWidget);
+      expect(find.text('Abschluss'), findsNothing);
+      expect(find.bySemanticsLabel('Schritt 1 von 4: Sprechen'), findsOne);
+    });
+
+    testWidgets('the three ways are tiles that say what they are', (
+      tester,
+    ) async {
+      await useScreen(tester);
+      var cards = false;
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            onUseCards: () => cards = true,
+            onTakePhoto: () {},
+            onShowHistory: () {},
+          ),
+        ),
+      );
+
+      // The word on the tile is short; the sentence a screen reader gets is
+      // the full one.
+      expect(find.text('Karten'), findsOneWidget);
+      expect(find.bySemanticsLabel('Über Karten erfassen'), findsOne);
+      expect(find.bySemanticsLabel('Wunde fotografieren'), findsOne);
+
+      await tester.tap(find.text('Karten'));
+      expect(cards, isTrue);
+    });
+
+    testWidgets('closing the visit carries a word, not a tick', (tester) async {
+      await useScreen(tester);
+      var finished = false;
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            visitDate: DateTime(2026, 8, 13),
+            onFinishVisit: () => finished = true,
+          ),
+        ),
+      );
+
+      expect(find.text('Besuch · 13.08.'), findsOneWidget);
+
+      await tester.tap(find.text('Abschließen'));
+      expect(finished, isTrue);
     });
 
     testWidgets('starting shows an unmissable recording state', (tester) async {
@@ -353,6 +435,7 @@ void main() {
           child: CaptureScreen(
             viewModel: model(),
             context: 'Mustermann · linker Unterschenkel, distal',
+            visitDate: DateTime(2026, 8, 13),
             onUseCards: () {},
             onTakePhoto: () {},
             onShowHistory: () {},
@@ -387,6 +470,7 @@ void main() {
           child: CaptureScreen(
             viewModel: model(),
             context: 'Mustermann · linker Unterschenkel, distal',
+            visitDate: DateTime(2026, 8, 13),
             onUseCards: () {},
             onTakePhoto: () {},
             onShowHistory: () {},
@@ -423,6 +507,7 @@ void main() {
           child: CaptureScreen(
             viewModel: model(),
             context: 'Mustermann · linker Unterschenkel, distal',
+            visitDate: DateTime(2026, 8, 13),
             onUseCards: () {},
             onTakePhoto: () {},
             onShowHistory: () {},

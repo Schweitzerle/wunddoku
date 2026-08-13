@@ -836,6 +836,43 @@ class AppLocalizationsDe extends AppLocalizations {
   String get captureExamplesHeading => 'So kann das klingen';
 
   @override
+  String get captureWayCards => 'Karten';
+
+  @override
+  String get captureWayPhoto => 'Foto';
+
+  @override
+  String get captureWayHistory => 'Verlauf';
+
+  @override
+  String get visitStepSpeak => 'Sprechen';
+
+  @override
+  String get visitStepCheck => 'Prüfen';
+
+  @override
+  String get visitStepPhoto => 'Foto';
+
+  @override
+  String get visitStepClosing => 'Abschluss';
+
+  @override
+  String visitStepPosition(int position, int total, String step) {
+    return 'Schritt $position von $total: $step';
+  }
+
+  @override
+  String visitHeaderDate(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat(
+      'dd.MM.',
+      localeName,
+    );
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Besuch · $dateString';
+  }
+
+  @override
   String historyChartSpan(DateTime from, DateTime to) {
     final intl.DateFormat fromDateFormat = intl.DateFormat.yMd(localeName);
     final String fromString = fromDateFormat.format(from);

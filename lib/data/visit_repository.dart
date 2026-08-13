@@ -84,6 +84,19 @@ class VisitRepository {
     return row == null ? null : VisitId(row.id);
   }
 
+  /// When [visit] was started, or null when there is no such visit.
+  ///
+  /// The header of every screen inside a visit shows it, so a draft resumed
+  /// from another day is not mistaken for today's visit.
+  Future<DateTime?> startedAt(VisitId visit) async {
+    final row =
+        await (_db.select(_db.visits)
+              ..where((v) => v.id.equals(visit.value))
+              ..limit(1))
+            .getSingleOrNull();
+    return row?.startedAt;
+  }
+
   /// Stores [value] for [slotId]; null clears the field back to a gap.
   ///
   /// One row, one write. Called after every single change, which is why it

@@ -173,7 +173,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Wunde fotografieren'));
+    // The tile carries the short word; the sentence is its semantics label.
+    await tester.tap(find.bySemanticsLabel('Wunde fotografieren'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Foto aufnehmen'));
     await tester.pumpAndSettle();
@@ -265,7 +266,7 @@ void main() {
 
     final closed = await dependencies.visits.openDraft(_wound);
 
-    await tester.tap(find.byIcon(Icons.check_circle_outline));
+    await tester.tap(find.text('Abschließen'));
     await tester.pumpAndSettle();
 
     // Nothing was recorded, so every expected field is a gap — and closing is
