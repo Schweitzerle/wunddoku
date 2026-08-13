@@ -41,10 +41,9 @@ die alle drei Tests und Analyzer passiert hatten (siehe unten).
 
 ## Nächste drei Schritte
 
-1. Weiter durch den Entwurf: 1e Prüfen, 1i Abschluss, 1j Verlauf, zuletzt
-   1f/1g/1h Karten, Foto, Markierung. Das Besuchsband (`VisitStep`,
-   `VisitHeader`) steht bereit und muss auf 1e, 1g/1h und 1i mit dem
-   jeweiligen Schritt gesetzt werden.
+1. Rest des Entwurfs: 1f Karten, 1g Foto, 1h Markierung. Auf 1g/1h fehlt das
+   Besuchsband (`VisitStep.photo`), und ihre Goldens laufen als einzige noch
+   auf 800×600 statt in Telefonmaß.
 2. `/eps:abgabe` vorbereiten
 3. Offene Fragen an den Auftraggeber bündeln (siehe unten) — die Wortliste der
    Pflegekräfte ist davon die wertvollste
@@ -105,6 +104,32 @@ der Besuch stammt vom Vortag, nicht von heute. Stand 8 Werte, 2 Fotos mit
 Markierung, 2 fehlen. Der Leerraum zwischen Beispielsätzen und Daumenzone ist
 auf etwa eine Zeilenhöhe geschrumpft; vorher war er das größte Element auf dem
 Bildschirm.
+
+## Erledigt (Abschluss und Verlauf gegen den Entwurf, 2026-08-13)
+
+**1i Abschluss.** Band statt Titel, alle vier Segmente gefüllt — so sieht der
+letzte Schritt aus. Was mit dem Besuch mitgeht, steht auf **einer** Karte: das
+Foto selbst, wie viele eine Markierung tragen, wie viele Werte erfasst sind.
+Vor dem Verlassen der Wohnung ist die Frage, ob das Bild wirklich in der Akte
+ist — ein Satz „ein Foto" ist eine Behauptung, die Miniatur ist die Sache.
+Anker von 22 auf 30; die zweite Zeile entfällt beim vollständigen Besuch, weil
+die Karte darunter dieselbe Zahl nennt.
+
+**1j Verlauf.** Zeile unter dem Titel mit Wunde und Besuchszahl — ein Verlauf
+ohne seine Wunde ist ein Diagramm über nichts. Die Bericht-Aktion trägt ihr
+Wort statt eines Blatt-Symbols in einer AppBar: sie übergibt Gesundheitsdaten
+an das, was die Pflegekraft als Nächstes auswählt, und das errät man nicht an
+einem Piktogramm.
+
+**Und eine Stelle, die der Entwurf nicht hat:** Ein Besuch ohne Messung
+hinterließ auf der Kurve nichts. Ein Verlauf mit einer Lücke in der Mitte zeichnete
+damit zwei einsame Punkte und keine Linie — richtig, und es liest sich wie eine
+kaputte Grafik. Diese Besuche bekommen jetzt einen **hohlen Ring auf der
+Grundlinie**: dort war ein Besuch, und er trug keine Messung. Das ist die
+Wahrheit und ist nicht dasselbe wie null. Weiterhin keine Interpolation.
+
+Goldens von Abschluss und Verlauf laufen jetzt in Telefonmaß — damit stehen nur
+noch Foto und Markierung auf Tabletbreite.
 
 ## Erledigt (Prüfen gegen den Entwurf, 2026-08-13)
 
