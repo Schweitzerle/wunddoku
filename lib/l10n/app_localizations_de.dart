@@ -942,6 +942,14 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String historyChartOneDay(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'am $dateString';
+  }
+
+  @override
   String historyChartLatest(num value) {
     final intl.NumberFormat valueNumberFormat =
         intl.NumberFormat.decimalPattern(localeName);

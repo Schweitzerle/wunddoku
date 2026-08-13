@@ -247,7 +247,11 @@ class _ChartBlock extends StatelessWidget {
           AreaChart(series: history.areaSeries, label: l10n.historyAreaLabel),
           SizedBox(height: spacing.s8),
           Text(
-            l10n.historyChartSpan(first.recordedAt, last.recordedAt),
+            // One day rather than a span when they are the same: "12.8.2026
+            // bis 12.8.2026" claims a stretch of time that did not happen.
+            DateUtils.isSameDay(first.recordedAt, last.recordedAt)
+                ? l10n.historyChartOneDay(first.recordedAt)
+                : l10n.historyChartSpan(first.recordedAt, last.recordedAt),
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

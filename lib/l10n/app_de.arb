@@ -1165,6 +1165,16 @@
       }
     }
   },
+  "historyChartOneDay": "am {date}",
+  "@historyChartOneDay": {
+    "description": "Steht anstelle des Zeitraums unter der Kurve, wenn alle Besuche auf denselben Tag fallen. „12.8.2026 bis 12.8.2026“ behauptet eine Strecke, die es nicht gibt.",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMd"
+      }
+    }
+  },
   "historyChartLatest": "zuletzt {value} cm²",
   "@historyChartLatest": {
     "description": "Der jüngste Flächenwert, als Beschriftung am Ende der Kurve.",

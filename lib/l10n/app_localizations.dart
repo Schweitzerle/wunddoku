@@ -1414,6 +1414,12 @@ abstract class AppLocalizations {
   /// **'{from} bis {to}'**
   String historyChartSpan(DateTime from, DateTime to);
 
+  /// Steht anstelle des Zeitraums unter der Kurve, wenn alle Besuche auf denselben Tag fallen. „12.8.2026 bis 12.8.2026“ behauptet eine Strecke, die es nicht gibt.
+  ///
+  /// In de, this message translates to:
+  /// **'am {date}'**
+  String historyChartOneDay(DateTime date);
+
   /// Der jüngste Flächenwert, als Beschriftung am Ende der Kurve.
   ///
   /// In de, this message translates to:
