@@ -185,6 +185,53 @@ void main() {
       expect(find.bySemanticsLabel('Schritt 1 von 4: Sprechen'), findsOne);
     });
 
+    testWidgets('the band is the way to the other steps', (tester) async {
+      // Four segments with the current one picked out look like something
+      // you press, and on the device that is what people tried. Every
+      // segment goes somewhere.
+      await useScreen(tester);
+      final taken = <VisitStep>[];
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            onSelectStep: taken.add,
+          ),
+        ),
+      );
+
+      for (final label in ['Prüfen', 'Foto', 'Abschluss']) {
+        await tester.tap(
+          find.descendant(
+            of: find.byType(VisitBand),
+            matching: find.text(label),
+          ),
+        );
+      }
+
+      expect(taken, [VisitStep.check, VisitStep.photo, VisitStep.closing]);
+    });
+
+    testWidgets('without a way to go the band only reports', (tester) async {
+      await useScreen(tester);
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(
+        TestApp(child: CaptureScreen(viewModel: model())),
+      );
+
+      // No button role where there is nowhere to go — a control that does
+      // nothing is worse than no control.
+      expect(
+        find.bySemanticsLabel('Schritt 3 von 4: Foto'),
+        findsOne,
+      );
+      final node = tester.getSemantics(
+        find.bySemanticsLabel('Schritt 3 von 4: Foto'),
+      );
+      expect(node.flagsCollection.isButton, isFalse);
+      handle.dispose();
+    });
+
     testWidgets('at 200 percent text the band names only where it is', (
       tester,
     ) async {

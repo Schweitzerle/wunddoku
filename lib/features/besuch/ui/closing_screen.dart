@@ -24,6 +24,7 @@ class ClosingScreen extends StatelessWidget {
     this.onFinish,
     this.onFillGap,
     this.onBack,
+    this.onSelectStep,
     super.key,
   });
 
@@ -43,6 +44,9 @@ class ClosingScreen extends StatelessWidget {
   /// Called to return to the record without closing.
   final VoidCallback? onBack;
 
+  /// Called with the step of the visit the nurse tapped in the band.
+  final void Function(VisitStep step)? onSelectStep;
+
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
@@ -57,7 +61,10 @@ class ClosingScreen extends StatelessWidget {
             // is where the visit says so.
             Padding(
               padding: EdgeInsets.only(top: spacing.s8),
-              child: const VisitBand(current: VisitStep.closing),
+              child: VisitBand(
+                current: VisitStep.closing,
+                onSelect: onSelectStep,
+              ),
             ),
             Expanded(
               child: ListView(

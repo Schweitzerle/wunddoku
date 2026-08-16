@@ -40,9 +40,17 @@ const _segmentHeight = 6.0;
 /// node so a screen reader says "Schritt 2 von 4: Prüfen" instead of reading
 /// four disconnected words.
 class VisitBand extends StatelessWidget {
-  const VisitBand({required this.current, super.key});
+  const VisitBand({required this.current, this.onSelect, super.key});
 
   final VisitStep current;
+
+  /// Goes to a step. Null where the band only reports.
+  ///
+  /// Four segments with the current one picked out look like something you
+  /// press, and on a device that is what people try — the draft's read-only
+  /// band left the ways to the other steps scattered over a tile, a header
+  /// button and one that happens by itself.
+  final void Function(VisitStep step)? onSelect;
 
   @override
   Widget build(BuildContext context) {
@@ -53,73 +61,43 @@ class VisitBand extends StatelessWidget {
     final labelStyle = theme.textTheme.labelMedium!;
     final steps = VisitStep.values;
 
-    return Semantics(
-      label: l10n.visitStepPosition(
-        current.position,
-        steps.length,
-        current.label(l10n),
-      ),
-      excludeSemantics: true,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: spacing.s16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                for (final step in steps) ...[
-                  if (step.index > 0) SizedBox(width: spacing.s8),
-                  Expanded(
-                    child: Container(
-                      height: _segmentHeight,
-                      decoration: BoxDecoration(
-                        color: step.index <= current.index
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(
-                          _segmentHeight / 2,
-                        ),
-                      ),
-                    ),
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: spacing.s16),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // At twice the text size four labels cannot share one line without
+          // breaking mid-word. The segments still carry the position; then
+          // only the step the nurse is on says its name.
+          final labelled = _fits(
+            context: context,
+            style: labelStyle,
+            labels: [for (final step in steps) step.label(l10n)],
+            gap: spacing.s8,
+            available: constraints.maxWidth,
+          );
+
+          return Row(
+            // Top, not stretch: the band lives in a column of unbounded
+            // height, and stretch would ask its children for an infinite
+            // one. The segments line up on the top edge either way.
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final step in steps) ...[
+                if (step.index > 0) SizedBox(width: spacing.s8),
+                Expanded(
+                  child: _BandStep(
+                    step: step,
+                    current: current,
+                    label: labelled || step == current
+                        ? step.label(l10n)
+                        : null,
+                    onSelect: onSelect,
                   ),
-                ],
+                ),
               ],
-            ),
-            SizedBox(height: spacing.s8),
-            LayoutBuilder(
-              builder: (context, constraints) => _fits(
-                context: context,
-                style: labelStyle,
-                labels: [for (final step in steps) step.label(l10n)],
-                gap: spacing.s8,
-                available: constraints.maxWidth,
-              )
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        for (final step in steps)
-                          Text(
-                            step.label(l10n),
-                            style: labelStyle.copyWith(
-                              color: step == current
-                                  ? theme.colorScheme.primary
-                                  : theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                      ],
-                    )
-                  // At large text sizes four labels cannot share one line
-                  // without truncating to stumps. The segments still carry
-                  // the position; the word only has to name where that is.
-                  : Text(
-                      current.label(l10n),
-                      style: labelStyle.copyWith(
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-            ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -152,6 +130,100 @@ class VisitBand extends StatelessWidget {
   }
 }
 
+/// One step of the band: its share of the bar, and its name under it.
+class _BandStep extends StatelessWidget {
+  const _BandStep({
+    required this.step,
+    required this.current,
+    required this.label,
+    required this.onSelect,
+  });
+
+  final VisitStep step;
+  final VisitStep current;
+
+  /// Null where this step gives up its name to keep the line unbroken.
+  final String? label;
+
+  final void Function(VisitStep step)? onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final done = step.index <= current.index;
+    final text = label;
+
+    final content = ConstrainedBox(
+      // A step whose label gave way at large text would otherwise be 30 dp
+      // tall — below the floor for a target.
+      constraints: BoxConstraints(minHeight: spacing.minTouch),
+      child: Padding(
+        // Not decoration: this is what makes the step a target a glove can
+        // hit.
+        padding: EdgeInsets.symmetric(vertical: spacing.s12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: _segmentHeight,
+              decoration: BoxDecoration(
+                // Progress is carried by how many segments are filled, not by
+                // which one is coloured — colour alone would leave the state
+                // invisible to anyone who cannot tell teal from grey.
+                color: done
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(_segmentHeight / 2),
+              ),
+            ),
+            if (text != null) ...[
+              SizedBox(height: spacing.s8),
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: step == current
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+
+    final semanticsLabel = l10n.visitStepPosition(
+      step.position,
+      VisitStep.values.length,
+      step.label(l10n),
+    );
+
+    if (onSelect == null) {
+      return Semantics(
+        label: semanticsLabel,
+        selected: step == current,
+        excludeSemantics: true,
+        child: content,
+      );
+    }
+
+    return Semantics(
+      label: semanticsLabel,
+      button: true,
+      selected: step == current,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: () => onSelect!(step),
+        borderRadius: BorderRadius.circular(spacing.r8),
+        child: content,
+      ),
+    );
+  }
+}
+
 /// The top row of every screen inside a visit.
 ///
 /// Not an [AppBar]: that bar is 56 dp tall whatever the text size, and the
@@ -164,6 +236,7 @@ class VisitHeader extends StatelessWidget {
     this.visitDate,
     this.onBack,
     this.onFinish,
+    this.onSelectStep,
     super.key,
   });
 
@@ -181,6 +254,9 @@ class VisitHeader extends StatelessWidget {
 
   /// Ends the visit. Reachable from every step (`23-a11y.md`, 3.2.6).
   final VoidCallback? onFinish;
+
+  /// Goes to another step of the visit; see [VisitBand.onSelect].
+  final void Function(VisitStep step)? onSelectStep;
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +303,7 @@ class VisitHeader extends StatelessWidget {
             ),
           ),
         SizedBox(height: spacing.s8),
-        VisitBand(current: step),
+        VisitBand(current: step, onSelect: onSelectStep),
       ],
     );
   }

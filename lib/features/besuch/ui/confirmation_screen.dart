@@ -21,6 +21,7 @@ class ConfirmationScreen extends StatelessWidget {
     this.onAccept,
     this.onBackToCapture,
     this.onEnterValue,
+    this.onSelectStep,
     super.key,
   });
 
@@ -42,6 +43,9 @@ class ConfirmationScreen extends StatelessWidget {
   /// waiting here are not lost on the way.
   final void Function(String slotId)? onEnterValue;
 
+  /// Called with the step of the visit the nurse tapped in the band.
+  final void Function(VisitStep step)? onSelectStep;
+
   @override
   Widget build(BuildContext context) {
     // The band rather than a title: "Prüfen" as a word in a bar said where
@@ -52,6 +56,7 @@ class ConfirmationScreen extends StatelessWidget {
       onBack: Navigator.of(context).canPop()
           ? () => Navigator.of(context).maybePop()
           : null,
+      onSelectStep: onSelectStep,
     );
 
     return Scaffold(

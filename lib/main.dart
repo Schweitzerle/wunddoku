@@ -24,6 +24,7 @@ import 'features/besuch/ui/closing_screen.dart';
 import 'features/besuch/ui/closing_view_model.dart';
 import 'features/besuch/ui/confirmation_screen.dart';
 import 'features/besuch/ui/confirmation_view_model.dart';
+import 'features/besuch/ui/widgets/visit_chrome.dart';
 import 'features/patienten/ui/patients_flow.dart';
 import 'shared/text/field_presentation.dart';
 import 'features/besuch/ui/marking_screen.dart';
@@ -298,18 +299,52 @@ class _VisitCorridorState extends State<VisitCorridor> {
     }
   }
 
+  /// Goes to a step of the visit from the band.
+  ///
+  /// Every step is a place the nurse can be, so every segment leads
+  /// somewhere: speaking is the corridor itself, checking without a recording
+  /// shows why there is nothing to check, and the other two are the same
+  /// actions the tile and the header button run.
+  Future<void> _goToStep(VisitStep step) async {
+    switch (step) {
+      case VisitStep.speak:
+        return;
+      case VisitStep.check:
+        await _openConfirmation();
+      case VisitStep.photo:
+        await _takePhoto();
+      case VisitStep.closing:
+        await _finishVisit();
+    }
+  }
+
+  /// Leaves the screen on top before going to [step].
+  ///
+  /// The band is on every screen of the visit; without this, stepping from
+  /// the check screen to the photo would leave the check screen underneath
+  /// and the way back would go through it.
+  Future<void> _stepFrom(VisitStep step) async {
+    Navigator.of(context).pop();
+    await _goToStep(step);
+  }
+
   Future<void> _openConfirmation() async {
     final state = _capture.state;
     final visit = _visit;
-    if (state is! CaptureDone || visit == null) return;
+    if (visit == null) return;
 
-    // The verbatim transcript belongs to the visit whether or not a single
-    // value is accepted: it is the evidence the words were the nurse's own.
-    unawaited(_visits.saveTranscript(visit, state.result.transcript));
+    // Reachable from the band as well, and then usually with nothing to
+    // check: the screen says so itself and points back at the recording.
+    final result = state is CaptureDone ? state.result : null;
+    if (result != null) {
+      // The verbatim transcript belongs to the visit whether or not a single
+      // value is accepted: it is the evidence the words were the nurse's own.
+      unawaited(_visits.saveTranscript(visit, result.transcript));
+    }
 
     final review = ConfirmationViewModel(
       expectedSlots: FieldPresentation.woundBedSlots,
-      result: state.result,
+      result: result,
     );
 
     await Navigator.of(context).push(
@@ -324,6 +359,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
             await _openCards(focusSlot: slotId, resetCapture: false);
             review.discard(slotId);
           },
+          onSelectStep: _stepFrom,
           onAccept: () {
             unawaited(_acceptSettled(visit, review.settledEntries));
             Navigator.of(context).pop();
@@ -368,6 +404,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
     final result = await navigator.push<_ClosingResult>(
       MaterialPageRoute<_ClosingResult>(
         builder: (_) => ClosingScreen(
+          onSelectStep: _stepFrom,
           // The last photo, marked copy preferred: what the nurse checks
           // before leaving is whether the picture is really in the record.
           photoRef: photos.isEmpty
@@ -433,6 +470,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
       MaterialPageRoute<Uint8List>(
         builder: (_) => PhotoScreen(
           camera: widget.dependencies.camera(),
+          onSelectStep: _stepFrom,
           previousPhoto: previousBytes == null
               ? null
               : MemoryImage(previousBytes),
@@ -516,5 +554,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     onTakePhoto: _visit == null ? null : _takePhoto,
     onFinishVisit: _visit == null ? null : _finishVisit,
     onShowHistory: _visit == null ? null : _showHistory,
+    onSelectStep: _visit == null ? null : _goToStep,
   );
 }

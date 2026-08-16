@@ -20,6 +20,7 @@ class PhotoScreen extends StatefulWidget {
     this.previousPhoto,
     this.onTaken,
     this.onSkipped,
+    this.onSelectStep,
     super.key,
   });
 
@@ -36,6 +37,9 @@ class PhotoScreen extends StatefulWidget {
   /// Always reachable: a camera that will not start must never be the reason
   /// a finding goes undocumented.
   final VoidCallback? onSkipped;
+
+  /// Called with the step of the visit the nurse tapped in the band.
+  final void Function(VisitStep step)? onSelectStep;
 
   @override
   State<PhotoScreen> createState() => _PhotoScreenState();
@@ -125,7 +129,10 @@ class _PhotoScreenState extends State<PhotoScreen> {
               ),
             ),
             SizedBox(height: spacing.s8),
-            const VisitBand(current: VisitStep.photo),
+            VisitBand(
+              current: VisitStep.photo,
+              onSelect: widget.onSelectStep,
+            ),
             SizedBox(height: spacing.s12),
             Expanded(child: _body(l10n)),
           ],

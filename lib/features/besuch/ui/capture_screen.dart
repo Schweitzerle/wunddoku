@@ -27,6 +27,7 @@ class CaptureScreen extends StatefulWidget {
     this.onTakePhoto,
     this.onFinishVisit,
     this.onShowHistory,
+    this.onSelectStep,
     super.key,
   });
 
@@ -66,6 +67,9 @@ class CaptureScreen extends StatefulWidget {
   /// Sits in phase A next to the recording: both happen at the open dressing,
   /// and the photo is worthless once the new bandage is on.
   final VoidCallback? onTakePhoto;
+
+  /// Called with the step of the visit the nurse tapped in the band.
+  final void Function(VisitStep step)? onSelectStep;
 
   @override
   State<CaptureScreen> createState() => _CaptureScreenState();
@@ -122,6 +126,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           ? () => Navigator.of(context).maybePop()
           : null,
       onFinish: widget.onFinishVisit,
+      onSelectStep: widget.onSelectStep,
     );
 
     return Scaffold(
