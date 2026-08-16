@@ -1396,6 +1396,72 @@ abstract class AppLocalizations {
   /// **'Sprich der Reihe nach oder durcheinander'**
   String get captureTopicsHeading;
 
+  /// Bereich des Befunds in der Fortschrittsliste: Länge, Breite, Tiefe.
+  ///
+  /// In de, this message translates to:
+  /// **'Maße'**
+  String get standingAreaMeasurements;
+
+  /// Bereich des Befunds in der Fortschrittsliste: die Gewebeanteile.
+  ///
+  /// In de, this message translates to:
+  /// **'Wundgrund'**
+  String get standingAreaWoundBed;
+
+  /// Bereich des Befunds in der Fortschrittsliste: Menge und Art des Exsudats.
+  ///
+  /// In de, this message translates to:
+  /// **'Exsudat'**
+  String get standingAreaExudate;
+
+  /// Bereich des Befunds in der Fortschrittsliste: die Schmerzintensität.
+  ///
+  /// In de, this message translates to:
+  /// **'Schmerz'**
+  String get standingAreaPain;
+
+  /// Bereich des Befunds in der Fortschrittsliste: das Wundfoto.
+  ///
+  /// In de, this message translates to:
+  /// **'Foto'**
+  String get standingAreaPhoto;
+
+  /// Stand eines Bereichs, der angefangen und nicht fertig ist.
+  ///
+  /// In de, this message translates to:
+  /// **'{done} von {total}'**
+  String standingPartial(int done, int total);
+
+  /// Stand eines Bereichs, der vollständig ist.
+  ///
+  /// In de, this message translates to:
+  /// **'erfasst'**
+  String get standingComplete;
+
+  /// Stand eines Bereichs, zu dem noch nichts festgehalten wurde. Bewusst nicht „fehlt“ — auf diesem Screen ist der Befund noch im Entstehen, fehlen tut es erst beim Abschluss.
+  ///
+  /// In de, this message translates to:
+  /// **'offen'**
+  String get standingOpen;
+
+  /// Zählt die Befundbereiche, die noch etwas wollen. Steht neben der Überschrift der Fortschrittsliste.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Bereich offen} other{{count} Bereiche offen}}'**
+  String standingOpenCount(int count);
+
+  /// Steht anstelle der Zahl offener Bereiche, wenn der Befund vollständig ist.
+  ///
+  /// In de, this message translates to:
+  /// **'vollständig'**
+  String get standingAllDone;
+
+  /// Überschrift über der Fortschrittsliste auf dem Erfassungs-Screen.
+  ///
+  /// In de, this message translates to:
+  /// **'Im Befund'**
+  String get standingHeading;
+
   /// Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label.
   ///
   /// In de, this message translates to:

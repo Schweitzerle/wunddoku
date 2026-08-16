@@ -28,6 +28,7 @@ class CaptureScreen extends StatefulWidget {
     this.onFinishVisit,
     this.onShowHistory,
     this.onSelectStep,
+    this.onOpenArea,
     super.key,
   });
 
@@ -70,6 +71,9 @@ class CaptureScreen extends StatefulWidget {
 
   /// Called with the step of the visit the nurse tapped in the band.
   final void Function(VisitStep step)? onSelectStep;
+
+  /// Called with the area of the finding the nurse wants to fill in.
+  final void Function(StandingArea area)? onOpenArea;
 
   @override
   State<CaptureScreen> createState() => _CaptureScreenState();
@@ -155,6 +159,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             onUseCards: widget.onUseCards,
             onTakePhoto: widget.onTakePhoto,
             onShowHistory: widget.onShowHistory,
+            onOpenArea: widget.onOpenArea,
           ),
         },
       ),
@@ -354,6 +359,7 @@ class _Idle extends StatelessWidget {
     required this.onUseCards,
     required this.onTakePhoto,
     required this.onShowHistory,
+    required this.onOpenArea,
   });
 
   final Widget header;
@@ -380,6 +386,9 @@ class _Idle extends StatelessWidget {
   /// Reachable before the recording on purpose: what the wound looked like a
   /// week ago is what the nurse compares against while the dressing is off.
   final VoidCallback? onShowHistory;
+
+  /// Opens the place where an area of the finding is filled in.
+  final void Function(StandingArea area)? onOpenArea;
 
   @override
   Widget build(BuildContext context) {
@@ -426,32 +435,185 @@ class _Idle extends StatelessWidget {
         SizedBox(height: spacing.s24),
         // On a visit under way the standing leads: the first thing a nurse
         // coming back from an interruption needs is where she left off.
-        if (!standing.isEmpty) ...[
-          _StandingCard(standing: standing),
-          SizedBox(height: spacing.s24),
-        ],
-        _Hint(text: l10n.captureIdleHint),
+        if (standing.isEmpty)
+          // What can be spoken, for a visit that holds nothing yet. Once it
+          // holds something the list below says the same in a form that also
+          // answers "what is still open", and two of those would compete.
+          _Hint(text: l10n.captureIdleHint)
+        else
+          _AreaList(
+            areas: standing.areas,
+            openCount: standing.areas.where((a) => !a.isComplete).length,
+            onOpen: onOpenArea,
+          ),
         // Whatever room is left over lands here rather than at the bottom of
-        // the screen: the examples then stand a constant 24 dp above the
-        // thumb zone, next to the button they describe, at every fill level.
-        // When the content is taller than the viewport this collapses to
-        // nothing and the screen simply scrolls.
+        // the screen: what follows then stands a constant 24 dp above the
+        // thumb zone. When the content is taller than the viewport this
+        // collapses to nothing and the screen simply scrolls.
         const Spacer(),
-        SizedBox(height: spacing.s24),
-        Text(
-          l10n.captureExamplesHeading,
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+        // The examples teach what a spoken finding sounds like. Once the
+        // visit holds something, the list above answers the question the
+        // nurse actually has — what is still open — and the examples give
+        // way to it.
+        if (standing.isEmpty) ...[
+          SizedBox(height: spacing.s24),
+          Text(
+            l10n.captureExamplesHeading,
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          // Inside the group half of what separates the groups: spacing is
+          // the cheapest grouping there is, and equal padding everywhere is
+          // a surface without structure (`22-design-tokens.md`).
+          SizedBox(height: spacing.s8),
+          _Example(text: l10n.captureExampleOne),
+          SizedBox(height: spacing.s8),
+          _Example(text: l10n.captureExampleTwo),
+        ],
+      ],
+    );
+  }
+}
+
+/// The finding by area, with what is in it and what is not.
+///
+/// Numbers alone ("8 Werte · 2 fehlen") say how much is done but never what.
+/// The areas are the ones the nurse speaks in, and each row is the way into
+/// the place where that area is filled in — seeing a gap and reaching it are
+/// one movement, not two (NN/g, *Visibility of System Status*).
+class _AreaList extends StatelessWidget {
+  const _AreaList({
+    required this.areas,
+    required this.openCount,
+    required this.onOpen,
+  });
+
+  final List<StandingArea> areas;
+
+  /// How many areas still want something.
+  final int openCount;
+
+  final void Function(StandingArea area)? onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n.standingHeading,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            // The one number that decides whether the visit can be left as
+            // it is, next to the list that says which ones they are.
+            Text(
+              openCount == 0
+                  ? l10n.standingAllDone
+                  : l10n.standingOpenCount(openCount),
+              style: theme.textTheme.labelMedium?.copyWith(
+                color: openCount == 0
+                    ? context.statusColors.sicher
+                    : context.statusColors.pruefen,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: spacing.s8),
+        for (final area in areas)
+          _AreaRow(
+            area: area,
+            onOpen: onOpen == null ? null : () => onOpen!(area),
+          ),
+      ],
+    );
+  }
+}
+
+/// One area of the finding: its name, how far it is, and the way there.
+class _AreaRow extends StatelessWidget {
+  const _AreaRow({required this.area, required this.onOpen});
+
+  final StandingArea area;
+  final VoidCallback? onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final status = context.statusColors;
+
+    final label = switch (area.id) {
+      StandingAreaId.measurements => l10n.standingAreaMeasurements,
+      StandingAreaId.woundBed => l10n.standingAreaWoundBed,
+      StandingAreaId.exudate => l10n.standingAreaExudate,
+      StandingAreaId.pain => l10n.standingAreaPain,
+      StandingAreaId.photo => l10n.standingAreaPhoto,
+    };
+    final state = switch (area) {
+      StandingArea(isComplete: true) => l10n.standingComplete,
+      StandingArea(isUntouched: true) => l10n.standingOpen,
+      _ => l10n.standingPartial(area.done, area.total),
+    };
+
+    return Semantics(
+      label: '$label, $state',
+      button: onOpen != null,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onOpen,
+        borderRadius: BorderRadius.circular(spacing.r8),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: spacing.minTouch),
+          child: Row(
+            children: [
+              // The mark differs as well as the colour: a tick for done, an
+              // empty ring for untouched, a half-filled one in between —
+              // colour alone is not a statement in sunlight.
+              Icon(
+                area.isComplete
+                    ? Icons.check_circle
+                    : area.isUntouched
+                    ? Icons.circle_outlined
+                    : Icons.incomplete_circle,
+                size: 20,
+                color: area.isComplete ? status.sicher : status.luecke,
+              ),
+              SizedBox(width: spacing.s12),
+              Expanded(
+                child: Text(label, style: theme.textTheme.bodyLarge),
+              ),
+              Text(
+                state,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: area.isComplete
+                      ? theme.colorScheme.onSurfaceVariant
+                      : status.luecke,
+                ),
+              ),
+              if (onOpen != null) ...[
+                SizedBox(width: spacing.s4),
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ],
           ),
         ),
-        // Inside the group half of what separates the groups: spacing is
-        // the cheapest grouping there is, and equal padding everywhere is
-        // a surface without structure (`22-design-tokens.md`).
-        SizedBox(height: spacing.s8),
-        _Example(text: l10n.captureExampleOne),
-        SizedBox(height: spacing.s8),
-        _Example(text: l10n.captureExampleTwo),
-      ],
+      ),
     );
   }
 }
@@ -707,136 +869,6 @@ class _WayTileState extends State<_WayTile> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// The visit at a glance: three numbers, largest first.
-///
-/// Replaces three sentences of running text. What the nurse wants on return
-/// is not prose but the answer to "how far am I" — and the one figure that
-/// decides whether she can leave the flat is what is still missing.
-class _StandingCard extends StatelessWidget {
-  const _StandingCard({required this.standing});
-
-  final VisitStanding standing;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-    final status = context.statusColors;
-    final complete = standing.gapCount == 0;
-
-    return MergeSemantics(
-      child: Container(
-        decoration: BoxDecoration(
-          color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(spacing.r12),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: spacing.s16,
-          vertical: spacing.s16,
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _Metric(
-              value: '${standing.valueCount}',
-              label: l10n.captureMetricValues,
-            ),
-            // At twice the text size the three labels grow into each other
-            // without it, and "Werte Fotos fehlen" reads as one line.
-            SizedBox(width: spacing.s8),
-            _Metric(
-              value: '${standing.photoCount}',
-              label: l10n.captureMetricPhotos,
-              // A drawn tick, not the character: the bundled font has no
-              // check mark and would print an empty box.
-              badge: standing.markedPhotoCount > 0 ? Icons.check : null,
-            ),
-            SizedBox(width: spacing.s8),
-            _Metric(
-              value: complete ? '' : '${standing.gapCount}',
-              badge: complete ? Icons.check_circle : null,
-              label: complete
-                  ? l10n.captureMetricComplete
-                  : l10n.captureMetricGaps,
-              // The only figure that decides whether the visit can be left
-              // as it is — so it is the only one that carries colour.
-              colour: complete ? status.sicher : status.pruefen,
-              emphasised: true,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Metric extends StatelessWidget {
-  const _Metric({
-    required this.value,
-    required this.label,
-    this.colour,
-    this.badge,
-    this.emphasised = false,
-  });
-
-  final String value;
-  final String label;
-  final Color? colour;
-
-  /// Drawn beside the figure when there is something to add to it.
-  final IconData? badge;
-
-  /// Whether this figure is the one that decides.
-  final bool emphasised;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (value.isNotEmpty)
-                Text(
-                  value,
-                  // All three figures are the same size. A larger one sat on
-                  // a lower baseline, so its label hung 4 dp below the other
-                  // two and the card's bottom edge frayed — and it was a
-                  // fifth type size on a screen the rules allow four on.
-                  // The emphasis is carried by colour and by the icon.
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: colour ?? theme.colorScheme.onSurface,
-                  ),
-                ),
-              if (badge != null) ...[
-                if (value.isNotEmpty) SizedBox(width: spacing.s4),
-                Icon(
-                  badge,
-                  size: emphasised ? 28 : 20,
-                  color: colour ?? theme.colorScheme.onSurface,
-                ),
-              ],
-            ],
-          ),
-          SizedBox(height: spacing.s4),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ],
       ),
     );
   }

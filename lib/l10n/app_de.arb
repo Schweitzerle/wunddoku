@@ -1125,6 +1125,63 @@
   "@captureTopicsHeading": {
     "description": "Überschrift über den vier Themen im Aufnahmezustand. Sagt zugleich, dass die Reihenfolge frei ist."
   },
+  "standingAreaMeasurements": "Maße",
+  "@standingAreaMeasurements": {
+    "description": "Bereich des Befunds in der Fortschrittsliste: Länge, Breite, Tiefe."
+  },
+  "standingAreaWoundBed": "Wundgrund",
+  "@standingAreaWoundBed": {
+    "description": "Bereich des Befunds in der Fortschrittsliste: die Gewebeanteile."
+  },
+  "standingAreaExudate": "Exsudat",
+  "@standingAreaExudate": {
+    "description": "Bereich des Befunds in der Fortschrittsliste: Menge und Art des Exsudats."
+  },
+  "standingAreaPain": "Schmerz",
+  "@standingAreaPain": {
+    "description": "Bereich des Befunds in der Fortschrittsliste: die Schmerzintensität."
+  },
+  "standingAreaPhoto": "Foto",
+  "@standingAreaPhoto": {
+    "description": "Bereich des Befunds in der Fortschrittsliste: das Wundfoto."
+  },
+  "standingPartial": "{done} von {total}",
+  "@standingPartial": {
+    "description": "Stand eines Bereichs, der angefangen und nicht fertig ist.",
+    "placeholders": {
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "standingComplete": "erfasst",
+  "@standingComplete": {
+    "description": "Stand eines Bereichs, der vollständig ist."
+  },
+  "standingOpen": "offen",
+  "@standingOpen": {
+    "description": "Stand eines Bereichs, zu dem noch nichts festgehalten wurde. Bewusst nicht „fehlt“ — auf diesem Screen ist der Befund noch im Entstehen, fehlen tut es erst beim Abschluss."
+  },
+  "standingOpenCount": "{count, plural, =1{1 Bereich offen} other{{count} Bereiche offen}}",
+  "@standingOpenCount": {
+    "description": "Zählt die Befundbereiche, die noch etwas wollen. Steht neben der Überschrift der Fortschrittsliste.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "standingAllDone": "vollständig",
+  "@standingAllDone": {
+    "description": "Steht anstelle der Zahl offener Bereiche, wenn der Befund vollständig ist."
+  },
+  "standingHeading": "Im Befund",
+  "@standingHeading": {
+    "description": "Überschrift über der Fortschrittsliste auf dem Erfassungs-Screen."
+  },
   "captureWayCards": "Karten",
   "@captureWayCards": {
     "description": "Beschriftung der Kachel, die in die Erfassung über Karten führt. Kurzform, weil die Kachel neben zwei gleich großen steht; die volle Formulierung trägt das Semantik-Label."

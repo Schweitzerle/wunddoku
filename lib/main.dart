@@ -299,6 +299,19 @@ class _VisitCorridorState extends State<VisitCorridor> {
     }
   }
 
+  /// Opens the place where [area] is filled in.
+  ///
+  /// The photo has its own screen; everything else is a card, and the card
+  /// mode opens on the one the row named. Seeing what is open and getting
+  /// there is one movement.
+  Future<void> _openArea(StandingArea area) async {
+    if (area.id == StandingAreaId.photo) {
+      await _takePhoto();
+      return;
+    }
+    await _openCards(focusSlot: area.focusSlot);
+  }
+
   /// Goes to a step of the visit from the band.
   ///
   /// Every step is a place the nurse can be, so every segment leads
@@ -555,5 +568,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     onFinishVisit: _visit == null ? null : _finishVisit,
     onShowHistory: _visit == null ? null : _showHistory,
     onSelectStep: _visit == null ? null : _goToStep,
+    onOpenArea: _visit == null ? null : _openArea,
   );
 }

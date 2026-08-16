@@ -105,17 +105,18 @@ void main() {
       );
 
       // An interruption is normal here, and the record is what the nurse
-      // returns to — so the screen has to show it.
-      // Three figures, largest first: how far am I, and what still stops me
-      // from leaving the flat.
-      expect(find.text('3'), findsOneWidget);
-      expect(find.text('6'), findsOneWidget);
-      expect(find.text('Werte'), findsOneWidget);
-      expect(find.text('fehlen'), findsOneWidget);
-      // The tick says at least one of them carries an outline.
-      expect(find.text('1'), findsOneWidget);
-      expect(find.byIcon(Icons.check), findsOneWidget);
-      expect(find.text('Fotos'), findsOneWidget);
+      // returns to — so the screen has to show it. Not as three abstract
+      // figures but by area, because "what have I already done" is a
+      // question about areas.
+      expect(find.text('Im Befund'), findsOneWidget);
+      expect(find.text('Maße'), findsOneWidget);
+      expect(find.text('2 von 3'), findsOneWidget);
+      expect(find.text('Wundgrund'), findsOneWidget);
+      expect(find.text('1 von 4'), findsOneWidget);
+      expect(find.text('Schmerz'), findsOneWidget);
+      // The photo is one of the areas, so it is ticked like the others.
+      expect(find.text('Foto'), findsWidgets);
+      expect(find.text('4 Bereiche offen'), findsOneWidget);
     });
 
     testWidgets('a retaken photo does not claim both are marked', (
@@ -135,8 +136,10 @@ void main() {
         ),
       );
 
-      expect(find.text('2'), findsOneWidget);
-      expect(find.byIcon(Icons.check), findsOneWidget);
+      // Two pictures of which one is marked is still "there is a photo" for
+      // the area list; how many carry an outline is the closing screen's
+      // question, not this one.
+      expect(find.text('erfasst'), findsOneWidget);
     });
 
     testWidgets('an unmarked photo is stated without a marking clause', (
@@ -156,14 +159,12 @@ void main() {
         ),
       );
 
-      expect(find.text('1'), findsOneWidget);
-      expect(find.text('Fotos'), findsOneWidget);
-
-      // The examples stay once a visit is under way. They used to give way to
-      // the standing, which left half a phone screen empty between the record
-      // and the thumb zone — and they are also the only place that names what
-      // may be spoken, which is worth more than the line it costs.
-      expect(find.textContaining('Länge drei Komma fünf'), findsOneWidget);
+      // Once the visit holds something, the area list answers the question
+      // the nurse actually has — what is still open — and the examples give
+      // way to it. On an empty visit they are still there.
+      expect(find.textContaining('Länge drei Komma fünf'), findsNothing);
+      expect(find.text('Im Befund'), findsOneWidget);
+      expect(find.text('erfasst'), findsOneWidget);
     });
 
     testWidgets('the visit band says which step this is', (tester) async {

@@ -1,5 +1,39 @@
 import 'visit_draft.dart';
 
+/// One area of the finding, and how far it is.
+///
+/// The nurse thinks in areas — measurements, wound bed, exudate, pain,
+/// photo — not in nine slot ids. Grouping the record the way she groups it is
+/// what turns "8 Werte, 2 fehlen" into something she can act on
+/// (NN/g, *Reduce Cognitive Load in Forms*: group related fields).
+class StandingArea {
+  const StandingArea({
+    required this.id,
+    required this.done,
+    required this.total,
+    required this.focusSlot,
+  });
+
+  /// Identifies the area for the label and for the card it leads to.
+  final StandingAreaId id;
+
+  /// How many of its parts the visit holds.
+  final int done;
+
+  /// How many parts it has. One for the areas that are a single value.
+  final int total;
+
+  /// A slot of this area, so tapping it opens the right card.
+  final String focusSlot;
+
+  bool get isComplete => done >= total;
+  bool get isUntouched => done == 0;
+}
+
+/// The areas a wound finding is made of, in the order they are spoken.
+enum StandingAreaId { measurements, woundBed, exudate, pain, photo }
+
+
 /// What a visit already holds, counted for the capture screen.
 ///
 /// The re-entry point after an interruption comes from the record, not from
@@ -13,13 +47,71 @@ class VisitStanding {
     required this.photoCount,
     required this.markedPhotoCount,
   }) : valueCount = draft.values.length,
-       gapCount = draft.gapsAmong(expectedSlots).length;
+       gapCount = draft.gapsAmong(expectedSlots).length,
+       areas = _areasOf(draft, photoCount);
 
   const VisitStanding.empty()
     : valueCount = 0,
       gapCount = 0,
       photoCount = 0,
-      markedPhotoCount = 0;
+      markedPhotoCount = 0,
+      areas = const [];
+
+  /// The finding by area, in the order the areas are spoken in.
+  final List<StandingArea> areas;
+
+  static List<StandingArea> _areasOf(VisitDraft draft, int photoCount) {
+    int held(List<String> slots) =>
+        slots.where(draft.has).length;
+
+    const measurements = [
+      'measurement.lengthCm',
+      'measurement.widthCm',
+      'measurement.depthCm',
+    ];
+    const tissue = [
+      'tissue.necrosis',
+      'tissue.fibrin',
+      'tissue.granulation',
+      'tissue.epithelialisation',
+    ];
+
+    return [
+      StandingArea(
+        id: StandingAreaId.measurements,
+        done: held(measurements),
+        total: measurements.length,
+        focusSlot: measurements.first,
+      ),
+      // The wound bed is complete when the shares add up, not when four
+      // numbers exist: three shares of 100 % together are the whole, and a
+      // fourth at zero is a statement, not a gap.
+      StandingArea(
+        id: StandingAreaId.woundBed,
+        done: draft.tissueDistribution == null ? held(tissue) : 1,
+        total: draft.tissueDistribution == null ? tissue.length : 1,
+        focusSlot: tissue.first,
+      ),
+      StandingArea(
+        id: StandingAreaId.exudate,
+        done: held(const ['exudate.amount']),
+        total: 1,
+        focusSlot: 'exudate.amount',
+      ),
+      StandingArea(
+        id: StandingAreaId.pain,
+        done: held(const ['pain.score']),
+        total: 1,
+        focusSlot: 'pain.score',
+      ),
+      StandingArea(
+        id: StandingAreaId.photo,
+        done: photoCount > 0 ? 1 : 0,
+        total: 1,
+        focusSlot: 'photo',
+      ),
+    ];
+  }
 
   /// Fields the visit carries a value for, expected or not.
   final int valueCount;

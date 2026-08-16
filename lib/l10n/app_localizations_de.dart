@@ -923,6 +923,49 @@ class AppLocalizationsDe extends AppLocalizations {
   String get captureTopicsHeading => 'Sprich der Reihe nach oder durcheinander';
 
   @override
+  String get standingAreaMeasurements => 'Maße';
+
+  @override
+  String get standingAreaWoundBed => 'Wundgrund';
+
+  @override
+  String get standingAreaExudate => 'Exsudat';
+
+  @override
+  String get standingAreaPain => 'Schmerz';
+
+  @override
+  String get standingAreaPhoto => 'Foto';
+
+  @override
+  String standingPartial(int done, int total) {
+    return '$done von $total';
+  }
+
+  @override
+  String get standingComplete => 'erfasst';
+
+  @override
+  String get standingOpen => 'offen';
+
+  @override
+  String standingOpenCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Bereiche offen',
+      one: '1 Bereich offen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get standingAllDone => 'vollständig';
+
+  @override
+  String get standingHeading => 'Im Befund';
+
+  @override
   String get captureWayCards => 'Karten';
 
   @override
