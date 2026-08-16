@@ -477,6 +477,9 @@ class _VisitCorridorState extends State<VisitCorridor> {
         ? null
         : await _readQuietly(previous.originalRef);
     if (!mounted) return;
+    // The record knows of a photo the media store could not hand over. The
+    // screen says so rather than dropping the framing aid without a word.
+    final aidUnreadable = previous != null && previousBytes == null;
 
     final navigator = Navigator.of(context);
     final taken = await navigator.push<Uint8List>(
@@ -487,6 +490,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
           previousPhoto: previousBytes == null
               ? null
               : MemoryImage(previousBytes),
+          previousPhotoUnreadable: aidUnreadable,
           onTaken: navigator.pop,
           onSkipped: navigator.pop,
         ),

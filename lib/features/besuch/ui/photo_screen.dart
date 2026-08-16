@@ -18,6 +18,7 @@ class PhotoScreen extends StatefulWidget {
   const PhotoScreen({
     required this.camera,
     this.previousPhoto,
+    this.previousPhotoUnreadable = false,
     this.onTaken,
     this.onSkipped,
     this.onSelectStep,
@@ -28,6 +29,13 @@ class PhotoScreen extends StatefulWidget {
 
   /// The photo of the last visit, used as the framing aid.
   final ImageProvider? previousPhoto;
+
+  /// Whether the record holds a previous photo whose file would not read.
+  ///
+  /// Then the framing aid is missing for a reason, and the screen says so.
+  /// Dropping it silently is how a nurse ends up wondering whether she
+  /// remembered the aid wrong.
+  final bool previousPhotoUnreadable;
 
   /// Called with the encoded bytes once the nurse accepts a picture.
   final ValueChanged<Uint8List>? onTaken;
@@ -167,6 +175,7 @@ class _PhotoScreenState extends State<PhotoScreen> {
     return _Viewfinder(
       preview: widget.camera.preview(),
       previousPhoto: widget.previousPhoto,
+      previousPhotoUnreadable: widget.previousPhotoUnreadable,
       ghostVisible: _ghostVisible,
       onGhostChanged: (visible) => setState(() => _ghostVisible = visible),
       onShutter: _shutterBusy ? null : _shoot,
@@ -179,6 +188,7 @@ class _Viewfinder extends StatelessWidget {
   const _Viewfinder({
     required this.preview,
     required this.previousPhoto,
+    required this.previousPhotoUnreadable,
     required this.ghostVisible,
     required this.onGhostChanged,
     required this.onShutter,
@@ -186,6 +196,7 @@ class _Viewfinder extends StatelessWidget {
 
   final Widget preview;
   final ImageProvider? previousPhoto;
+  final bool previousPhotoUnreadable;
   final bool ghostVisible;
   final ValueChanged<bool> onGhostChanged;
   final VoidCallback? onShutter;
@@ -215,7 +226,11 @@ class _Viewfinder extends StatelessWidget {
             spacing.s12,
           ),
           child: Text(
-            previous == null ? l10n.photoHintFirst : l10n.photoHint,
+            previous != null
+                ? l10n.photoHint
+                : previousPhotoUnreadable
+                ? l10n.photoGhostUnreadable
+                : l10n.photoHintFirst,
             style: theme.textTheme.labelSmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -241,6 +256,11 @@ class _Viewfinder extends StatelessWidget {
                           image: previous,
                           fit: BoxFit.contain,
                           opacity: const AlwaysStoppedAnimation(_ghostOpacity),
+                          // A framing aid that cannot be decoded costs the
+                          // aid and nothing else — but it may not take the
+                          // viewfinder with it.
+                          errorBuilder: (context, error, stack) =>
+                              const SizedBox.shrink(),
                         ),
                       ),
                   ],

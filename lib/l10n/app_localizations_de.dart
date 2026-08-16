@@ -382,6 +382,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.';
 
   @override
+  String get photoGhostUnreadable =>
+      'Das Foto des vorigen Besuchs lässt sich nicht laden — die Einblendung fehlt diesmal.';
+
+  @override
   String get photoHintFirst =>
       'Erstes Foto dieser Wunde. Formatiere frontal und mit gleichbleibendem Abstand.';
 

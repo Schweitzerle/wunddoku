@@ -640,6 +640,12 @@ abstract class AppLocalizations {
   /// **'Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.'**
   String get photoHint;
 
+  /// Steht anstelle des Ausricht-Hinweises, wenn die Akte ein voriges Foto führt, die Datei sich aber nicht lesen lässt. Der Hinweis sagt, dass die Hilfe fehlt, statt sie stillschweigend wegzulassen.
+  ///
+  /// In de, this message translates to:
+  /// **'Das Foto des vorigen Besuchs lässt sich nicht laden — die Einblendung fehlt diesmal.'**
+  String get photoGhostUnreadable;
+
   /// Hinweis über dem Sucher, wenn es noch kein Vorfoto gibt.
   ///
   /// In de, this message translates to:
