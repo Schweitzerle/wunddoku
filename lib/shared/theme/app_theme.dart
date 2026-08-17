@@ -145,6 +145,21 @@ abstract final class AppTheme {
           side: BorderSide(color: scheme.outline, width: 1.5),
         ),
       ),
+      // Feedback that floats over the thumb zone rather than sitting in it,
+      // and in the app's own surfaces: Material's default is a black slab
+      // with its own radius, and it looked like a visitor from another app.
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: surfaceContainerHighest,
+        contentTextStyle: buildTextTheme(font).bodyMedium?.copyWith(
+          color: onSurface,
+        ),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: outline),
+        ),
+      ),
       extensions: const <ThemeExtension<dynamic>>[
         AppSpacing(),
         AppMotion(),

@@ -226,6 +226,31 @@ void main() {
     });
   });
 
+  testWidgets('the pain rating is a value, and zero is one of them', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      TestApp(child: CardEntryScreen(viewModel: viewModel)),
+    );
+    await tester.scrollUntilVisible(find.text('Schmerz'), 200);
+
+    // The area list promised a way to it and there was none — the card was
+    // missing entirely.
+    expect(find.text('0 bis 10, bezogen auf den Verbandwechsel'), findsWidgets);
+
+    await tester.tap(find.byIcon(Icons.add).last);
+    await tester.pump();
+    expect(find.text('0 von 10'), findsOneWidget);
+
+    // Zero is a finding here — "keine Schmerzen" is an answer — so unlike a
+    // measurement it does not fall back into a gap. Clearing it is its own
+    // action.
+    expect(find.text('Angabe löschen'), findsOneWidget);
+    await tester.tap(find.text('Angabe löschen'));
+    await tester.pump();
+    expect(find.text('Angabe löschen'), findsNothing);
+  });
+
   group('goldens', () {
     testWidgets('empty', (tester) async {
       await useScreen(tester);

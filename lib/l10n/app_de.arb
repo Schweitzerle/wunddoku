@@ -369,6 +369,18 @@
   "@cardsTitle": {
     "description": "Titel des Kartenmodus — der Erfassung ohne Sprache."
   },
+  "cardsPain": "Schmerz",
+  "@cardsPain": {
+    "description": "Überschrift der Schmerz-Karte im Kartenmodus."
+  },
+  "cardsPainScale": "0 bis 10, bezogen auf den Verbandwechsel",
+  "@cardsPainScale": {
+    "description": "Erklärt die Skala auf der Schmerz-Karte. Ohne den Bezug ist die Zahl über die Besuche hinweg nicht vergleichbar (siehe docs/fachkataloge.md)."
+  },
+  "cardsPainClear": "Angabe löschen",
+  "@cardsPainClear": {
+    "description": "Setzt die Schmerzangabe zurück auf eine Lücke. Nötig, weil 0 hier ein Befund ist („keine Schmerzen“) und nicht das Fehlen einer Angabe."
+  },
   "cardsWoundBed": "Wundgrund",
   "@cardsWoundBed": {
     "description": "Überschrift der Karte für die Gewebeanteile am Wundgrund. Fachbegriff des Kunden."

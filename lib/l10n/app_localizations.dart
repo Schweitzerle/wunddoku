@@ -532,6 +532,24 @@ abstract class AppLocalizations {
   /// **'Befund erfassen'**
   String get cardsTitle;
 
+  /// Überschrift der Schmerz-Karte im Kartenmodus.
+  ///
+  /// In de, this message translates to:
+  /// **'Schmerz'**
+  String get cardsPain;
+
+  /// Erklärt die Skala auf der Schmerz-Karte. Ohne den Bezug ist die Zahl über die Besuche hinweg nicht vergleichbar (siehe docs/fachkataloge.md).
+  ///
+  /// In de, this message translates to:
+  /// **'0 bis 10, bezogen auf den Verbandwechsel'**
+  String get cardsPainScale;
+
+  /// Setzt die Schmerzangabe zurück auf eine Lücke. Nötig, weil 0 hier ein Befund ist („keine Schmerzen“) und nicht das Fehlen einer Angabe.
+  ///
+  /// In de, this message translates to:
+  /// **'Angabe löschen'**
+  String get cardsPainClear;
+
   /// Überschrift der Karte für die Gewebeanteile am Wundgrund. Fachbegriff des Kunden.
   ///
   /// In de, this message translates to:

@@ -326,6 +326,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cardsTitle => 'Befund erfassen';
 
   @override
+  String get cardsPain => 'Schmerz';
+
+  @override
+  String get cardsPainScale => '0 bis 10, bezogen auf den Verbandwechsel';
+
+  @override
+  String get cardsPainClear => 'Angabe löschen';
+
+  @override
   String get cardsWoundBed => 'Wundgrund';
 
   @override

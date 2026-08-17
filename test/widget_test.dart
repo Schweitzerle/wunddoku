@@ -211,10 +211,10 @@ void main() {
     expect(media.files, hasLength(2));
   });
 
-  testWidgets('taking the values over leads on to the photo', (tester) async {
-    // Both happen at the open dressing, and the picture is worthless once
-    // the new bandage is on. Landing back on the screen the recording came
-    // from left the nurse to remember the next step herself.
+  testWidgets('taking the values over ends where it began', (tester) async {
+    // A detour returns to where it started. Sending the nurse on to the
+    // camera made the app decide where she goes next, and then nobody could
+    // predict where a "Fertig" would come out.
     final dependencies = await _dependencies();
     addTearDown(dependencies.dispose);
 
@@ -241,7 +241,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
-    expect(find.text('Wunde fotografieren'), findsOneWidget);
+    expect(find.text('Besuch'), findsOneWidget);
+    expect(find.text('Wunde fotografieren'), findsNothing);
+    // And it says what it did, because the screen it lands on looks like the
+    // one it left.
+    expect(find.byType(SnackBar), findsWidgets);
   });
 
   testWidgets('a discarded value stays out of the record', (tester) async {

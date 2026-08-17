@@ -24,6 +24,7 @@ import 'features/besuch/ui/closing_screen.dart';
 import 'features/besuch/ui/closing_view_model.dart';
 import 'features/besuch/ui/confirmation_screen.dart';
 import 'features/besuch/ui/confirmation_view_model.dart';
+import 'features/besuch/ui/widgets/area_sheet.dart';
 import 'features/besuch/ui/widgets/visit_chrome.dart';
 import 'features/patienten/ui/patients_flow.dart';
 import 'shared/text/field_presentation.dart';
@@ -273,11 +274,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
   /// [resetCapture] is false when the cards were opened from the check
   /// screen: the proposals still waiting there are not stale just because one
   /// field was filled in by hand.
-  Future<void> _openCards({
-    String? focusSlot,
-    bool resetCapture = true,
-    bool thenCheck = false,
-  }) async {
+  Future<void> _openCards({String? focusSlot, bool resetCapture = true}) async {
     final visit = _visit;
     if (visit == null) return;
 
@@ -300,10 +297,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     if (result != null && mounted) {
       setState(() => _draft = result);
       if (resetCapture) _capture.reset();
-      // Entering by hand ends where speaking ends: at the finding, to look
-      // over. Without it the cards were a dead end that dropped the nurse
-      // back on the screen she came from.
-      if (thenCheck) await _openConfirmation();
     }
   }
 
@@ -328,7 +321,28 @@ class _VisitCorridorState extends State<VisitCorridor> {
       await _takePhoto();
       return;
     }
-    await _openCards(focusSlot: area.focusSlot);
+    await _openAreaSheet(area.id);
+  }
+
+  /// Fills in one area without leaving the screen it was opened from.
+  ///
+  /// A sheet, not a screen: one area of the finding is an edit, not a place
+  /// to go. What is underneath stays there, and the tick that appears behind
+  /// the sheet is the answer to whether it worked.
+  Future<void> _openAreaSheet(StandingAreaId area) async {
+    final visit = _visit;
+    if (visit == null) return;
+
+    final entry = CardEntryViewModel(
+      draft: _draft,
+      repository: _visits,
+      visit: visit,
+    );
+    await AreaSheet.show(context, area: area, viewModel: entry);
+    final draft = entry.draft;
+    await entry.pendingWrite;
+    entry.dispose();
+    if (mounted) setState(() => _draft = draft);
   }
 
   /// Goes to a step of the visit from the band.
@@ -392,24 +406,18 @@ class _VisitCorridorState extends State<VisitCorridor> {
           // replaces stops asking for a decision — what reaches the record
           // is the value the nurse set, never both.
           onEnterValue: (slotId) async {
-            await _openCards(focusSlot: slotId, resetCapture: false);
+            await _openAreaSheet(StandingAreaId.ofSlot(slotId));
             review.recordedByHand(slotId, _draft[slotId]);
           },
           onSelectStep: _stepFrom,
           onAccept: () {
             final taken = review.settledEntries.length;
             unawaited(_acceptSettled(visit, review.settledEntries));
+            // A detour ends where it began. Sending the nurse on to the
+            // camera made the app decide where she goes next, and nobody
+            // could predict where a "Fertig" would come out.
             Navigator.of(context).pop();
-            // The photo is the other half of the open dressing, so it is
-            // where the finding leads next — but only while there is none.
-            // Sending the nurse back to the camera for a picture she has
-            // already taken would be the app deciding for her; saying why
-            // the road ends here is the least it owes her.
-            if (_photoCount == 0) {
-              unawaited(_takePhoto());
-            } else {
-              _report(l10n.captureTookOver(taken), l10n.capturePhotoAlready);
-            }
+            _report(l10n.captureTookOver(taken));
           },
         ),
       ),
@@ -601,9 +609,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
       markedPhotoCount: _markedPhotoCount,
     ),
     onInterpreted: _openConfirmation,
-    onUseCards: _visit == null
-        ? null
-        : () => _openCards(thenCheck: true),
+    onUseCards: _visit == null ? null : _openCards,
     onTakePhoto: _visit == null ? null : _takePhoto,
     onFinishVisit: _visit == null ? null : _finishVisit,
     onShowHistory: _visit == null ? null : _showHistory,

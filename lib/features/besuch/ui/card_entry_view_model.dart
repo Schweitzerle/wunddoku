@@ -123,6 +123,25 @@ class CardEntryViewModel extends ChangeNotifier {
     _write(slot, _draft.has(slot) ? null : ExudateKindValue(kind));
   }
 
+  /// The pain rating entered, or null.
+  int? get painScore {
+    final value = _draft['pain.score'];
+    return value is ScoreValue ? value.score : null;
+  }
+
+  /// Adds [step] to the pain rating, kept inside the scale.
+  ///
+  /// Zero is a rating, not an absence: "keine Schmerzen" is a finding the
+  /// catalogue knows (`PainScore.none`), so unlike a measurement it does not
+  /// collapse back into a gap. Clearing it takes the eraser.
+  void adjustPain(int step) {
+    final next = ((painScore ?? -1) + step).clamp(0, 10);
+    _write('pain.score', ScoreValue(next));
+  }
+
+  /// Clears the pain rating back to a gap.
+  void clearPain() => _write('pain.score', null);
+
   double _round(double value) => (value * 10).round() / 10;
 
   void _write(String slotId, VisitValue? value, {bool silent = false}) {

@@ -38,6 +38,7 @@ class _CardEntryScreenState extends State<CardEntryScreen> {
   final _woundBed = GlobalKey();
   final _measurements = GlobalKey();
   final _exudation = GlobalKey();
+  final _pain = GlobalKey();
 
   @override
   void initState() {
@@ -47,6 +48,7 @@ class _CardEntryScreenState extends State<CardEntryScreen> {
     final key = switch (slot.split('.').first) {
       'tissue' => _woundBed,
       'measurement' => _measurements,
+      'pain' => _pain,
       _ => _exudation,
     };
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -105,6 +107,8 @@ class _CardEntryScreenState extends State<CardEntryScreen> {
                     MeasurementCard(key: _measurements, viewModel: viewModel),
                     SizedBox(height: spacing.s12),
                     ExudationCard(key: _exudation, viewModel: viewModel),
+                    SizedBox(height: spacing.s12),
+                    PainCard(key: _pain, viewModel: viewModel),
                   ],
                 ),
               ),

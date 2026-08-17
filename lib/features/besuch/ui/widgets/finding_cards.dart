@@ -224,6 +224,60 @@ class MeasurementCard extends StatelessWidget {
   }
 }
 
+/// The pain rating, on the scale the catalogue defines.
+///
+/// Stepped like the other values and never typed. Zero is a finding here —
+/// "keine Schmerzen" is an answer, not a missing one — so it does not fall
+/// back into a gap the way a measurement of zero does; clearing it is its
+/// own action.
+class PainCard extends StatelessWidget {
+  const PainCard({required this.viewModel, super.key});
+
+  final CardEntryViewModel viewModel;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+    final score = viewModel.painScore;
+
+    return FindingCard(
+      heading: l10n.cardsPain,
+      status: Text(
+        l10n.cardsPainScale,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+      children: [
+        StepperRow(
+          label: FieldPresentation.label(l10n, 'pain.score'),
+          value: score == null
+              ? l10n.cardsNotEnteredShort
+              : l10n.valuePainScore(score),
+          dimmed: score == null,
+          onDecrease: score == null || score == 0
+              ? null
+              : () => viewModel.adjustPain(-1),
+          onIncrease: score == 10 ? null : () => viewModel.adjustPain(1),
+        ),
+        if (score != null)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(top: spacing.s8),
+              child: TextButton(
+                onPressed: viewModel.clearPain,
+                child: Text(l10n.cardsPainClear),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
 /// Amount and kinds of exudate, both chosen from the catalogue.
 class ExudationCard extends StatelessWidget {
   const ExudationCard({required this.viewModel, super.key});

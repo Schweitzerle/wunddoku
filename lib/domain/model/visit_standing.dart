@@ -31,7 +31,25 @@ class StandingArea {
 }
 
 /// The areas a wound finding is made of, in the order they are spoken.
-enum StandingAreaId { measurements, woundBed, exudate, pain, photo }
+enum StandingAreaId {
+  measurements,
+  woundBed,
+  exudate,
+  pain,
+  photo;
+
+  /// The area a record field belongs to.
+  ///
+  /// One place for the mapping: the check screen and the finding list both
+  /// have to land on the same card for the same field.
+  static StandingAreaId ofSlot(String slotId) =>
+      switch (slotId.split('.').first) {
+        'measurement' => StandingAreaId.measurements,
+        'tissue' => StandingAreaId.woundBed,
+        'pain' => StandingAreaId.pain,
+        _ => StandingAreaId.exudate,
+      };
+}
 
 
 /// What a visit already holds, counted for the capture screen.
