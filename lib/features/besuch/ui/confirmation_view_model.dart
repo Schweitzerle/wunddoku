@@ -174,8 +174,40 @@ class ConfirmationViewModel extends ChangeNotifier {
       List.unmodifiable(entries.where((e) => e.needsAttention));
 
   /// Rows that will stay empty, in the declared order.
-  List<ConfirmationEntry> get gapEntries =>
-      List.unmodifiable(_entries.where((e) => e.isGap));
+  ///
+  /// A wound-bed share is left out once the shares add up: the same rule the
+  /// record itself uses, so this screen and the closing screen cannot
+  /// disagree about how much is missing. See [VisitDraft.gapsAmong].
+  List<ConfirmationEntry> get gapEntries {
+    final bedSettled = _recordAsItWouldStand.isWoundBedSettled;
+    return List.unmodifiable(
+      _entries.where(
+        (e) =>
+            e.isGap && !(bedSettled && VisitDraft.isWoundBedSlot(e.slotId)),
+      ),
+    );
+  }
+
+  /// The record as it would stand if this screen were taken over now.
+  ///
+  /// Built rather than read from the repository: the nurse is still deciding,
+  /// and the question "is anything still missing" has to be answered against
+  /// the decisions on screen, not against what was saved before them.
+  VisitDraft get _recordAsItWouldStand {
+    final values = <String, VisitValue>{};
+    for (final entry in _entries) {
+      final recorded = entry.recorded;
+      if (recorded != null) {
+        values[entry.slotId] = recorded;
+        continue;
+      }
+      final proposal = entry.proposal;
+      if (proposal != null && entry.isSettled) {
+        values[entry.slotId] = VisitValue.fromProposal(proposal);
+      }
+    }
+    return VisitDraft(values: values);
+  }
 
   /// Rows whose value goes into the record as it stands.
   List<ConfirmationEntry> get settledEntries =>
@@ -188,7 +220,7 @@ class ConfirmationViewModel extends ChangeNotifier {
   int get attentionCount => _entries.where((e) => e.needsAttention).length;
 
   /// Number of fields that will stay empty.
-  int get gapCount => _entries.where((e) => e.isGap).length;
+  int get gapCount => gapEntries.length;
 
   /// Number of values that currently block saving.
   int get blockingCount => _entries.where((e) => e.blocksSaving).length;

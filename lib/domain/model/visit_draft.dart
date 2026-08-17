@@ -23,9 +23,28 @@ class VisitDraft {
   /// Whether [slotId] carries a value.
   bool has(String slotId) => values.containsKey(slotId);
 
-  /// The slots from [expected] that are still empty, in the given order.
-  Iterable<String> gapsAmong(Iterable<String> expected) =>
-      expected.where((slot) => !has(slot));
+  /// The slots from [expected] the visit still says nothing about.
+  ///
+  /// An empty slot is not automatically a gap: once the tissue shares add up
+  /// to 100 the wound bed is a complete statement about all four types, and a
+  /// type that was never named carries zero. Counting the four slots one by
+  /// one instead let the capture screen call a visit complete while the
+  /// closing screen named two missing entries in the same draft.
+  Iterable<String> gapsAmong(Iterable<String> expected) {
+    final bedSettled = isWoundBedSettled;
+    return expected.where(
+      (slot) => !has(slot) && !(bedSettled && isWoundBedSlot(slot)),
+    );
+  }
+
+  /// Whether the wound bed is a finished statement.
+  ///
+  /// Everything that asks whether the record is complete goes through this,
+  /// so the answer cannot differ between two screens.
+  bool get isWoundBedSettled => tissueDistribution != null;
+
+  /// Whether [slotId] is one of the tissue shares of the wound bed.
+  static bool isWoundBedSlot(String slotId) => slotId.startsWith('tissue.');
 
   /// Returns a copy with [value] stored for [slotId].
   VisitDraft withValue(String slotId, VisitValue value) =>

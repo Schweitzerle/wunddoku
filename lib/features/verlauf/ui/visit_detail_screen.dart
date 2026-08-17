@@ -55,10 +55,10 @@ class VisitDetailScreen extends StatelessWidget {
       for (final slot in expectedSlots)
         if (entry.draft[slot] != null) slot,
     ];
-    final gaps = [
-      for (final slot in expectedSlots)
-        if (entry.draft[slot] == null) slot,
-    ];
+    // Through the draft rather than by slot, so a wound bed whose shares add
+    // up is not reported as two missing entries here and as complete on the
+    // visit screen.
+    final gaps = entry.draft.gapsAmong(expectedSlots).toList();
     final area = entry.areaCm2;
     final change = areaChange;
 
