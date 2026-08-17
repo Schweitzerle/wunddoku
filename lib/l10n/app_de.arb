@@ -220,6 +220,27 @@
   "@captureTitle": {
     "description": "Titel des Aufnahme-Screens, auf dem der Befund am offenen Verband diktiert wird."
   },
+  "captureTitleResumed": "Besuch",
+  "@captureTitleResumed": {
+    "description": "Titel des Erfassungs-Screens, sobald der Besuch etwas enthält. „Befund sprechen“ behauptet dann einen ersten Schritt, der längst getan ist."
+  },
+  "captureContinue": "Weiter sprechen",
+  "@captureContinue": {
+    "description": "Beschriftung der großen Fläche, wenn der Besuch schon Werte trägt. Es fängt nichts an, es geht weiter."
+  },
+  "captureTookOver": "{count, plural, =1{1 Wert übernommen} other{{count} Werte übernommen}}",
+  "@captureTookOver": {
+    "description": "Kurze Rückmeldung nach der Rückkehr vom Prüfen. Ohne sie kommt die Pflegekraft auf einem Screen an, der aussieht wie der, den sie verlassen hat.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "capturePhotoAlready": "Ein Foto ist schon im Besuch.",
+  "@capturePhotoAlready": {
+    "description": "Zusatz zur Rückmeldung, wenn der Weg nicht zur Kamera führt, weil bereits ein Foto vorliegt. Sagt, warum hier Schluss ist."
+  },
   "captureIdleHint": "Sprich Maße, Wundgrund, Exsudat und Schmerz — in beliebiger Reihenfolge.",
   "@captureIdleHint": {
     "description": "Erklärender Satz im Leerzustand des Aufnahme-Screens. Sagt, was gesprochen werden kann."

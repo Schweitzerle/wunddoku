@@ -166,6 +166,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get captureTitle => 'Befund sprechen';
 
   @override
+  String get captureTitleResumed => 'Besuch';
+
+  @override
+  String get captureContinue => 'Weiter sprechen';
+
+  @override
+  String captureTookOver(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werte übernommen',
+      one: '1 Wert übernommen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get capturePhotoAlready => 'Ein Foto ist schon im Besuch.';
+
+  @override
   String get captureIdleHint =>
       'Sprich Maße, Wundgrund, Exsudat und Schmerz — in beliebiger Reihenfolge.';
 

@@ -307,6 +307,17 @@ class _VisitCorridorState extends State<VisitCorridor> {
     }
   }
 
+  /// Says what just happened, where the screen alone would not show it.
+  ///
+  /// Coming back to a screen that looks exactly like the one you left is the
+  /// commonest way to lose the thread (NN/g, *Visibility of System Status*).
+  void _report(String what, [String? why]) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(why == null ? what : '$what · $why')),
+    );
+  }
+
   /// Opens the place where [area] is filled in.
   ///
   /// The photo has its own screen; everything else is a card, and the card
@@ -370,6 +381,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
       // heard: values from the cards belong on it and are changed from it.
       draft: _draft,
     );
+    final l10n = AppLocalizations.of(context)!;
 
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -385,13 +397,19 @@ class _VisitCorridorState extends State<VisitCorridor> {
           },
           onSelectStep: _stepFrom,
           onAccept: () {
+            final taken = review.settledEntries.length;
             unawaited(_acceptSettled(visit, review.settledEntries));
             Navigator.of(context).pop();
             // The photo is the other half of the open dressing, so it is
             // where the finding leads next — but only while there is none.
             // Sending the nurse back to the camera for a picture she has
-            // already taken would be the app deciding for her.
-            if (_photoCount == 0) unawaited(_takePhoto());
+            // already taken would be the app deciding for her; saying why
+            // the road ends here is the least it owes her.
+            if (_photoCount == 0) {
+              unawaited(_takePhoto());
+            } else {
+              _report(l10n.captureTookOver(taken), l10n.capturePhotoAlready);
+            }
           },
         ),
       ),

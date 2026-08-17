@@ -167,6 +167,35 @@ void main() {
       expect(find.text('erfasst'), findsOneWidget);
     });
 
+    testWidgets('a visit with something in it does not claim to start', (
+      tester,
+    ) async {
+      await useScreen(tester);
+      await tester.pumpWidget(
+        TestApp(
+          child: CaptureScreen(
+            viewModel: model(),
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {'measurement.lengthCm': CentimetreValue(3.5)},
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 1,
+              markedPhotoCount: 0,
+            ),
+          ),
+        ),
+      );
+
+      // "Befund sprechen" over eight recorded values reads as though the
+      // eight were gone, and "Aufnahme starten" as though nothing had been
+      // said yet.
+      expect(find.text('Besuch'), findsOneWidget);
+      expect(find.text('Befund sprechen'), findsNothing);
+      expect(find.text('Weiter sprechen'), findsOneWidget);
+      expect(find.text('Aufnahme starten'), findsNothing);
+    });
+
     testWidgets('the visit band says which step this is', (tester) async {
       await useScreen(tester);
       await tester.pumpWidget(

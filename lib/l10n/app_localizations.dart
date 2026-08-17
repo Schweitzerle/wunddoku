@@ -370,6 +370,30 @@ abstract class AppLocalizations {
   /// **'Befund sprechen'**
   String get captureTitle;
 
+  /// Titel des Erfassungs-Screens, sobald der Besuch etwas enthält. „Befund sprechen“ behauptet dann einen ersten Schritt, der längst getan ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch'**
+  String get captureTitleResumed;
+
+  /// Beschriftung der großen Fläche, wenn der Besuch schon Werte trägt. Es fängt nichts an, es geht weiter.
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter sprechen'**
+  String get captureContinue;
+
+  /// Kurze Rückmeldung nach der Rückkehr vom Prüfen. Ohne sie kommt die Pflegekraft auf einem Screen an, der aussieht wie der, den sie verlassen hat.
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =1{1 Wert übernommen} other{{count} Werte übernommen}}'**
+  String captureTookOver(int count);
+
+  /// Zusatz zur Rückmeldung, wenn der Weg nicht zur Kamera führt, weil bereits ein Foto vorliegt. Sagt, warum hier Schluss ist.
+  ///
+  /// In de, this message translates to:
+  /// **'Ein Foto ist schon im Besuch.'**
+  String get capturePhotoAlready;
+
   /// Erklärender Satz im Leerzustand des Aufnahme-Screens. Sagt, was gesprochen werden kann.
   ///
   /// In de, this message translates to:

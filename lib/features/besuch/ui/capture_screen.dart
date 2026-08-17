@@ -400,7 +400,10 @@ class _Idle extends StatelessWidget {
       header: header,
       action: _PrimaryCaptureAction(
         icon: Icons.mic,
-        label: l10n.captureStart,
+        // Nothing starts on a visit that already carries something, and a
+        // screen that says "Aufnahme starten" over eight recorded values
+        // reads as though the eight were gone.
+        label: standing.isEmpty ? l10n.captureStart : l10n.captureContinue,
         onPressed: onStart,
       ),
       ways: [
@@ -427,7 +430,10 @@ class _Idle extends StatelessWidget {
         // Whose wound this is, in the body rather than in the app bar: at the
         // text sizes people actually run their phones at, a second line up
         // there collides with the title and the action.
-        Text(l10n.captureTitle, style: theme.textTheme.headlineMedium),
+        Text(
+          standing.isEmpty ? l10n.captureTitle : l10n.captureTitleResumed,
+          style: theme.textTheme.headlineMedium,
+        ),
         if (address != null) ...[
           SizedBox(height: spacing.s4),
           _Address(text: address!),
