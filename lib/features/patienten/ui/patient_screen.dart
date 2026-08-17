@@ -13,16 +13,28 @@ import '../../../shared/widgets/photo_thumbnail.dart';
 class WoundStanding {
   const WoundStanding({
     required this.visitCount,
+    this.hasOpenVisit = false,
     this.areaCm2,
     this.areaChangeCm2,
     this.photoRef,
   });
 
   /// A wound nobody has visited yet.
-  const WoundStanding.none() : visitCount = 0, areaCm2 = null,
-        areaChangeCm2 = null, photoRef = null;
+  const WoundStanding.none()
+    : visitCount = 0,
+      hasOpenVisit = false,
+      areaCm2 = null,
+      areaChangeCm2 = null,
+      photoRef = null;
 
   final int visitCount;
+
+  /// Whether a visit for this wound was begun and never closed.
+  ///
+  /// The action then says so: "beginnen" would claim something starts that
+  /// is already running, and the nurse would wonder what happened to the
+  /// values she entered an hour ago.
+  final bool hasOpenVisit;
 
   /// Length times width at the last visit, in square centimetres.
   ///
@@ -285,6 +297,7 @@ class _WoundCard extends StatelessWidget {
             _WoundActions(
               onOpen: wound.isOpen ? onOpen : null,
               onShowHistory: onShowHistory,
+              resumes: standing.hasOpenVisit,
             ),
           ],
         ],
@@ -341,10 +354,17 @@ class _Area extends StatelessWidget {
 
 /// Beginning a visit, and looking at the course without beginning one.
 class _WoundActions extends StatelessWidget {
-  const _WoundActions({required this.onOpen, required this.onShowHistory});
+  const _WoundActions({
+    required this.onOpen,
+    required this.onShowHistory,
+    required this.resumes,
+  });
 
   final VoidCallback? onOpen;
   final VoidCallback? onShowHistory;
+
+  /// Whether the visit this leads into is already under way.
+  final bool resumes;
 
   @override
   Widget build(BuildContext context) {
@@ -370,7 +390,9 @@ class _WoundActions extends StatelessWidget {
           child: FilledButton.icon(
             onPressed: onOpen,
             icon: const Icon(Icons.mic),
-            label: Text(l10n.woundStartVisit),
+            label: Text(
+              resumes ? l10n.woundResumeVisit : l10n.woundStartVisit,
+            ),
             style: FilledButton.styleFrom(
               minimumSize: Size.fromHeight(spacing.comfortTouch),
             ),

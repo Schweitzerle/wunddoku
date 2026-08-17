@@ -182,19 +182,19 @@ void main() {
         TestApp(child: ConfirmationScreen(viewModel: _model())),
       );
 
-      await tester.scrollUntilVisible(find.text('3,5 cm'), 100);
-      // scrollUntilVisible stops as soon as the widget enters the viewport;
-      // ensureVisible brings it fully in so the tap cannot miss.
-      await tester.ensureVisible(find.text('3,5 cm'));
-      await tester.pump();
-      await tester.tap(find.text('3,5 cm'));
+      // The wording sits under the value on a row that still wants a
+      // decision; tapping it opens the whole dictation.
+      await tester.tap(find.textContaining('Granulationsgewebe sechzig'));
       await tester.pumpAndSettle();
 
       expect(find.text('Wortlaut'), findsOneWidget);
       final sheet = tester.widget<ProvenanceSheet>(
         find.byType(ProvenanceSheet),
       );
-      expect(sheet.span!.textIn(sheet.transcript), 'Länge drei Komma fünf');
+      expect(
+        sheet.span!.textIn(sheet.transcript),
+        'Granulationsgewebe sechzig Prozent',
+      );
     });
 
     testWidgets('the summary counts what is settled, open and missing', (
@@ -230,7 +230,15 @@ void main() {
     ) async {
       final handle = tester.ensureSemantics();
       await tester.pumpWidget(
-        TestApp(child: ConfirmationScreen(viewModel: _model())),
+        TestApp(
+          child: ConfirmationScreen(
+            viewModel: _model(),
+            // With a way to change them the settled values are controls and
+            // each is its own node; without one the whole zone is read as a
+            // single block, which is what a read-only list should be.
+            onEnterValue: (_) {},
+          ),
+        ),
       );
 
       expect(
@@ -249,7 +257,10 @@ void main() {
 
       // Settled values sit in the compact zone below the fold.
       await tester.scrollUntilVisible(find.text('3,5 cm'), 100);
-      expect(find.bySemanticsLabel('Länge, 3,5 cm, Sicher erkannt'), findsOne);
+      // A value that is in the record says what it is and what it holds.
+      // Which confidence tier it once came from is no longer the question —
+      // it may just as well have been entered by hand.
+      expect(find.bySemanticsLabel('Länge, 3,5 cm'), findsOne);
 
       handle.dispose();
     });

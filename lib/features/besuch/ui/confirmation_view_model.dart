@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../domain/capture/field_proposal.dart';
+import '../../../domain/model/visit_draft.dart';
 
 /// What the nurse has decided about one proposed value.
 enum FieldDecision {
@@ -22,6 +23,7 @@ class ConfirmationEntry {
     required this.slotId,
     required this.proposal,
     required this.decision,
+    this.recorded,
   });
 
   /// Identifies the record field; see [FieldProposal.slotId].
@@ -32,11 +34,21 @@ class ConfirmationEntry {
 
   final FieldDecision decision;
 
+  /// What the record already holds for this field, from an earlier decision
+  /// or from the cards.
+  ///
+  /// The check screen is the finding as it stands, not only what was just
+  /// heard: a value entered by hand is as much part of it, and it has to be
+  /// changeable from here rather than only from the way back.
+  final VisitValue? recorded;
+
   /// Whether the field will stay empty.
   ///
   /// Nothing was said, or the nurse threw the proposal away. Both are gaps and
   /// both are allowed — an empty field is visibly empty, which is the point.
-  bool get isGap => proposal == null || decision == FieldDecision.discarded;
+  bool get isGap =>
+      recorded == null &&
+      (proposal == null || decision == FieldDecision.discarded);
 
   /// Whether this entry keeps the record from being saved.
   ///
@@ -49,11 +61,18 @@ class ConfirmationEntry {
       proposal!.confidence == ConfidenceTier.low;
 
   /// Whether the value is settled and goes into the record.
-  bool get isSettled =>
-      proposal != null &&
-      (decision == FieldDecision.accepted ||
-          (decision == FieldDecision.pending &&
-              proposal!.confidence == ConfidenceTier.high));
+  ///
+  /// A value already in the record counts too — unless a proposal about the
+  /// same field is still undecided, because then the newer statement is the
+  /// one that wants an answer.
+  bool get isSettled {
+    if (needsAttention || blocksSaving) return false;
+    if (recorded != null && decision != FieldDecision.accepted) return true;
+    return proposal != null &&
+        (decision == FieldDecision.accepted ||
+            (decision == FieldDecision.pending &&
+                proposal!.confidence == ConfidenceTier.high));
+  }
 
   /// Whether the value is worth a second look before accepting.
   bool get needsAttention =>
@@ -76,10 +95,12 @@ class ConfirmationEntry {
   ConfirmationEntry copyWith({
     FieldProposal? proposal,
     FieldDecision? decision,
+    VisitValue? recorded,
   }) => ConfirmationEntry(
     slotId: slotId,
     proposal: proposal ?? this.proposal,
     decision: decision ?? this.decision,
+    recorded: recorded ?? this.recorded,
   );
 }
 
@@ -99,6 +120,7 @@ class ConfirmationViewModel extends ChangeNotifier {
   ConfirmationViewModel({
     required List<String> expectedSlots,
     CaptureResult? result,
+    VisitDraft draft = const VisitDraft(),
   }) : _transcript = result?.transcript ?? '' {
     final bySlot = <String, FieldProposal>{};
     for (final proposal in result?.proposals ?? const <FieldProposal>[]) {
@@ -116,6 +138,7 @@ class ConfirmationViewModel extends ChangeNotifier {
           slotId: slot,
           proposal: bySlot[slot],
           decision: FieldDecision.pending,
+          recorded: draft[slot],
         ),
     ];
   }
@@ -126,8 +149,12 @@ class ConfirmationViewModel extends ChangeNotifier {
   /// The verbatim transcript the proposals came from.
   String get transcript => _transcript;
 
-  /// Whether a recording has been interpreted at all.
-  bool get hasRecording => _transcript.isNotEmpty;
+  /// Whether there is anything on this screen at all.
+  ///
+  /// A recording, or a finding that was entered by hand — both make this the
+  /// screen where the finding is looked over.
+  bool get hasRecording =>
+      _transcript.isNotEmpty || _entries.any((e) => e.recorded != null);
 
   /// The rows, most in need of attention first.
   ///
@@ -176,6 +203,20 @@ class ConfirmationViewModel extends ChangeNotifier {
 
   /// Throws the proposal for [slotId] away; the field becomes a gap.
   void discard(String slotId) => _decide(slotId, FieldDecision.discarded);
+
+  /// Takes over what the record now holds for [slotId] after a detour into
+  /// the cards, so the row stops asking about the proposal it replaced.
+  void recordedByHand(String slotId, VisitValue? value) {
+    final index = _entries.indexWhere((e) => e.slotId == slotId);
+    if (index < 0) return;
+    _entries[index] = ConfirmationEntry(
+      slotId: slotId,
+      proposal: null,
+      decision: FieldDecision.discarded,
+      recorded: value,
+    );
+    notifyListeners();
+  }
 
   void _decide(String slotId, FieldDecision decision) {
     final index = _entries.indexWhere((e) => e.slotId == slotId);

@@ -211,6 +211,39 @@ void main() {
     expect(media.files, hasLength(2));
   });
 
+  testWidgets('taking the values over leads on to the photo', (tester) async {
+    // Both happen at the open dressing, and the picture is worthless once
+    // the new bandage is on. Landing back on the screen the recording came
+    // from left the nurse to remember the next step herself.
+    final dependencies = await _dependencies();
+    addTearDown(dependencies.dispose);
+
+    await tester.pumpWidget(
+      TestApp(
+        child: VisitCorridor(
+          dependencies: dependencies,
+          wound: _wound,
+          capture: _cannedCapture,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Aufnahme starten'));
+    await tester.pump();
+    await tester.pump();
+    await tester.runAsync(() => tester.tap(find.text('Fertig')));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Verwerfen').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Übernehmen'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text('Wunde fotografieren'), findsOneWidget);
+  });
+
   testWidgets('a discarded value stays out of the record', (tester) async {
     final dependencies = await _dependencies();
     addTearDown(dependencies.dispose);
@@ -242,7 +275,10 @@ void main() {
     await tester.tap(find.text('Verwerfen').first);
     await tester.pumpAndSettle();
     await tester.tap(find.text('Übernehmen'));
-    await tester.pumpAndSettle();
+    // Fixed frames rather than settling: taking the values over leads on to
+    // the camera, whose start-up spinner never settles.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
 
     final visit = await dependencies.visits.openDraft(_wound);
     final draft = await dependencies.visits.loadDraft(visit!);

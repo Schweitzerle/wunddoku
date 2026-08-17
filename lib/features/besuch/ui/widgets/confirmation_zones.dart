@@ -107,14 +107,18 @@ class _GapZoneState extends State<GapZone> {
 class SettledZone extends StatelessWidget {
   const SettledZone({
     required this.entries,
-    required this.onShowProvenance,
+    required this.onChange,
     super.key,
   });
 
   final List<ConfirmationEntry> entries;
 
-  /// Called with the slot id of the row whose wording should be shown.
-  final void Function(String slotId) onShowProvenance;
+  /// Called with the slot id of the row the nurse wants to change.
+  ///
+  /// A settled value used to be reachable only through the way back into the
+  /// cards. It is part of the finding on this screen, so it is changed from
+  /// this screen.
+  final void Function(String slotId)? onChange;
 
   @override
   Widget build(BuildContext context) {
@@ -137,27 +141,22 @@ class SettledZone extends StatelessWidget {
             ),
           ),
         ),
-        Wrap(
-          spacing: spacing.s8,
-          runSpacing: spacing.s8,
-          children: [
-            for (final entry in entries)
-              _SettledChip(
-                entry: entry,
-                onTap: () => onShowProvenance(entry.slotId),
-              ),
-          ],
-        ),
+        for (final entry in entries)
+          _SettledRow(
+            entry: entry,
+            onTap: onChange == null ? null : () => onChange!(entry.slotId),
+          ),
       ],
     );
   }
 }
 
-class _SettledChip extends StatelessWidget {
-  const _SettledChip({required this.entry, required this.onTap});
+/// A value that is in the record, and the way to change it.
+class _SettledRow extends StatelessWidget {
+  const _SettledRow({required this.entry, required this.onTap});
 
   final ConfirmationEntry entry;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -166,37 +165,40 @@ class _SettledChip extends StatelessWidget {
     final spacing = context.spacing;
 
     final label = FieldPresentation.label(l10n, entry.slotId);
-    final value = FieldPresentation.value(l10n, entry.proposal!);
+    final recorded = entry.recorded;
+    final value = recorded != null
+        ? FieldPresentation.storedValue(l10n, recorded)
+        : FieldPresentation.value(l10n, entry.proposal!);
 
     return Semantics(
-      label: '$label, $value, ${l10n.confidenceHigh}',
-      button: true,
+      label: '$label, $value',
+      button: onTap != null,
       excludeSemantics: true,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(spacing.r8),
-        child: Container(
-          // Still a full touch target although the row is visually compact.
+        child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: spacing.minTouch),
-          padding: EdgeInsets.symmetric(
-            horizontal: spacing.s12,
-            vertical: spacing.s8,
-          ),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainer,
-            borderRadius: BorderRadius.circular(spacing.r8),
-          ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                label.toUpperCase(),
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              Expanded(
+                child: Text(
+                  label,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
-              SizedBox(width: spacing.s8),
+              SizedBox(width: spacing.s12),
               Text(value, style: theme.textTheme.bodyLarge),
+              if (onTap != null) ...[
+                SizedBox(width: spacing.s4),
+                Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ],
             ],
           ),
         ),

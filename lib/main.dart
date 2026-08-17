@@ -273,7 +273,11 @@ class _VisitCorridorState extends State<VisitCorridor> {
   /// [resetCapture] is false when the cards were opened from the check
   /// screen: the proposals still waiting there are not stale just because one
   /// field was filled in by hand.
-  Future<void> _openCards({String? focusSlot, bool resetCapture = true}) async {
+  Future<void> _openCards({
+    String? focusSlot,
+    bool resetCapture = true,
+    bool thenCheck = false,
+  }) async {
     final visit = _visit;
     if (visit == null) return;
 
@@ -296,6 +300,10 @@ class _VisitCorridorState extends State<VisitCorridor> {
     if (result != null && mounted) {
       setState(() => _draft = result);
       if (resetCapture) _capture.reset();
+      // Entering by hand ends where speaking ends: at the finding, to look
+      // over. Without it the cards were a dead end that dropped the nurse
+      // back on the screen she came from.
+      if (thenCheck) await _openConfirmation();
     }
   }
 
@@ -358,6 +366,9 @@ class _VisitCorridorState extends State<VisitCorridor> {
     final review = ConfirmationViewModel(
       expectedSlots: FieldPresentation.woundBedSlots,
       result: result,
+      // The screen is the finding as it stands, not only what was just
+      // heard: values from the cards belong on it and are changed from it.
+      draft: _draft,
     );
 
     await Navigator.of(context).push(
@@ -370,12 +381,17 @@ class _VisitCorridorState extends State<VisitCorridor> {
           // is the value the nurse set, never both.
           onEnterValue: (slotId) async {
             await _openCards(focusSlot: slotId, resetCapture: false);
-            review.discard(slotId);
+            review.recordedByHand(slotId, _draft[slotId]);
           },
           onSelectStep: _stepFrom,
           onAccept: () {
             unawaited(_acceptSettled(visit, review.settledEntries));
             Navigator.of(context).pop();
+            // The photo is the other half of the open dressing, so it is
+            // where the finding leads next — but only while there is none.
+            // Sending the nurse back to the camera for a picture she has
+            // already taken would be the app deciding for her.
+            if (_photoCount == 0) unawaited(_takePhoto());
           },
         ),
       ),
@@ -567,7 +583,9 @@ class _VisitCorridorState extends State<VisitCorridor> {
       markedPhotoCount: _markedPhotoCount,
     ),
     onInterpreted: _openConfirmation,
-    onUseCards: _visit == null ? null : _openCards,
+    onUseCards: _visit == null
+        ? null
+        : () => _openCards(thenCheck: true),
     onTakePhoto: _visit == null ? null : _takePhoto,
     onFinishVisit: _visit == null ? null : _finishVisit,
     onShowHistory: _visit == null ? null : _showHistory,

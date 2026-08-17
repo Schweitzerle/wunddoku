@@ -1074,6 +1074,10 @@
   "@woundSave": {
     "description": "Primäraktion im Wundformular."
   },
+  "woundResumeVisit": "Besuch fortführen",
+  "@woundResumeVisit": {
+    "description": "Aktion auf der Wundkarte, wenn für diese Wunde bereits ein Besuch offen ist. „Beginnen“ würde behaupten, es finge etwas an, das schon läuft."
+  },
   "woundStartVisit": "Besuch beginnen",
   "@woundStartVisit": {
     "description": "Aktion auf einer Wunde, die den Besuchskorridor öffnet."

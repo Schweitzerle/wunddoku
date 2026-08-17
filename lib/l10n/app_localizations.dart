@@ -1324,6 +1324,12 @@ abstract class AppLocalizations {
   /// **'Anlegen'**
   String get woundSave;
 
+  /// Aktion auf der Wundkarte, wenn für diese Wunde bereits ein Besuch offen ist. „Beginnen“ würde behaupten, es finge etwas an, das schon läuft.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch fortführen'**
+  String get woundResumeVisit;
+
   /// Aktion auf einer Wunde, die den Besuchskorridor öffnet.
   ///
   /// In de, this message translates to:

@@ -138,10 +138,7 @@ class _ConfirmationBody extends StatelessWidget {
               GapZone(entries: viewModel.gapEntries),
               SettledZone(
                 entries: viewModel.settledEntries,
-                onShowProvenance: (slotId) => _showProvenance(
-                  context,
-                  viewModel.entries.firstWhere((e) => e.slotId == slotId),
-                ),
+                onChange: onEnterValue,
               ),
             ],
           ),

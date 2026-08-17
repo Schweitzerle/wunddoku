@@ -888,6 +888,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get woundSave => 'Anlegen';
 
   @override
+  String get woundResumeVisit => 'Besuch fortführen';
+
+  @override
   String get woundStartVisit => 'Besuch beginnen';
 
   @override

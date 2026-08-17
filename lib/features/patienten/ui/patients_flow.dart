@@ -172,11 +172,15 @@ class _PatientHomeState extends State<_PatientHome> {
   /// Reads the last visit of [wound] into what its card shows.
   Future<WoundStanding> _standingOf(WoundId wound) async {
     final history = await widget.dependencies.visits.historyOf(wound);
-    if (history.isEmpty) return const WoundStanding.none();
+    final open = await widget.dependencies.visits.openDraft(wound) != null;
+    if (history.isEmpty) {
+      return WoundStanding(visitCount: 0, hasOpenVisit: open);
+    }
 
     final last = history.entries.last;
     return WoundStanding(
       visitCount: history.entries.length,
+      hasOpenVisit: open,
       areaCm2: last.areaCm2,
       areaChangeCm2: history.areaChangeBefore(last),
       // The marked copy where there is one: the outline is what makes two
