@@ -640,6 +640,18 @@ abstract class AppLocalizations {
   /// **'Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.'**
   String get photoHint;
 
+  /// Wie stark das Foto des vorigen Besuchs durchscheint, als Prozentwert neben dem Regler.
+  ///
+  /// In de, this message translates to:
+  /// **'{percent} %'**
+  String photoGhostStrength(int percent);
+
+  /// Stand des Reglers, wenn die Einblendung ganz abgeschaltet ist.
+  ///
+  /// In de, this message translates to:
+  /// **'aus'**
+  String get photoGhostOff;
+
   /// Steht anstelle des Ausricht-Hinweises, wenn die Akte ein voriges Foto führt, die Datei sich aber nicht lesen lässt. Der Hinweis sagt, dass die Hilfe fehlt, statt sie stillschweigend wegzulassen.
   ///
   /// In de, this message translates to:

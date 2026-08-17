@@ -451,6 +451,19 @@
   "@photoHint": {
     "description": "Hinweis über dem Sucher, wenn ein Foto des vorigen Besuchs vorliegt."
   },
+  "photoGhostStrength": "{percent} %",
+  "@photoGhostStrength": {
+    "description": "Wie stark das Foto des vorigen Besuchs durchscheint, als Prozentwert neben dem Regler.",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "photoGhostOff": "aus",
+  "@photoGhostOff": {
+    "description": "Stand des Reglers, wenn die Einblendung ganz abgeschaltet ist."
+  },
   "photoGhostUnreadable": "Das Foto des vorigen Besuchs lässt sich nicht laden — die Einblendung fehlt diesmal.",
   "@photoGhostUnreadable": {
     "description": "Steht anstelle des Ausricht-Hinweises, wenn die Akte ein voriges Foto führt, die Datei sich aber nicht lesen lässt. Der Hinweis sagt, dass die Hilfe fehlt, statt sie stillschweigend wegzulassen."

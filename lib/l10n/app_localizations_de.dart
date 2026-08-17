@@ -382,6 +382,14 @@ class AppLocalizationsDe extends AppLocalizations {
       'Gleicher Abstand wie beim letzten Mal — das Geisterbild hilft beim Ausrichten.';
 
   @override
+  String photoGhostStrength(int percent) {
+    return '$percent %';
+  }
+
+  @override
+  String get photoGhostOff => 'aus';
+
+  @override
   String get photoGhostUnreadable =>
       'Das Foto des vorigen Besuchs lässt sich nicht laden — die Einblendung fehlt diesmal.';
 

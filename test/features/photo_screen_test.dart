@@ -55,12 +55,13 @@ void main() {
         ),
         findsOneWidget,
       );
-      final toggle = tester.widget<SwitchListTile>(find.byType(SwitchListTile));
       expect(find.text('Voriges Foto einblenden'), findsOneWidget);
-      expect(toggle.value, isTrue);
+      expect(find.text('35 %'), findsOneWidget);
     });
 
-    testWidgets('the framing aid can be switched off', (tester) async {
+    testWidgets('the framing aid is set by hand, not switched', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         TestApp(
           child: PhotoScreen(
@@ -71,16 +72,16 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byType(SwitchListTile));
+      // How much of the old picture helps depends on the wound and the
+      // light. Tapping the far left of the track turns it off, and the
+      // control works without a drag (WCAG 2.5.7).
+      final track = tester.getRect(find.byType(Slider));
+      await tester.tapAt(Offset(track.left + 4, track.center.dy));
       await tester.pump();
 
       expect(find.byType(Image), findsNothing);
-
-      // The label stays put and the switch carries the state — otherwise
-      // "einblenden, eingeschaltet" would mean the ghost is off.
-      final toggle = tester.widget<SwitchListTile>(find.byType(SwitchListTile));
       expect(find.text('Voriges Foto einblenden'), findsOneWidget);
-      expect(toggle.value, isFalse);
+      expect(find.text('aus'), findsOneWidget);
     });
 
     testWidgets('says so when there is nothing to line up against', (

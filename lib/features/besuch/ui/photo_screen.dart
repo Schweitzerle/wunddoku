@@ -56,7 +56,7 @@ class PhotoScreen extends StatefulWidget {
 class _PhotoScreenState extends State<PhotoScreen> {
   CameraFailure? _failure;
   bool _starting = true;
-  bool _ghostVisible = true;
+  double _ghostOpacity = _Viewfinder._ghostDefault;
   bool _shutterBusy = false;
   Uint8List? _taken;
 
@@ -176,9 +176,71 @@ class _PhotoScreenState extends State<PhotoScreen> {
       preview: widget.camera.preview(),
       previousPhoto: widget.previousPhoto,
       previousPhotoUnreadable: widget.previousPhotoUnreadable,
-      ghostVisible: _ghostVisible,
-      onGhostChanged: (visible) => setState(() => _ghostVisible = visible),
+      ghostOpacity: _ghostOpacity,
+      onGhostOpacityChanged: (value) =>
+          setState(() => _ghostOpacity = value),
       onShutter: _shutterBusy ? null : _shoot,
+    );
+  }
+}
+
+/// How strongly the previous photo shows through the viewfinder.
+///
+/// A slider rather than a switch: how much of the old picture helps depends
+/// on the wound and the light, and "on or off" makes that choice for the
+/// nurse. Tapping the track sets the value, so the control does not depend
+/// on a drag (WCAG 2.5.7).
+class _GhostControl extends StatelessWidget {
+  const _GhostControl({required this.opacity, required this.onChanged});
+
+  final double opacity;
+  final ValueChanged<double> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    final spacing = context.spacing;
+
+    return MergeSemantics(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.photoGhost,
+                  style: theme.textTheme.bodyLarge,
+                ),
+              ),
+              Text(
+                opacity == 0
+                    ? l10n.photoGhostOff
+                    : l10n.photoGhostStrength((opacity * 100).round()),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            // The slider brings its own 48 dp of touch area; without a fixed
+            // height it also brings Material's default vertical padding on
+            // top of it.
+            height: spacing.minTouch,
+            child: Slider(
+              value: opacity,
+              // Steps rather than a continuum: with gloves on, a value that
+              // can be hit again next time is worth more than one that can
+              // be hit exactly.
+              divisions: 10,
+              label: l10n.photoGhostStrength((opacity * 100).round()),
+              onChanged: onChanged,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -189,23 +251,27 @@ class _Viewfinder extends StatelessWidget {
     required this.preview,
     required this.previousPhoto,
     required this.previousPhotoUnreadable,
-    required this.ghostVisible,
-    required this.onGhostChanged,
+    required this.ghostOpacity,
+    required this.onGhostOpacityChanged,
     required this.onShutter,
   });
 
   final Widget preview;
   final ImageProvider? previousPhoto;
   final bool previousPhotoUnreadable;
-  final bool ghostVisible;
-  final ValueChanged<bool> onGhostChanged;
+  /// How strongly the previous photo shows through; 0 turns it off.
+  final double ghostOpacity;
+
+  final ValueChanged<double> onGhostOpacityChanged;
   final VoidCallback? onShutter;
 
   /// How strongly the previous photo shows through.
   ///
-  /// Enough to line up an outline, faint enough that it is never mistaken for
-  /// what the camera sees right now.
-  static const _ghostOpacity = 0.35;
+  /// Where the framing aid starts: enough to line up an outline, faint
+  /// enough that it is never mistaken for what the camera sees right now.
+  /// The nurse moves it from there — a dark wound on a dark leg needs a
+  /// different mix than a pale one in daylight.
+  static const _ghostDefault = 0.35;
 
   @override
   Widget build(BuildContext context) {
@@ -236,53 +302,47 @@ class _Viewfinder extends StatelessWidget {
             ),
           ),
         ),
+        // Edge to edge, without a card around it. The wound is the content
+        // of this screen, and 16 dp of surface on either side of it is 16 dp
+        // taken from the thing the nurse is aiming.
         Expanded(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: spacing.s16),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(spacing.r12),
-              child: ColoredBox(
-                color: status.mediaGround,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    preview,
-                    if (previous != null && ghostVisible)
-                      // Image's own opacity blends while painting. Wrapping
-                      // this in Opacity would force a saveLayer over the live
-                      // viewfinder every single frame.
-                      ExcludeSemantics(
-                        child: Image(
-                          image: previous,
-                          fit: BoxFit.contain,
-                          opacity: const AlwaysStoppedAnimation(_ghostOpacity),
-                          // A framing aid that cannot be decoded costs the
-                          // aid and nothing else — but it may not take the
-                          // viewfinder with it.
-                          errorBuilder: (context, error, stack) =>
-                              const SizedBox.shrink(),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+          child: ColoredBox(
+            color: status.mediaGround,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                preview,
+                if (previous != null && ghostOpacity > 0)
+                  // Image's own opacity blends while painting. Wrapping this
+                  // in Opacity would force a saveLayer over the live
+                  // viewfinder every single frame.
+                  ExcludeSemantics(
+                    child: Image(
+                      image: previous,
+                      fit: BoxFit.contain,
+                      opacity: AlwaysStoppedAnimation(ghostOpacity),
+                      // A framing aid that cannot be decoded costs the aid
+                      // and nothing else — but it may not take the
+                      // viewfinder with it.
+                      errorBuilder: (context, error, stack) =>
+                          const SizedBox.shrink(),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
         if (previous != null)
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: spacing.s16,
-              vertical: spacing.s8,
+            padding: EdgeInsets.fromLTRB(
+              spacing.s16,
+              spacing.s8,
+              spacing.s16,
+              0,
             ),
-            child: SwitchListTile(
-              value: ghostVisible,
-              onChanged: onGhostChanged,
-              contentPadding: EdgeInsets.zero,
-              // The label names the state, never the action: a switch that
-              // reads "ausblenden" while it is on says the opposite of what
-              // it does, and a screen reader announces exactly that pair.
-              title: Text(l10n.photoGhost, style: theme.textTheme.bodyLarge),
+            child: _GhostControl(
+              opacity: ghostOpacity,
+              onChanged: onGhostOpacityChanged,
             ),
           ),
         Padding(
