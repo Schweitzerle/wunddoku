@@ -22,6 +22,9 @@ class PhotoScreen extends StatefulWidget {
     this.onTaken,
     this.onSkipped,
     this.onSelectStep,
+    this.visitDate,
+    this.onFinishVisit,
+    this.onShowHistory,
     super.key,
   });
 
@@ -48,6 +51,15 @@ class PhotoScreen extends StatefulWidget {
 
   /// Called with the step of the visit the nurse tapped in the band.
   final void Function(VisitStep step)? onSelectStep;
+
+  /// When the open visit was started, for the visit header.
+  final DateTime? visitDate;
+
+  /// Closes the visit. Carried on every step, never only on the first.
+  final VoidCallback? onFinishVisit;
+
+  /// Opens the course of this wound.
+  final VoidCallback? onShowHistory;
 
   @override
   State<PhotoScreen> createState() => _PhotoScreenState();
@@ -114,32 +126,19 @@ class _PhotoScreenState extends State<PhotoScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // The band, not a title: the photo is the third step of the
-            // visit, and this is where the visit says so.
-            Padding(
-              padding: EdgeInsets.only(top: spacing.s8),
-              child: Row(
-                children: [
-                  if (Navigator.of(context).canPop())
-                    const BackButton()
-                  else
-                    SizedBox(width: spacing.s16),
-                  Expanded(
-                    child: Text(
-                      l10n.photoTitle,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: spacing.s16),
-                ],
-              ),
-            ),
-            SizedBox(height: spacing.s8),
-            VisitBand(
-              current: VisitStep.photo,
-              onSelect: widget.onSelectStep,
+            // The same header as every other step, rather than this screen's
+            // own title row: the way out of the visit may not move from step
+            // to step (`23-a11y.md`, 3.2.6), and the band already says the
+            // word "Foto" one line further down.
+            VisitHeader(
+              step: VisitStep.photo,
+              visitDate: widget.visitDate,
+              onBack: Navigator.of(context).canPop()
+                  ? () => Navigator.of(context).maybePop()
+                  : null,
+              onFinish: widget.onFinishVisit,
+              onShowHistory: widget.onShowHistory,
+              onSelectStep: widget.onSelectStep,
             ),
             SizedBox(height: spacing.s12),
             Expanded(child: _body(l10n)),

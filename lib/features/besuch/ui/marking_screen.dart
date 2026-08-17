@@ -17,6 +17,10 @@ class MarkingScreen extends StatefulWidget {
     this.previous,
     this.initial,
     this.onDone,
+    this.visitDate,
+    this.onFinishVisit,
+    this.onShowHistory,
+    this.onSelectStep,
     super.key,
   });
 
@@ -29,6 +33,18 @@ class MarkingScreen extends StatefulWidget {
   final ImageMarking? initial;
 
   final ValueChanged<ImageMarking>? onDone;
+
+  /// When the open visit was started, for the visit header.
+  final DateTime? visitDate;
+
+  /// Closes the visit. Carried on every step, never only on the first.
+  final VoidCallback? onFinishVisit;
+
+  /// Opens the course of this wound.
+  final VoidCallback? onShowHistory;
+
+  /// Called with the step of the visit the nurse tapped in the band.
+  final void Function(VisitStep step)? onSelectStep;
 
   @override
   State<MarkingScreen> createState() => _MarkingScreenState();
@@ -52,30 +68,19 @@ class _MarkingScreenState extends State<MarkingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Marking belongs to the photo step; the band keeps saying so
-            // while the nurse is drawing.
-            Padding(
-              padding: EdgeInsets.only(top: spacing.s8),
-              child: Row(
-                children: [
-                  if (Navigator.of(context).canPop())
-                    const BackButton()
-                  else
-                    SizedBox(width: spacing.s16),
-                  Expanded(
-                    child: Text(
-                      l10n.markingTitle,
-                      style: theme.textTheme.labelMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: spacing.s16),
-                ],
-              ),
+            // Marking belongs to the photo step, and carries the same header
+            // as every other step of the visit: the way out may not move
+            // from screen to screen (`23-a11y.md`, 3.2.6).
+            VisitHeader(
+              step: VisitStep.photo,
+              visitDate: widget.visitDate,
+              onBack: Navigator.of(context).canPop()
+                  ? () => Navigator.of(context).maybePop()
+                  : null,
+              onFinish: widget.onFinishVisit,
+              onShowHistory: widget.onShowHistory,
+              onSelectStep: widget.onSelectStep,
             ),
-            SizedBox(height: spacing.s8),
-            const VisitBand(current: VisitStep.photo),
             SizedBox(height: spacing.s12),
             // What to do, only until it is being done. An instruction that
             // stays after the first mark is a line of the screen spent on

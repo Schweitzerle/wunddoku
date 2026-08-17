@@ -428,6 +428,10 @@ class _VisitCorridorState extends State<VisitCorridor> {
             review.recordedByHand(slotId, _draft[slotId]);
           },
           onSelectStep: _stepFrom,
+          // Through _stepFrom, so closing does not stack itself on top of
+          // the screen it was called from.
+          onFinishVisit: () => _stepFrom(VisitStep.closing),
+          onShowHistory: _showHistory,
           onAccept: () {
             final taken = review.settledEntries.length;
             unawaited(_acceptSettled(visit, review.settledEntries));
@@ -553,6 +557,9 @@ class _VisitCorridorState extends State<VisitCorridor> {
         builder: (_) => PhotoScreen(
           camera: widget.dependencies.camera(),
           onSelectStep: _stepFrom,
+          visitDate: _visitDate,
+          onFinishVisit: () => _stepFrom(VisitStep.closing),
+          onShowHistory: _showHistory,
           previousPhoto: previousBytes == null
               ? null
               : MemoryImage(previousBytes),
@@ -570,6 +577,10 @@ class _VisitCorridorState extends State<VisitCorridor> {
           photo: MemoryImage(taken),
           previous: previous?.marking,
           onDone: navigator.pop,
+          visitDate: _visitDate,
+          onSelectStep: _stepFrom,
+          onFinishVisit: () => _stepFrom(VisitStep.closing),
+          onShowHistory: _showHistory,
         ),
       ),
     );

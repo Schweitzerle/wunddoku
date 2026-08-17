@@ -22,6 +22,8 @@ class ConfirmationScreen extends StatelessWidget {
     this.onBackToCapture,
     this.onEnterValue,
     this.onSelectStep,
+    this.onFinishVisit,
+    this.onShowHistory,
     super.key,
   });
 
@@ -46,6 +48,12 @@ class ConfirmationScreen extends StatelessWidget {
   /// Called with the step of the visit the nurse tapped in the band.
   final void Function(VisitStep step)? onSelectStep;
 
+  /// Closes the visit. Carried on every step, never only on the first.
+  final VoidCallback? onFinishVisit;
+
+  /// Opens the course of this wound.
+  final VoidCallback? onShowHistory;
+
   @override
   Widget build(BuildContext context) {
     // The band rather than a title: "Prüfen" as a word in a bar said where
@@ -56,6 +64,8 @@ class ConfirmationScreen extends StatelessWidget {
       onBack: Navigator.of(context).canPop()
           ? () => Navigator.of(context).maybePop()
           : null,
+      onFinish: onFinishVisit,
+      onShowHistory: onShowHistory,
       onSelectStep: onSelectStep,
     );
 

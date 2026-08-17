@@ -235,24 +235,30 @@ class _CaptureLayout extends StatelessWidget {
   }
 }
 
-/// What the visit needs next, when the finding has nothing open.
+/// The way that is open but not the one the visit is asking for.
 ///
-/// Quieter than the microphone above it and louder than a line of text: the
-/// nurse decides whether she is done, the app only stops hiding the door.
-class _FinishSuggestion extends StatelessWidget {
-  const _FinishSuggestion({required this.onPressed});
+/// Sits above the one large target in the same width, quieter by an outline:
+/// still a full-width button under the thumb, so choosing it costs nothing —
+/// it just does not claim to be the answer.
+class _QuietAction extends StatelessWidget {
+  const _QuietAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
 
+  final IconData icon;
+  final String label;
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final spacing = context.spacing;
 
     return OutlinedButton.icon(
       onPressed: onPressed,
-      icon: const Icon(Icons.check_circle_outline),
-      label: Text(l10n.captureFinishVisit),
+      icon: Icon(icon),
+      label: Text(label),
       style: OutlinedButton.styleFrom(
         minimumSize: Size.fromHeight(spacing.comfortTouch),
       ),
@@ -368,25 +374,54 @@ class _Idle extends StatelessWidget {
     final theme = Theme.of(context);
     final spacing = context.spacing;
 
+    // The one large target carries what the visit is actually asking for.
+    // Speaking is the answer while something is still open — but a finding
+    // with nothing left wants closing, and a finding whose only gap is the
+    // photo wants the camera. Leaving the microphone loudest in those two
+    // cases points the nurse at the one action that cannot help her.
+    final open = standing.areas.where((area) => !area.isComplete).toList();
+    final done = !standing.isEmpty && open.isEmpty;
+    final photoOnly =
+        open.length == 1 && open.single.id == StandingAreaId.photo;
+
+    final speak = (
+      icon: Icons.mic,
+      // Nothing starts on a visit that already carries something, and a
+      // screen that says "Aufnahme starten" over eight recorded values
+      // reads as though the eight were gone.
+      label: standing.isEmpty ? l10n.captureStart : l10n.captureContinue,
+      onPressed: onStart,
+    );
+    final ({IconData icon, String label, VoidCallback onPressed})? instead =
+        done && onFinishVisit != null
+        ? (
+            icon: Icons.check_circle_outline,
+            label: l10n.captureFinishVisit,
+            onPressed: onFinishVisit!,
+          )
+        : photoOnly && onOpenArea != null
+        ? (
+            icon: Icons.photo_camera_outlined,
+            label: l10n.photoShutter,
+            onPressed: () => onOpenArea!(open.single),
+          )
+        : null;
+
     return _CaptureLayout(
       header: header,
       action: _PrimaryCaptureAction(
-        icon: Icons.mic,
-        // Nothing starts on a visit that already carries something, and a
-        // screen that says "Aufnahme starten" over eight recorded values
-        // reads as though the eight were gone.
-        label: standing.isEmpty ? l10n.captureStart : l10n.captureContinue,
-        onPressed: onStart,
+        icon: (instead ?? speak).icon,
+        label: (instead ?? speak).label,
+        onPressed: (instead ?? speak).onPressed,
       ),
-      // What the visit needs next, when there is an obvious answer. A
-      // finding with nothing open wants closing, and leaving that to a thin
-      // outline in the header while the loudest thing on screen says "keep
-      // talking" points the nurse at the one action she does not need.
-      lead: standing.isEmpty || onFinishVisit == null
+      // Speaking never disappears — it moves up and gets quieter.
+      lead: instead == null
           ? null
-          : standing.areas.every((area) => area.isComplete)
-          ? _FinishSuggestion(onPressed: onFinishVisit!)
-          : null,
+          : _QuietAction(
+              icon: speak.icon,
+              label: speak.label,
+              onPressed: speak.onPressed,
+            ),
       children: [
         // Whose wound this is, in the body rather than in the app bar: at the
         // text sizes people actually run their phones at, a second line up
