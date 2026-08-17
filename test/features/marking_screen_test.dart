@@ -65,7 +65,8 @@ void main() {
     testWidgets('cannot be finished without an outline', (tester) async {
       await tester.pumpWidget(TestApp(child: MarkingScreen(photo: photo())));
 
-      expect(find.text('Noch nichts markiert.'), findsOneWidget);
+      // The disabled action says it; a line of text under it said it again.
+      expect(find.text('Noch nichts markiert.'), findsNothing);
       final button = tester.widget<FilledButton>(
         find.widgetWithText(FilledButton, 'Markierung übernehmen'),
       );
@@ -136,7 +137,8 @@ void main() {
 
       await tester.tap(find.byTooltip('Markierung löschen'));
       await tester.pump();
-      expect(find.text('Noch nichts markiert.'), findsOneWidget);
+      // The disabled action says it; a line of text under it said it again.
+      expect(find.text('Noch nichts markiert.'), findsNothing);
     });
 
     testWidgets('an earlier outline is announced when it is shown', (

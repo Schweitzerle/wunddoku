@@ -9,7 +9,11 @@ import '../../../../shared/theme/app_theme.dart';
 /// Shares its painting with [MarkingBurner] so what the nurse sees and what
 /// the report shows cannot drift apart.
 class MarkingPainter extends CustomPainter {
-  const MarkingPainter({required this.marking, this.previous});
+  const MarkingPainter({
+    required this.marking,
+    required this.previousColour,
+    this.previous,
+  });
 
   final ImageMarking? marking;
 
@@ -19,6 +23,9 @@ class MarkingPainter extends CustomPainter {
   /// marks. Seeing last week's outline while drawing is what makes the two
   /// comparable later.
   final ImageMarking? previous;
+
+  /// Colour of [previous]; from the theme rather than from here.
+  final Color previousColour;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -36,7 +43,7 @@ class MarkingPainter extends CustomPainter {
           Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = 2
-            ..color = const Color(0x99FF00E5),
+            ..color = previousColour.withValues(alpha: 0.6),
         );
       }
     }
@@ -47,7 +54,9 @@ class MarkingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(MarkingPainter oldDelegate) =>
-      oldDelegate.marking != marking || oldDelegate.previous != previous;
+      oldDelegate.marking != marking ||
+      oldDelegate.previous != previous ||
+      oldDelegate.previousColour != previousColour;
 }
 
 /// The photo with the outline on top, zoomable and drawable.
@@ -213,6 +222,7 @@ class _MarkingEditorState extends State<MarkingEditor> {
                           Image(image: widget.photo, fit: BoxFit.fill),
                         CustomPaint(
                           painter: MarkingPainter(
+                            previousColour: status.markPrevious,
                             marking: widget.marking,
                             previous: widget.previous,
                           ),

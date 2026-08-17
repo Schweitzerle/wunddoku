@@ -252,7 +252,9 @@ class PainCard extends StatelessWidget {
       ),
       children: [
         StepperRow(
-          label: FieldPresentation.label(l10n, 'pain.score'),
+          // The card is already called "Schmerz"; the row underneath saying
+          // it again is a label on a label.
+          label: l10n.valuePainScoreLabel,
           value: score == null
               ? l10n.cardsNotEnteredShort
               : l10n.valuePainScore(score),

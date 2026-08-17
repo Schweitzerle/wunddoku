@@ -68,12 +68,16 @@ class VisitStanding {
        gapCount = draft.gapsAmong(expectedSlots).length,
        areas = _areasOf(draft, photoCount);
 
-  const VisitStanding.empty()
+  /// A visit that holds nothing yet.
+  ///
+  /// The areas are still listed: they are what the finding is made of, and
+  /// on an empty visit they are the only way in that is not the microphone.
+  VisitStanding.empty()
     : valueCount = 0,
       gapCount = 0,
       photoCount = 0,
       markedPhotoCount = 0,
-      areas = const [];
+      areas = _areasOf(const VisitDraft(), 0);
 
   /// The finding by area, in the order the areas are spoken in.
   final List<StandingArea> areas;

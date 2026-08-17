@@ -15,6 +15,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     required this.offline,
     required this.mediaGround,
     required this.onMediaGround,
+    required this.markPrevious,
   });
 
   /// Low confidence: highlighted, blocks saving.
@@ -43,6 +44,14 @@ class StatusColors extends ThemeExtension<StatusColors> {
   /// shift that perception between day and night shifts.
   final Color mediaGround;
 
+  /// The outline of the previous visit, drawn behind the current one.
+  ///
+  /// Identical in both themes, and outside the palette on purpose: it lies on
+  /// a wound photo, has to be told apart from the current outline at a
+  /// glance, and must never be mistaken for tissue. Magenta occurs in no
+  /// wound.
+  final Color markPrevious;
+
   /// Text and icons drawn on [mediaGround].
   ///
   /// Identical in both themes for the same reason the ground is: a label
@@ -57,6 +66,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     offline: Color(0xFF57514A),
     mediaGround: Color(0xFF3A3D40),
     onMediaGround: Color(0xFFE6E8EA),
+    markPrevious: Color(0xFFFF00E5),
   );
 
   static const dark = StatusColors(
@@ -67,6 +77,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     offline: Color(0xFFA9BFC4),
     mediaGround: Color(0xFF3A3D40),
     onMediaGround: Color(0xFFE6E8EA),
+    markPrevious: Color(0xFFFF00E5),
   );
 
   @override
@@ -78,6 +89,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     Color? offline,
     Color? mediaGround,
     Color? onMediaGround,
+    Color? markPrevious,
   }) => StatusColors(
     entscheiden: entscheiden ?? this.entscheiden,
     pruefen: pruefen ?? this.pruefen,
@@ -86,6 +98,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
     offline: offline ?? this.offline,
     mediaGround: mediaGround ?? this.mediaGround,
     onMediaGround: onMediaGround ?? this.onMediaGround,
+    markPrevious: markPrevious ?? this.markPrevious,
   );
 
   @override
@@ -99,6 +112,7 @@ class StatusColors extends ThemeExtension<StatusColors> {
       offline: Color.lerp(offline, other.offline, t)!,
       mediaGround: Color.lerp(mediaGround, other.mediaGround, t)!,
       onMediaGround: Color.lerp(onMediaGround, other.onMediaGround, t)!,
+      markPrevious: Color.lerp(markPrevious, other.markPrevious, t)!,
     );
   }
 }

@@ -538,6 +538,12 @@ abstract class AppLocalizations {
   /// **'Schmerz'**
   String get cardsPain;
 
+  /// Bezeichnung der Stufenzeile auf der Schmerz-Karte. Nicht „Schmerz“, weil die Karte schon so heißt.
+  ///
+  /// In de, this message translates to:
+  /// **'Stärke'**
+  String get valuePainScoreLabel;
+
   /// Erklärt die Skala auf der Schmerz-Karte. Ohne den Bezug ist die Zahl über die Besuche hinweg nicht vergleichbar (siehe docs/fachkataloge.md).
   ///
   /// In de, this message translates to:
@@ -849,6 +855,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Zurück zur Erfassung'**
   String get closingBack;
+
+  /// Rückmeldung nach dem Abschluss eines Besuchs, bei dem Angaben offen geblieben sind. Sie nennt den Unterschied, weil er in die Akte eingeht.
+  ///
+  /// In de, this message translates to:
+  /// **'Besuch mit Lücken abgeschlossen.'**
+  String get closingDoneWithGaps;
 
   /// Rückmeldung nach dem Abschluss, wird auch vom Screenreader angesagt.
   ///

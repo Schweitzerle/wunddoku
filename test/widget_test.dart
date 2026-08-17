@@ -323,10 +323,11 @@ void main() {
     expect(row.status, VisitStatus.completeWithGaps);
     expect(row.completedAt, isNotNull);
 
-    // The next patient is the next visit: a fresh draft is open afterwards.
+    // And the corridor is over. Starting a fresh visit on the same wound
+    // left a screen that looked exactly like the beginning, as though
+    // everything just written had gone.
     final next = await dependencies.visits.openDraft(_wound);
-    expect(next, isNotNull);
-    expect(next, isNot(closed));
+    expect(next, isNull);
   });
 }
 

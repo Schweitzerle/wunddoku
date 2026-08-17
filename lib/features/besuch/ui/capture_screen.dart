@@ -21,7 +21,7 @@ class CaptureScreen extends StatefulWidget {
     required this.viewModel,
     this.context,
     this.visitDate,
-    this.standing = const VisitStanding.empty(),
+    this.standing,
     this.onInterpreted,
     this.onUseCards,
     this.onFinishVisit,
@@ -44,7 +44,7 @@ class CaptureScreen extends StatefulWidget {
   /// Shown instead of the examples once there is anything to show: the record
   /// is the re-entry point after an interruption, and a screen that looks
   /// freshly started tells the nurse nothing about where she left off.
-  final VisitStanding standing;
+  final VisitStanding? standing;
 
   /// Called when a recording has been turned into field proposals.
   final VoidCallback? onInterpreted;
@@ -149,7 +149,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           _ => _Idle(
             header: header,
             address: context_,
-            standing: widget.standing,
+            standing: widget.standing ?? VisitStanding.empty(),
             onStart: _toggleRecording,
             onFinishVisit: widget.onFinishVisit,
             onOpenArea: widget.onOpenArea,
@@ -402,17 +402,15 @@ class _Idle extends StatelessWidget {
         SizedBox(height: spacing.s24),
         // On a visit under way the standing leads: the first thing a nurse
         // coming back from an interruption needs is where she left off.
-        if (standing.isEmpty)
-          // What can be spoken, for a visit that holds nothing yet. Once it
-          // holds something the list below says the same in a form that also
-          // answers "what is still open", and two of those would compete.
-          _Hint(text: l10n.captureIdleHint)
-        else
-          _AreaList(
-            areas: standing.areas,
-            openCount: standing.areas.where((a) => !a.isComplete).length,
-            onOpen: onOpenArea,
-          ),
+        // Always, empty visit included. It is what the finding is made of,
+        // and every row is the way in — on an empty visit that is the only
+        // way in that is not the microphone. Hiding it there left a screen
+        // whose single offer was to speak.
+        _AreaList(
+          areas: standing.areas,
+          openCount: standing.areas.where((a) => !a.isComplete).length,
+          onOpen: onOpenArea,
+        ),
         // Whatever room is left over lands here rather than at the bottom of
         // the screen: what follows then stands a constant 24 dp above the
         // thumb zone. When the content is taller than the viewport this
@@ -423,6 +421,8 @@ class _Idle extends StatelessWidget {
         // nurse actually has — what is still open — and the examples give
         // way to it.
         if (standing.isEmpty) ...[
+          SizedBox(height: spacing.s24),
+          _Hint(text: l10n.captureIdleHint),
           SizedBox(height: spacing.s24),
           Text(
             l10n.captureExamplesHeading,

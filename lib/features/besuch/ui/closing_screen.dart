@@ -25,6 +25,7 @@ class ClosingScreen extends StatelessWidget {
     this.onFillGap,
     this.onBack,
     this.onSelectStep,
+    this.visitDate,
     super.key,
   });
 
@@ -47,6 +48,9 @@ class ClosingScreen extends StatelessWidget {
   /// Called with the step of the visit the nurse tapped in the band.
   final void Function(VisitStep step)? onSelectStep;
 
+  /// When the open visit was started, for the header.
+  final DateTime? visitDate;
+
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
@@ -57,14 +61,15 @@ class ClosingScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // All four segments filled: this is the last step, and the band
-            // is where the visit says so.
-            Padding(
-              padding: EdgeInsets.only(top: spacing.s8),
-              child: VisitBand(
-                current: VisitStep.closing,
-                onSelect: onSelectStep,
-              ),
+            // The same header as every other step: this screen had no way
+            // back and did not say which visit it was closing.
+            VisitHeader(
+              step: VisitStep.closing,
+              visitDate: visitDate,
+              onBack: Navigator.of(context).canPop()
+                  ? () => Navigator.of(context).maybePop()
+                  : null,
+              onSelectStep: onSelectStep,
             ),
             Expanded(
               child: ListView(

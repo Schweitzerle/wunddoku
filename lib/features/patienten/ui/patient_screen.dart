@@ -134,13 +134,17 @@ class PatientScreen extends StatelessWidget {
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  SizedBox(height: spacing.s24),
-                  Text(
-                    l10n.woundsHeading,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
+                  // No heading over nothing: with no wound on file the word
+                  // "Wunden" sat above an empty screen.
+                  if (wounds.isNotEmpty) ...[
+                    SizedBox(height: spacing.s24),
+                    Text(
+                      l10n.woundsHeading,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

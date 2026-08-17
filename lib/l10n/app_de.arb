@@ -373,6 +373,10 @@
   "@cardsPain": {
     "description": "Überschrift der Schmerz-Karte im Kartenmodus."
   },
+  "valuePainScoreLabel": "Stärke",
+  "@valuePainScoreLabel": {
+    "description": "Bezeichnung der Stufenzeile auf der Schmerz-Karte. Nicht „Schmerz“, weil die Karte schon so heißt."
+  },
   "cardsPainScale": "0 bis 10, bezogen auf den Verbandwechsel",
   "@cardsPainScale": {
     "description": "Erklärt die Skala auf der Schmerz-Karte. Ohne den Bezug ist die Zahl über die Besuche hinweg nicht vergleichbar (siehe docs/fachkataloge.md)."
@@ -625,6 +629,10 @@
   "closingBack": "Zurück zur Erfassung",
   "@closingBack": {
     "description": "Führt zurück in den Befund, um eine Lücke noch zu füllen."
+  },
+  "closingDoneWithGaps": "Besuch mit Lücken abgeschlossen.",
+  "@closingDoneWithGaps": {
+    "description": "Rückmeldung nach dem Abschluss eines Besuchs, bei dem Angaben offen geblieben sind. Sie nennt den Unterschied, weil er in die Akte eingeht."
   },
   "closingDone": "Besuch abgeschlossen.",
   "@closingDone": {

@@ -78,9 +78,15 @@ void main() {
         TestApp(child: CaptureScreen(viewModel: model())),
       );
 
-      expect(find.textContaining('Sprich Maße'), findsOneWidget);
+      // The hint names the areas and so does the list above it; the list is
+      // the one that also leads there.
+      expect(find.textContaining('Sprich Maße'), findsWidgets);
       expect(find.textContaining('Länge drei Komma fünf'), findsOneWidget);
       expect(find.text('Aufnahme starten'), findsOneWidget);
+
+      // An empty visit has a way in that is not the microphone.
+      expect(find.text('Im Befund'), findsOneWidget);
+      expect(find.text('Schmerz'), findsOneWidget);
     });
 
     testWidgets('a visit under way says what it already holds', (tester) async {

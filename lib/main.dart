@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -36,6 +36,14 @@ import 'shared/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Upright only. The app is held in one hand with the other at the dressing,
+  // and every screen is designed for that grip: turning the phone sideways
+  // produced layouts nothing was measured against — the photo review at a
+  // fifth of its size, the finding list beside a wall of empty surface.
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(WunddokuApp(dependencies: bootstrap()));
 }
 
@@ -307,7 +315,17 @@ class _VisitCorridorState extends State<VisitCorridor> {
   void _report(String what, [String? why]) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(why == null ? what : '$what · $why')),
+      SnackBar(
+        content: Text(why == null ? what : '$what · $why'),
+        // Clear of the thumb zone: a floating snack bar lands at the bottom
+        // edge, which is where the one large target lives. It covered the
+        // action it was reporting on.
+        margin: EdgeInsets.only(
+          left: context.spacing.s16,
+          right: context.spacing.s16,
+          bottom: context.spacing.s96 + context.spacing.s32,
+        ),
+      ),
     );
   }
 
@@ -460,6 +478,7 @@ class _VisitCorridorState extends State<VisitCorridor> {
       MaterialPageRoute<_ClosingResult>(
         builder: (_) => ClosingScreen(
           onSelectStep: _stepFrom,
+          visitDate: _visitDate,
           // The last photo, marked copy preferred: what the nurse checks
           // before leaving is whether the picture is really in the record.
           photoRef: photos.isEmpty
@@ -491,15 +510,20 @@ class _VisitCorridorState extends State<VisitCorridor> {
     await _visits.completeVisit(visit, withGaps: result.withGaps);
     if (!mounted) return;
 
-    // The next patient is the next visit: the corridor starts a fresh one
-    // rather than leaving a closed record open on screen.
-    setState(() {
-      _draft = const VisitDraft();
-      _photoCount = 0;
-      _markedPhotoCount = 0;
-    });
-    _capture.reset();
-    await _resumeOrStart();
+    // The visit is over, so the corridor is too. Starting a fresh one on the
+    // same wound left a screen that looked exactly like the beginning — as
+    // though everything just written had gone — and invited documenting the
+    // same wound twice.
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    navigator.pop();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          result.withGaps ? l10n.closingDoneWithGaps : l10n.closingDone,
+        ),
+      ),
+    );
   }
 
   /// Photograph, mark, keep — the picture half of phase A.

@@ -329,6 +329,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get cardsPain => 'Schmerz';
 
   @override
+  String get valuePainScoreLabel => 'Stärke';
+
+  @override
   String get cardsPainScale => '0 bis 10, bezogen auf den Verbandwechsel';
 
   @override
@@ -535,6 +538,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get closingBack => 'Zurück zur Erfassung';
+
+  @override
+  String get closingDoneWithGaps => 'Besuch mit Lücken abgeschlossen.';
 
   @override
   String get closingDone => 'Besuch abgeschlossen.';
