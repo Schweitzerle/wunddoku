@@ -610,7 +610,6 @@ class _VisitCorridorState extends State<VisitCorridor> {
     ),
     onInterpreted: _openConfirmation,
     onUseCards: _visit == null ? null : _openCards,
-    onTakePhoto: _visit == null ? null : _takePhoto,
     onFinishVisit: _visit == null ? null : _finishVisit,
     onShowHistory: _visit == null ? null : _showHistory,
     onSelectStep: _visit == null ? null : _goToStep,

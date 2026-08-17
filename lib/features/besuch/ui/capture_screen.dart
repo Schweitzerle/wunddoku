@@ -24,7 +24,6 @@ class CaptureScreen extends StatefulWidget {
     this.standing = const VisitStanding.empty(),
     this.onInterpreted,
     this.onUseCards,
-    this.onTakePhoto,
     this.onFinishVisit,
     this.onShowHistory,
     this.onSelectStep,
@@ -63,11 +62,6 @@ class CaptureScreen extends StatefulWidget {
   /// a thumb goes for the recording.
   final VoidCallback? onFinishVisit;
 
-  /// Called to photograph the wound.
-  ///
-  /// Sits in phase A next to the recording: both happen at the open dressing,
-  /// and the photo is worthless once the new bandage is on.
-  final VoidCallback? onTakePhoto;
 
   /// Called with the step of the visit the nurse tapped in the band.
   final void Function(VisitStep step)? onSelectStep;
@@ -130,6 +124,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
           ? () => Navigator.of(context).maybePop()
           : null,
       onFinish: widget.onFinishVisit,
+      onShowHistory: widget.onShowHistory,
       onSelectStep: widget.onSelectStep,
     );
 
@@ -156,9 +151,7 @@ class _CaptureScreenState extends State<CaptureScreen> {
             address: context_,
             standing: widget.standing,
             onStart: _toggleRecording,
-            onUseCards: widget.onUseCards,
-            onTakePhoto: widget.onTakePhoto,
-            onShowHistory: widget.onShowHistory,
+            onFinishVisit: widget.onFinishVisit,
             onOpenArea: widget.onOpenArea,
           ),
         },
@@ -178,7 +171,7 @@ class _CaptureLayout extends StatelessWidget {
     required this.children,
     required this.action,
     this.header,
-    this.ways = const [],
+    this.lead,
   });
 
   final List<Widget> children;
@@ -187,87 +180,81 @@ class _CaptureLayout extends StatelessWidget {
   /// The visit header and band, where this state carries them.
   final Widget? header;
 
-  /// The equal paths: icon, the word on the tile, the sentence a screen
-  /// reader gets, and what to do.
-  final List<(IconData, String, String, VoidCallback?)> ways;
+  /// What the visit needs next, above the one large target. Null when there
+  /// is no obvious answer.
+  final Widget? lead;
 
   @override
   Widget build(BuildContext context) {
     final spacing = context.spacing;
 
     return SafeArea(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          // Three across is the layout while three labels fit across. Beyond
-          // that they break mid-word ("Verla / uf"), so the paths become a
-          // list and move out of the thumb zone into the reading matter: at
-          // twice the text size the surface is scarce, and what must not move
-          // is the one target the nurse hits without looking.
-          final across = _WayTiles.fitAcross(
-            context: context,
-            ways: ways,
-            available: constraints.maxWidth - 2 * spacing.s16,
-          );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ?header,
+          // Reading fills from the top, and what is touched sits low where
+          // the thumb is.
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, viewport) {
+                final padding = EdgeInsets.fromLTRB(
+                  spacing.s16,
+                  spacing.s24,
+                  spacing.s16,
+                  spacing.s24,
+                );
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ?header,
-              // Reading fills from the top, the paths sit low where the thumb
-              // is, and the gap between them lands between two groups rather
-              // than at the end of the screen. On a real phone that
-              // end-of-screen hole was the largest thing on it.
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, viewport) {
-                    final padding = EdgeInsets.fromLTRB(
-                      spacing.s16,
-                      spacing.s24,
-                      spacing.s16,
-                      spacing.s24,
-                    );
-
-                    return SingleChildScrollView(
-                      padding: padding,
-                      child: ConstrainedBox(
-                        // The content fills the viewport even when it is
-                        // shorter, so a [Spacer] among the children turns
-                        // what used to be dead space at the bottom into the
-                        // gap between two groups. Costs one intrinsic pass
-                        // over a handful of leaves; this is a screen, not a
-                        // list (`25-performance.md`).
-                        constraints: BoxConstraints(
-                          minHeight: viewport.maxHeight - padding.vertical,
-                        ),
-                        child: IntrinsicHeight(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ...children,
-                              if (ways.isNotEmpty && !across) ...[
-                                SizedBox(height: spacing.s24),
-                                _WayTiles(ways: ways, across: false),
-                              ],
-                            ],
-                          ),
-                        ),
+                return SingleChildScrollView(
+                  padding: padding,
+                  child: ConstrainedBox(
+                    // The content fills the viewport even when it is
+                    // shorter, so a [Spacer] among the children turns what
+                    // used to be dead space at the bottom into the gap
+                    // between two groups. Costs one intrinsic pass over a
+                    // handful of leaves; this is a screen, not a list
+                    // (`25-performance.md`).
+                    constraints: BoxConstraints(
+                      minHeight: viewport.maxHeight - padding.vertical,
+                    ),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: children,
                       ),
-                    );
-                  },
-                ),
-              ),
-              // What is touched sits low and does not scroll away: the one
-              // large target keeps the same place at every text size, so the
-              // thumb finds it without looking.
-              _Dock(
-                ways: ways.isNotEmpty && across
-                    ? _WayTiles(ways: ways, across: true)
-                    : null,
-                action: action,
-              ),
-            ],
-          );
-        },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          _Dock(lead: lead, action: action),
+        ],
+      ),
+    );
+  }
+}
+
+/// What the visit needs next, when the finding has nothing open.
+///
+/// Quieter than the microphone above it and louder than a line of text: the
+/// nurse decides whether she is done, the app only stops hiding the door.
+class _FinishSuggestion extends StatelessWidget {
+  const _FinishSuggestion({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final spacing = context.spacing;
+
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(Icons.check_circle_outline),
+      label: Text(l10n.captureFinishVisit),
+      style: OutlinedButton.styleFrom(
+        minimumSize: Size.fromHeight(spacing.comfortTouch),
       ),
     );
   }
@@ -275,9 +262,9 @@ class _CaptureLayout extends StatelessWidget {
 
 /// The area the thumb owns: the equal paths, then the one large action.
 class _Dock extends StatelessWidget {
-  const _Dock({required this.ways, required this.action});
+  const _Dock({required this.lead, required this.action});
 
-  final Widget? ways;
+  final Widget? lead;
   final Widget action;
 
   @override
@@ -303,7 +290,7 @@ class _Dock extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (ways != null) ...[ways!, SizedBox(height: spacing.s12)],
+          if (lead != null) ...[lead!, SizedBox(height: spacing.s12)],
           action,
         ],
       ),
@@ -356,9 +343,7 @@ class _Idle extends StatelessWidget {
     required this.address,
     required this.standing,
     required this.onStart,
-    required this.onUseCards,
-    required this.onTakePhoto,
-    required this.onShowHistory,
+    required this.onFinishVisit,
     required this.onOpenArea,
   });
 
@@ -371,21 +356,8 @@ class _Idle extends StatelessWidget {
 
   final VoidCallback onStart;
 
-  /// The path without speech, offered here and not only after a refusal.
-  ///
-  /// Speech is the shortcut, never the only way (`23-a11y.md`): the patient
-  /// may not want to be recorded, the room may be too loud, or three taps may
-  /// simply be faster than a sentence.
-  final VoidCallback? onUseCards;
-
-  /// Photographing the wound, the other half of phase A.
-  final VoidCallback? onTakePhoto;
-
-  /// The course so far.
-  ///
-  /// Reachable before the recording on purpose: what the wound looked like a
-  /// week ago is what the nurse compares against while the dressing is off.
-  final VoidCallback? onShowHistory;
+  /// Closes the visit, offered here when there is nothing left open.
+  final VoidCallback? onFinishVisit;
 
   /// Opens the place where an area of the finding is filled in.
   final void Function(StandingArea area)? onOpenArea;
@@ -406,26 +378,15 @@ class _Idle extends StatelessWidget {
         label: standing.isEmpty ? l10n.captureStart : l10n.captureContinue,
         onPressed: onStart,
       ),
-      ways: [
-        (
-          Icons.checklist,
-          l10n.captureWayCards,
-          l10n.captureUseCards,
-          onUseCards,
-        ),
-        (
-          Icons.photo_camera_outlined,
-          l10n.captureWayPhoto,
-          l10n.captureTakePhoto,
-          onTakePhoto,
-        ),
-        (
-          Icons.show_chart,
-          l10n.captureWayHistory,
-          l10n.captureShowHistory,
-          onShowHistory,
-        ),
-      ],
+      // What the visit needs next, when there is an obvious answer. A
+      // finding with nothing open wants closing, and leaving that to a thin
+      // outline in the header while the loudest thing on screen says "keep
+      // talking" points the nurse at the one action she does not need.
+      lead: standing.isEmpty || onFinishVisit == null
+          ? null
+          : standing.areas.every((area) => area.isComplete)
+          ? _FinishSuggestion(onPressed: onFinishVisit!)
+          : null,
       children: [
         // Whose wound this is, in the body rather than in the app bar: at the
         // text sizes people actually run their phones at, a second line up
@@ -680,202 +641,6 @@ class _Hint extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-/// The three equal paths, side by side and the same size.
-///
-/// `standardfallen.md` names "three equal tiles in a row" as a model
-/// preference, and it is one — but cards, photo and course really are equal
-/// ways into the same record rather than a ranking, so the exception applies
-/// (`docs/design/README.md`). As a list under the microphone they read as
-/// footnotes to speech, which is exactly what they are not.
-class _WayTiles extends StatelessWidget {
-  const _WayTiles({required this.ways, required this.across});
-
-  /// Icon, the word on the tile, the full sentence a screen reader gets, and
-  /// what to do.
-  final List<(IconData, String, String, VoidCallback?)> ways;
-
-  /// Whether the tiles stand side by side rather than under each other.
-  final bool across;
-
-  /// Whether the labels of [ways] fit side by side in [available].
-  ///
-  /// Measured rather than derived from the text scale: the answer depends on
-  /// the width as much as on the size, and a threshold picked from arithmetic
-  /// would be wrong on the first phone that is not the one it was picked on.
-  static bool fitAcross({
-    required BuildContext context,
-    required List<(IconData, String, String, VoidCallback?)> ways,
-    required double available,
-  }) {
-    if (ways.isEmpty) return true;
-
-    final spacing = context.spacing;
-    final style = Theme.of(context).textTheme.labelSmall;
-    final scaler = MediaQuery.textScalerOf(context);
-    final tileWidth =
-        (available - spacing.s8 * (ways.length - 1)) / ways.length;
-
-    for (final way in ways) {
-      final painter = TextPainter(
-        text: TextSpan(text: way.$2, style: style),
-        textDirection: Directionality.of(context),
-        textScaler: scaler,
-      )..layout();
-      final needed = painter.width + 2 * spacing.s8;
-      painter.dispose();
-      if (needed > tileWidth) return false;
-    }
-    return true;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final spacing = context.spacing;
-
-    final tiles = [
-      for (final way in ways)
-        _WayTile(
-          icon: way.$1,
-          label: way.$2,
-          semanticsLabel: way.$3,
-          onTap: way.$4,
-          across: across,
-        ),
-    ];
-
-    if (!across) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final (index, tile) in tiles.indexed) ...[
-            if (index > 0) SizedBox(height: spacing.s8),
-            tile,
-          ],
-        ],
-      );
-    }
-
-    // Equal height even when one label wraps and the others do not: three
-    // leaf tiles are cheap to measure, and tiles of different heights would
-    // undo the very thing the row is here to say.
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final (index, tile) in tiles.indexed) ...[
-            if (index > 0) SizedBox(width: spacing.s8),
-            Expanded(child: tile),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-/// An equal path, drawn as something you press.
-///
-/// Speech is the shortcut, never the only way (`23-a11y.md`). The word on the
-/// tile is short because three of them share a phone width; the sentence a
-/// screen reader reads out is the full one.
-class _WayTile extends StatefulWidget {
-  const _WayTile({
-    required this.icon,
-    required this.label,
-    required this.semanticsLabel,
-    required this.onTap,
-    required this.across,
-  });
-
-  final IconData icon;
-  final String label;
-  final String semanticsLabel;
-  final VoidCallback? onTap;
-
-  /// Whether the label sits under the icon rather than beside it.
-  final bool across;
-
-  @override
-  State<_WayTile> createState() => _WayTileState();
-}
-
-class _WayTileState extends State<_WayTile> {
-  bool _focused = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final spacing = context.spacing;
-    final icon = widget.icon;
-    final across = widget.across;
-    final onTap = widget.onTap;
-    final enabled = onTap != null;
-    final foreground = enabled
-        ? theme.colorScheme.onSurface
-        : theme.colorScheme.onSurfaceVariant;
-
-    final glyph = Icon(icon, size: 22, color: foreground);
-    final text = ExcludeSemantics(
-      child: Text(
-        widget.label,
-        textAlign: across ? TextAlign.center : TextAlign.start,
-        style: theme.textTheme.labelSmall?.copyWith(color: foreground),
-      ),
-    );
-
-    return Semantics(
-      label: widget.semanticsLabel,
-      child: Material(
-        color: theme.colorScheme.surface,
-        // An outline, not a lighter fill: in this palette no two surface
-        // tones are more than 1.2:1 apart, so a tinted panel says "target"
-        // indoors and nothing at all in sunlight. The outline clears the 3:1
-        // that a control boundary owes (`23-a11y.md`).
-        //
-        // Focus moves the same edge rather than adding Material's tinted
-        // overlay — for the same reason: the default overlay changes the
-        // fill by about 1.1:1 here and is not an indicator anyone can see.
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(spacing.r12),
-          side: BorderSide(
-            color: _focused
-                ? theme.colorScheme.primary
-                : theme.colorScheme.outline,
-            width: _focused ? 3 : 1.5,
-          ),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: InkWell(
-          onTap: onTap,
-          onFocusChange: (focused) => setState(() => _focused = focused),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: spacing.s64),
-            child: Padding(
-              padding: EdgeInsets.all(spacing.s8),
-              child: across
-                  ? Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [glyph, SizedBox(height: spacing.s4), text],
-                    )
-                  : Row(
-                      children: [
-                        SizedBox(width: spacing.s8),
-                        glyph,
-                        SizedBox(width: spacing.s16),
-                        Expanded(child: text),
-                        Icon(
-                          Icons.chevron_right,
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ],
-                    ),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

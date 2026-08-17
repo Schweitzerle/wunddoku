@@ -26,11 +26,14 @@ enum VisitStep {
   };
 }
 
-/// Thickness of one segment of the band.
+/// Thickness of the line under a step.
 ///
 /// Not a spacing token: this is the weight of a drawn line, and it has no
 /// business changing when the spacing scale does.
-const _segmentHeight = 6.0;
+const _segmentHeight = 3.0;
+
+/// Thickness of the line under the step the nurse is on.
+const _currentSegmentHeight = 6.0;
 
 /// Where the nurse is in the visit, as four segments over the content.
 ///
@@ -155,43 +158,47 @@ class _BandStep extends StatelessWidget {
     final done = step.index <= current.index;
     final text = label;
 
+    final here = step == current;
     final content = ConstrainedBox(
-      // A step whose label gave way at large text would otherwise be 30 dp
-      // tall — below the floor for a target.
+      // A step whose label gave way at large text would otherwise be a bare
+      // line — below the floor for a target.
       constraints: BoxConstraints(minHeight: spacing.minTouch),
-      child: Padding(
-        // Not decoration: this is what makes the step a target a glove can
-        // hit.
-        padding: EdgeInsets.symmetric(vertical: spacing.s12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              height: _segmentHeight,
-              decoration: BoxDecoration(
-                // Progress is carried by how many segments are filled, not by
-                // which one is coloured — colour alone would leave the state
-                // invisible to anyone who cannot tell teal from grey.
-                color: done
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(_segmentHeight / 2),
-              ),
-            ),
-            if (text != null) ...[
-              SizedBox(height: spacing.s8),
-              Text(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (text != null)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: spacing.s12),
+              child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: step == current
+                maxLines: 1,
+                // Without tracking: with it "Abschluss" broke across two
+                // lines in the width a quarter of a phone gives it, and a
+                // word broken in half reads as decoration, not as a place
+                // to go.
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: here
                       ? theme.colorScheme.primary
                       : theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-            ],
-          ],
-        ),
+            )
+          else
+            SizedBox(height: spacing.s48),
+          // Under the word, not over it: an underline is what a row of
+          // words uses to say which one you are on. Its weight doubles on
+          // the current step, so the state survives without colour.
+          Container(
+            height: here ? _currentSegmentHeight : _segmentHeight,
+            decoration: BoxDecoration(
+              color: done
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(_segmentHeight / 2),
+            ),
+          ),
+        ],
       ),
     );
 
@@ -236,6 +243,7 @@ class VisitHeader extends StatelessWidget {
     this.visitDate,
     this.onBack,
     this.onFinish,
+    this.onShowHistory,
     this.onSelectStep,
     super.key,
   });
@@ -255,6 +263,13 @@ class VisitHeader extends StatelessWidget {
   /// Ends the visit. Reachable from every step (`23-a11y.md`, 3.2.6).
   final VoidCallback? onFinish;
 
+  /// Opens the course of this wound.
+  ///
+  /// In the header rather than among the actions of the visit: what the
+  /// wound looked like a week ago is background for the whole visit, not a
+  /// step in it.
+  final VoidCallback? onShowHistory;
+
   /// Goes to another step of the visit; see [VisitBand.onSelect].
   final void Function(VisitStep step)? onSelectStep;
 
@@ -265,7 +280,11 @@ class VisitHeader extends StatelessWidget {
     final date = visitDate;
 
     // With nothing in it the row was 48 dp of empty screen above the band.
-    final hasRow = onBack != null || onFinish != null || date != null;
+    final hasRow =
+        onBack != null ||
+        onFinish != null ||
+        onShowHistory != null ||
+        date != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -288,6 +307,12 @@ class VisitHeader extends StatelessWidget {
                         ? const SizedBox.shrink()
                         : _WhichVisit(date: date),
                   ),
+                  if (onShowHistory != null)
+                    IconButton(
+                      onPressed: onShowHistory,
+                      icon: const Icon(Icons.show_chart),
+                      tooltip: l10n.captureShowHistory,
+                    ),
                   if (onFinish != null)
                     Padding(
                       padding: EdgeInsets.only(right: spacing.s16),

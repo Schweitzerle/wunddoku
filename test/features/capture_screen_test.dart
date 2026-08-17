@@ -277,30 +277,34 @@ void main() {
       expect(find.bySemanticsLabel('Schritt 1 von 4: Sprechen'), findsOne);
     });
 
-    testWidgets('the three ways are tiles that say what they are', (
+    testWidgets('the finding leads everywhere, the dock holds one thing', (
       tester,
     ) async {
       await useScreen(tester);
-      var cards = false;
       await tester.pumpWidget(
         TestApp(
           child: CaptureScreen(
             viewModel: model(),
-            onUseCards: () => cards = true,
-            onTakePhoto: () {},
+            onUseCards: () {},
             onShowHistory: () {},
+            standing: VisitStanding(
+              draft: const VisitDraft(
+                values: {'measurement.lengthCm': CentimetreValue(3.5)},
+              ),
+              expectedSlots: FieldPresentation.woundBedSlots,
+              photoCount: 0,
+              markedPhotoCount: 0,
+            ),
           ),
         ),
       );
 
-      // The word on the tile is short; the sentence a screen reader gets is
-      // the full one.
-      expect(find.text('Karten'), findsOneWidget);
-      expect(find.bySemanticsLabel('Über Karten erfassen'), findsOne);
-      expect(find.bySemanticsLabel('Wunde fotografieren'), findsOne);
-
-      await tester.tap(find.text('Karten'));
-      expect(cards, isTrue);
+      // Three tiles used to offer what the band and the finding list
+      // already offered. The same thing in three places is why nothing
+      // looked like the way.
+      expect(find.text('Karten'), findsNothing);
+      expect(find.text('Verlauf'), findsNothing);
+      expect(find.text('Weiter sprechen'), findsOneWidget);
     });
 
     testWidgets('closing the visit carries a word, not a tick', (tester) async {
@@ -515,7 +519,6 @@ void main() {
             context: 'Mustermann · linker Unterschenkel, distal',
             visitDate: DateTime(2026, 8, 13),
             onUseCards: () {},
-            onTakePhoto: () {},
             onShowHistory: () {},
             onFinishVisit: () {},
             standing: VisitStanding(
@@ -550,7 +553,6 @@ void main() {
             context: 'Mustermann · linker Unterschenkel, distal',
             visitDate: DateTime(2026, 8, 13),
             onUseCards: () {},
-            onTakePhoto: () {},
             onShowHistory: () {},
             onFinishVisit: () {},
             standing: VisitStanding(
@@ -587,7 +589,6 @@ void main() {
             context: 'Mustermann · linker Unterschenkel, distal',
             visitDate: DateTime(2026, 8, 13),
             onUseCards: () {},
-            onTakePhoto: () {},
             onShowHistory: () {},
             onFinishVisit: () {},
             standing: VisitStanding(
@@ -655,7 +656,6 @@ void main() {
           child: CaptureScreen(
             viewModel: model(),
             onUseCards: () {},
-            onTakePhoto: () {},
             onShowHistory: () {},
           ),
         ),

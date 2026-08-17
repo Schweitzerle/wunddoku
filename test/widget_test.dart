@@ -173,8 +173,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // The tile carries the short word; the sentence is its semantics label.
-    await tester.tap(find.bySemanticsLabel('Wunde fotografieren'));
+    // The band is the way to the steps of the visit; the tile that used to
+    // offer the same thing a second time is gone.
+    await tester.tap(find.bySemanticsLabel('Schritt 3 von 4: Foto'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Foto aufnehmen'));
     await tester.pumpAndSettle();
